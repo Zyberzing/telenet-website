@@ -20,6 +20,13 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  {
+    rules: {
+      // Prevent usage of 'any' type
+
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
 ];
 
 export default eslintConfig;

@@ -14,7 +14,12 @@ const COUNTRIES = [
   { code: "CA", name: "Canada" },
   { code: "AE", name: "United Arab Emirates" },
 ];
-
+const NAV_ITEMS = [
+  { label: "Plans", href: "/plans" },
+  { label: "Top Up & Recharge", href: "/top-up" },
+  { label: "Installation guide", href: "/installation" },
+  { label: "Contact Us", href: "/contact" },
+];
 export default function Header({ isDarkMode, setIsDarkMode }: any) {
   const [open, setOpen] = useState(false);
   const [countryOpen, setCountryOpen] = useState(false);
@@ -27,40 +32,25 @@ export default function Header({ isDarkMode, setIsDarkMode }: any) {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 text-xl font-bold">
           <Image
-            src="/logo.png"
+            src="/logo.svg"
             alt="Telenet Logo"
-            width={32}
-            height={32}
-            className="h-8 w-auto"
+            width={156}
+            height={56}
+            // className="h-8 w-auto"
           />
         </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8 font-medium capitalize">
-          <Link
-            href="#"
-            className="hover:text-purple-600 dark:hover:text-purple-400"
-          >
-            Plans
-          </Link>
-          <Link
-            href="#"
-            className="hover:text-purple-600 dark:hover:text-purple-400"
-          >
-            Top Up & Recharge
-          </Link>
-          <Link
-            href="#"
-            className="hover:text-purple-600 dark:hover:text-purple-400"
-          >
-            Installation guide
-          </Link>
-          <Link
-            href="#"
-            className="hover:text-purple-600 dark:hover:text-purple-400"
-          >
-            Contact Us
-          </Link>
+          {NAV_ITEMS.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="hover:text-purple-600 text-base uppercase font-medium dark:hover:text-purple-400"
+            >
+              {item.label}
+            </Link>
+          ))}
 
           {/* Country Dropdown */}
           <div className="relative">
@@ -69,7 +59,7 @@ export default function Header({ isDarkMode, setIsDarkMode }: any) {
               className="flex items-center gap-1 cursor-pointer text-sm px-2 py-1 dark:hover:bg-gray-800 hover:bg-gray-100"
             >
               <Globe className="h-4 w-4" />
-              {selectedCountry.name}
+              {selectedCountry?.name}
             </button>
             {countryOpen && (
               <ul className="absolute right-0 mt-2 bg-white shadow-lg z-50 dark:bg-gray-800">
@@ -149,7 +139,7 @@ export default function Header({ isDarkMode, setIsDarkMode }: any) {
               className="flex items-center gap-1 cursor-pointer text-sm px-2 py-1 border rounded border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               <Globe className="h-4 w-4" />
-              {selectedCountry.name}
+              {selectedCountry?.name}
             </button>
             {countryOpen && (
               <ul className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded shadow-lg z-50 dark:bg-gray-800 dark:border-gray-700">
