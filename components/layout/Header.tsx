@@ -18,7 +18,7 @@ const NAV_ITEMS = [
   { label: "Plans", href: "/plans" },
   { label: "Top Up & Recharge", href: "/top-up" },
   { label: "Installation guide", href: "/installation" },
-  { label: "Contact Us", href: "/contact" },
+  { label: "Contact Us", href: "/contact-us" },
 ];
 export default function Header({ isDarkMode, setIsDarkMode }: any) {
   const [open, setOpen] = useState(false);
@@ -46,7 +46,7 @@ export default function Header({ isDarkMode, setIsDarkMode }: any) {
             <Link
               key={item.href}
               href={item.href}
-              className="hover:text-purple-600 text-base uppercase font-medium dark:hover:text-purple-400"
+              className="hover:text-primary text-base uppercase font-medium dark:hover:text-primary"
             >
               {item.label}
             </Link>
@@ -66,7 +66,7 @@ export default function Header({ isDarkMode, setIsDarkMode }: any) {
                 {COUNTRIES.map((c) => (
                   <li
                     key={c.code}
-                    className="px-4 py-2 hover:bg-purple-100 dark:hover:bg-purple-800 cursor-pointer"
+                    className="px-4 py-2 hover:bg-primary dark:hover:bg-primary cursor-pointer"
                     onClick={() => {
                       setSelectedCountry(c);
                       setCountryOpen(false);
@@ -109,25 +109,25 @@ export default function Header({ isDarkMode, setIsDarkMode }: any) {
         <div className="md:hidden px-4 py-4 space-y-3 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
           <Link
             href="#"
-            className="block hover:text-purple-600 dark:hover:text-purple-400"
+            className="block hover:text-primary dark:hover:text-primary"
           >
             Plans
           </Link>
           <Link
             href="#"
-            className="block hover:text-purple-600 dark:hover:text-purple-400"
+            className="block hover:text-primary dark:hover:text-primary"
           >
             Top Up & Recharge
           </Link>
           <Link
             href="#"
-            className="block hover:text-purple-600 dark:hover:text-purple-400"
+            className="block hover:text-primary dark:hover:text-primary"
           >
             Installation guide
           </Link>
           <Link
             href="#"
-            className="block hover:text-purple-600 dark:hover:text-purple-400"
+            className="block hover:text-primary dark:hover:text-primary"
           >
             Contact Us
           </Link>
@@ -146,7 +146,7 @@ export default function Header({ isDarkMode, setIsDarkMode }: any) {
                 {COUNTRIES.map((c) => (
                   <li
                     key={c.code}
-                    className="px-4 py-2 hover:bg-purple-100 dark:hover:bg-purple-800 cursor-pointer"
+                    className="px-4 py-2 hover:bg-primary dark:hover:bg-primary cursor-pointer"
                     onClick={() => {
                       setSelectedCountry(c);
                       setCountryOpen(false);

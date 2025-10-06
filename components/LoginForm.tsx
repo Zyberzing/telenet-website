@@ -25,13 +25,13 @@ export default function LoginForm() {
       </div>
 
       {/* Login Button */}
-      <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
+      <Button className="w-full bg-gradient-to-r from-primary to-indigo-600 text-white">
         Login
       </Button>
 
       {/* Forgot Password */}
       <div className="">
-        <a href="#" className="text-sm text-purple-600 hover:underline">
+        <a href="#" className="text-sm text-primary hover:underline">
           Forgot Password?
         </a>
       </div>
@@ -59,7 +59,7 @@ export default function LoginForm() {
       {/* Register */}
       <div className="text-center text-sm">
         Not registered?{" "}
-        <a href="/register" className="text-purple-600 hover:underline">
+        <a href="/register" className="text-primary hover:underline">
           Create an account
         </a>
       </div>

@@ -1,3 +1,4 @@
+import { ROUTES } from "@/routes";
 import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -94,7 +95,7 @@ export default function Footer() {
               <Link href="#">Careers</Link>
             </li>
             <li>
-              <Link href="#">Contact Us</Link>
+              <Link href={ROUTES.CONTACT_US}>Contact Us</Link>
             </li>
             <li>
               <Link href="#">Partner with Us</Link>
