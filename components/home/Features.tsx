@@ -17,11 +17,9 @@ export default function Features() {
     <div className="w-full">
       {/* 🏆 Press & Awards */}
       <section className="py-12 text-center px-4">
-        <h2 className="text-2xl md:text-3xl font-bold mb-8">
-          Press, Media & Awards
-        </h2>
+        <h2 className="text-2xl md:text-3xl  mb-8">Press, Media & Awards</h2>
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+        <div className="flex flex-col md:flex-row items-center justify-center ">
           {[
             {
               img: "/award-logo.png",
@@ -38,7 +36,7 @@ export default function Features() {
           ].map((award, i) => (
             <div
               key={i}
-              className="flex flex-col sm:flex-row items-center md:w-1/3 gap-3 text-center sm:text-left"
+              className="flex flex-col sm:flex-row items-center w-full gap-1 text-center sm:text-left"
             >
               <Image
                 src={award.img}
@@ -47,9 +45,7 @@ export default function Features() {
                 height={60}
                 className="mx-auto sm:mx-0"
               />
-              <p className="text-xs sm:text-sm text-gray-600 max-w-[250px]">
-                {award.text}
-              </p>
+              <p className="text-[13.13px]">{award.text}</p>
             </div>
           ))}
         </div>
@@ -57,37 +53,56 @@ export default function Features() {
 
       {/* 📱 Download Banner */}
       <section className="max-w-6xl mx-auto px-6 py-12">
-        <div className="bg-gradient text-white rounded-2xl pt-3 px-8 flex flex-col lg:flex-row items-center justify-between gap-10">
-          <div className="flex flex-row items-center gap-6">
-            <Image
-              src="/man-talking-mobile.png"
-              alt="App Promo 1"
-              width={60}
-              height={60}
-              className="rounded-full bg-white border-2 self-start"
-            />
+        <div className="relative bg-gradient text-white rounded-2xl pt-3 flex flex-col lg:flex-row items-center justify-between gap-2">
+          <div className="absolute inset-0 bg-[url(/line-press-award.svg)] bg-center bg-cover bg-no-repeat z-30 w-[30em] left-[28em] h-[11em] -top-[1.2em] rounded-4xl" />
+          <div className="flex flex-1 justify-center flex-row items-center gap-6">
+            <div className="relative">
+              <Image
+                src="/man-talking-mobile.svg"
+                alt=""
+                width={60}
+                height={60}
+                className="absolute inset-0 bg-center bg-cover bg-no-repeat -top-[3em] left-[1.3em] z-30"
+              />
+              <Image
+                src="/voice.svg"
+                alt="App Promo 1"
+                width={100}
+                height={100}
+                className="-mt-[30px]"
+              />
+            </div>
             <Image
               src="/girl-with-phone.png"
               alt="App Promo 2"
               width={120}
               height={80}
             />
-            <Image
-              src="/girl-talking-mobile.png"
-              alt="App Promo 3"
-              width={60}
-              height={60}
-              className="rounded-full bg-white border-2"
-            />
+            <div className="relative">
+              <Image
+                src="/girl-talking-mobile.svg"
+                alt=""
+                width={60}
+                height={60}
+                className="absolute inset-0 bg-center bg-cover bg-no-repeat -top-[1.2em] left-[1.3em] z-30"
+              />
+              <Image
+                src="/voice.svg"
+                alt="App Promo 3"
+                width={100}
+                height={100}
+                className=""
+              />
+            </div>
           </div>
 
-          <div className="text-center lg:text-left flex flex-col lg:flex-row gap-6">
-            <h1 className="text-2xl md:text-3xl font-bold mb-3 leading-snug">
+          <div className="flex flex-col lg:flex-row gap-6 px-6">
+            <h1 className="text-2xl md:text-3xl mb-3 leading-snug">
               Download Telenet <br />
               25% OFF
             </h1>
-            <div className="flex justify-center lg:justify-start gap-4 mt-6">
-              <div className="flex gap-3 items-center border border-white rounded-md px-3 py-1 bg-transparent">
+            <div className="flex justify-center lg:justify-start gap-4 mt-6 h-[2.8em]">
+              <div className="flex gap-3 items-center border border-white rounded-md px-2 bg-transparent">
                 <FaGooglePlay className="text-white text-3xl" />
                 <div className="text-start leading-none">
                   <p className="text-[10px] m-0 p-0">GET IT ON</p>
@@ -95,7 +110,7 @@ export default function Features() {
                 </div>
               </div>
 
-              <div className="flex gap-3 items-center border border-white rounded-md px-3 py-1 bg-transparent">
+              <div className="flex flex-row px-2 gap-3 items-center border border-white rounded-md bg-transparent">
                 <FaApple className="text-white text-4xl" />
                 <div className="text-start leading-none">
                   <p className="text-[10px] m-0 p-0">Download on the</p>

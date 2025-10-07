@@ -55,19 +55,7 @@ export default function Hero() {
           <svg className="absolute w-full h-full rounded-4xl">
             <defs>
               <clipPath id="hero-clip" clipPathUnits="objectBoundingBox">
-                {/* Converted from your original path */}
-                <path
-                  d="
-                    M0.06,0
-                    Q0.05,0,0.04,0.02
-                    L0.015,0.07
-                    Q0,0.09,0,0.12
-                    L0,1
-                    L1,1
-                    L1,0
-                    Z
-                  "
-                />
+                <polygon points="0.10 0, 0.99 0.01, 1 0.99, 0 1, 0 0.20" />
               </clipPath>
             </defs>
           </svg>
@@ -78,7 +66,7 @@ export default function Hero() {
           />
 
           {/* Left Side */}
-          <div className="relative z-10 text-white w-full lg:w-1/2 text-start ml-0 sm:ml-[25px]">
+          <div className="relative z-10 text-white w-full lg:w-1/2 text-start ml-0 sm:ml-[25px] py-[50px] ">
             <h2 className="text-base pt-[50px] md:pt-[40px] lg:pt-0 sm:pt-0 sm:text-lg md:text-3xl font-medium mb-4">
               Where would you like to Travel?
             </h2>
@@ -144,14 +132,61 @@ export default function Hero() {
           </div>
 
           {/* Right Side */}
-          <div className="relative z-10 w-full lg:w-1/2 flex justify-center">
-            <Image
-              src="/home-hero-banner.png"
-              alt="Man using phone"
-              width={350}
-              height={400}
-              className="rounded-lg object-cover max-h-[300px] sm:max-h-[350px] md:max-h-[400px] w-auto"
-            />
+          <div className="relative z-10 w-full lg:w-1/2 flex justify-center hidden lg:flex">
+            {/* Image Wrapper */}
+            <div className="absolute -top-10 sm:-top-16 md:-top-[20em] lg:-top-[13.3em] xl:-top-[14.4em]">
+              <Image
+                src="/home-hero-banner.png"
+                alt="Man using phone"
+                width={350}
+                height={400}
+                className="object-cover max-h-[300px] sm:max-h-[350px] md:max-h-[400px] w-auto"
+              />
+              {/* United States */}
+              <div className="absolute top-[11rem] right-[0rem] rounded-b-md bg-white shadow-md flex flex-col items-center w-[70px]">
+                <Image
+                  src="/flags/usa.svg"
+                  alt="USA flag"
+                  width={100}
+                  height={35}
+                />
+                <span className="text-[11px] my-[2px] leading-[1.1] text-center">
+                  United States
+                  <br />
+                  of America
+                </span>
+              </div>
+
+              {/* United Arab Emirates */}
+              <div className="absolute bottom-[7rem] -left-[0.8rem] bg-white rounded-b-md shadow-md flex flex-col items-center w-[70px]">
+                <Image
+                  src="/flags/uae.svg"
+                  alt="UAE flag"
+                  width={100}
+                  height={35}
+                />
+                <span className="text-[11px] text-gray-700 font-medium my-[2px] leading-[1.1] text-center">
+                  United Arab
+                  <br />
+                  Emirates
+                </span>
+              </div>
+
+              {/* United Kingdom */}
+              <div className="absolute bottom-[3.2rem] right-[2rem] bg-white rounded-b-md shadow-md flex flex-col items-center w-[70px]">
+                <Image
+                  src="/flags/uk.svg"
+                  alt="UK flag"
+                  width={100}
+                  height={35}
+                />
+                <span className="text-[11px] text-gray-700 font-medium my-[2px] leading-[1.1] text-center">
+                  United
+                  <br />
+                  Kingdom
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
