@@ -26,7 +26,7 @@ const ContactUs = () => {
           <div className="bg-white p-8 rounded-2xl shadow-md w-full lg:w-1/2">
             <h2 className="text-2xl font-semibold mb-4">Get in touch</h2>
             <p className="text-gray-600 mb-6">
-              Want to get in touch? We'd love to hear from you. Here's how you
+              Want to get in touch? We&apos;d love to hear from you. Here&apos;s how you
               can reach us.
             </p>
 
