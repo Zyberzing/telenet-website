@@ -57,7 +57,7 @@ export default function Features() {
 
       {/* 📱 Download Banner */}
       <section className="max-w-6xl mx-auto px-6 py-12">
-        <div className="bg-[#A22BE6] text-white rounded-2xl pt-3 px-8 flex flex-col lg:flex-row items-center justify-between gap-10">
+        <div className="bg-gradient text-white rounded-2xl pt-3 px-8 flex flex-col lg:flex-row items-center justify-between gap-10">
           <div className="flex flex-row items-center gap-6">
             <Image
               src="/man-talking-mobile.png"
@@ -141,7 +141,7 @@ export default function Features() {
           ))}
         </div>
 
-        <Button className="mt-10 px-8 py-2 rounded-full flex items-center gap-2 mx-auto">
+        <Button className="mt-10 px-8 py-2 bg-gradient rounded-full flex items-center gap-2 mx-auto">
           View All
           <ChevronRight className="w-4 h-4 bg-white text-black rounded-full" />
         </Button>

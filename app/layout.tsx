@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Open_Sans } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 
-const openSans = Open_Sans({
+const openSans = Outfit({
   variable: "--font-sans",
   subsets: ["latin"],
 });

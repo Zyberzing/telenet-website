@@ -1,6 +1,9 @@
-"use client";
-import { useState } from "react";
-import { Plus, Minus } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const faqs = [
   {
@@ -56,12 +59,6 @@ const faqs = [
 ];
 
 export default function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-
-  const toggleFAQ = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-
   return (
     <section className="w-full py-16 px-2">
       <div className="max-w-5xl mx-auto text-center">
@@ -69,28 +66,24 @@ export default function FAQ() {
 
         <div className="grid md:grid-cols-2 gap-6 text-left">
           {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className="bg-gray-50 rounded-2xl p-5 shadow-sm transition"
-            >
-              <button
-                className="flex w-full justify-between items-center text-lg font-semibold focus:outline-none"
-                onClick={() => toggleFAQ(index)}
+            <>
+              <Accordion
+                type="single"
+                collapsible
+                className="bg-gradient-three p-2 px-6 border  rounded-xl border-[#F1F1F1]"
               >
-                {faq.question}
-                {openIndex === index ? (
-                  <Minus className="w-5 h-5" />
-                ) : (
-                  <Plus className="w-5 h-5" />
-                )}
-              </button>
-
-              {openIndex === index && (
-                <p className="mt-3 text-gray-600 text-sm leading-relaxed">
-                  {faq.answer}
-                </p>
-              )}
-            </div>
+                <AccordionItem value={`item-${index}`}>
+                  <AccordionTrigger className="text-lg font-normal text-left hover:no-underline">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <p className="text-gray-600 text-sm  leading-relaxed">
+                      {faq.answer}
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </>
           ))}
         </div>
       </div>
