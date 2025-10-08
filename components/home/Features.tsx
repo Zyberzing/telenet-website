@@ -53,8 +53,8 @@ export default function Features() {
 
       {/* 📱 Download Banner */}
       <section className="max-w-6xl mx-auto px-6 py-12">
-        <div className="relative bg-gradient text-white rounded-2xl pt-3 flex flex-col lg:flex-row items-center justify-between gap-2">
-          <div className="absolute inset-0 bg-[url(/line-press-award.svg)] bg-center bg-cover bg-no-repeat z-30 w-[30em] left-[28em] h-[11em] -top-[1.2em] rounded-4xl" />
+        <div className="relative overflow-hidden bg-gradient text-white rounded-2xl pt-3 flex flex-col lg:flex-row items-center justify-between gap-2">
+          <div className="absolute inset-0 bg-[url(/line-press-award.svg)] bg-center  bg-no-repeat  rounded-4xl" />
           <div className="flex flex-1 justify-center flex-row items-center gap-6">
             <div className="relative">
               <Image
@@ -123,7 +123,7 @@ export default function Features() {
       </section>
 
       {/* 🌍 Popular Countries */}
-      <section className="py-16 text-center px-6">
+      <section className="py-16 text-center bg-[url(/alldots.svg)] bg-no-repeat bg-center bg-cover px-6 ">
         <h2 className="text-2xl md:text-3xl font-bold mb-10">
           Popular Countries
         </h2>

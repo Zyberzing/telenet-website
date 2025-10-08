@@ -55,7 +55,19 @@ export default function Hero() {
           <svg className="absolute w-full h-full rounded-4xl">
             <defs>
               <clipPath id="hero-clip" clipPathUnits="objectBoundingBox">
-                <polygon points="0.10 0, 0.99 0.01, 1 0.99, 0 1, 0 0.20" />
+                {/* Converted from your original path */}
+                <path
+                  d="
+                    M0.06,0
+                    Q0.05,0,0.04,0.02
+                    L0.015,0.07
+                    Q0,0.09,0,0.12
+                    L0,1
+                    L1,1
+                    L1,0
+                    Z
+                  "
+                />
               </clipPath>
             </defs>
           </svg>
