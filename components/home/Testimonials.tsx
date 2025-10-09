@@ -1,13 +1,6 @@
 "use client";
+import Image from "next/image";
 import React, { useRef, useState } from "react";
-import {
-  FaFacebook,
-  FaInstagram,
-  FaSpotify,
-  FaVideo,
-  FaWhatsapp,
-  FaYoutube,
-} from "react-icons/fa";
 
 const testimonials = [
   {
@@ -73,9 +66,9 @@ const Testimonials = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 text-center leading-snug">
-        Our Travellers say it all — they’ve picked the best network!
+    <div className="min-h-screen flex flex-col items-center justify-center p-6">
+      <h1 className="text-2xl sm:text-3xl font-[400px] mb-8 text-center leading-snug">
+        Our Travellers say it all - they’ve picked the best network!
       </h1>
 
       {/* ✅ Carousel */}
@@ -84,7 +77,7 @@ const Testimonials = () => {
         onTouchEnd={handleTouchEnd}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
-        className="w-full max-w-6xl overflow-hidden cursor-grab active:cursor-grabbing"
+        className="w-full max-w-6xl overflow-hidden cursor-grab py-3 active:cursor-grabbing"
       >
         <div
           className="flex transition-transform duration-700 ease-in-out"
@@ -96,7 +89,7 @@ const Testimonials = () => {
           {Array.from({ length: slides }).map((_, index) => (
             <div
               key={index}
-              className={`grid grid-cols-1 sm:grid-cols-2 gap-6 w-full flex-shrink-0 px-4`}
+              className={`grid grid-cols-1 sm:grid-cols-2 gap-1 flex-shrink-0 px-14`}
               style={{
                 width: `${100 / slides}%`,
               }}
@@ -109,28 +102,30 @@ const Testimonials = () => {
                 .map((t, i) => (
                   <div
                     key={i}
-                    className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all flex flex-col justify-between"
+                    className="bg-white p-10 rounded-xl shadow-md hover:shadow-lg transition-all flex flex-col justify-between"
                   >
                     <div className="flex items-center mb-4">
                       <img
                         src={t.image}
                         alt={t.name}
-                        className="w-12 h-12 rounded-full mr-4"
+                        className="w-[100px] h-[100px] rounded-full mr-4"
                       />
+                    </div>
+                    <p className="text-[25px] mb-8">“{t.text}”</p>
+                    <div className="flex justify-between">
                       <div>
                         <p className="text-gray-900 font-semibold">{t.name}</p>
                         <p className="text-gray-600 text-xs">{t.location}</p>
                       </div>
-                    </div>
-                    <p className="text-gray-700 mb-4 italic">“{t.text}”</p>
-                    <div className="flex justify-end">
-                      {Array(5)
-                        .fill(0)
-                        .map((_, i) => (
-                          <span key={i} className="text-yellow-400 text-lg">
-                            ★
-                          </span>
-                        ))}
+                      <div className="flex justify-end">
+                        {Array(5)
+                          .fill(0)
+                          .map((_, i) => (
+                            <span key={i} className="text-yellow-400 text-lg">
+                              ★
+                            </span>
+                          ))}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -146,7 +141,9 @@ const Testimonials = () => {
             key={i}
             onClick={() => setCurrent(i)}
             className={`h-2 w-2 sm:h-3 sm:w-3 mx-1 rounded-full cursor-pointer transition-all ${
-              i === current ? "bg-gray-800 scale-110" : "bg-gray-400"
+              i === current
+                ? "bg-gray-800 scale-110"
+                : "bg-white border border-black"
             }`}
           ></span>
         ))}
@@ -154,23 +151,60 @@ const Testimonials = () => {
 
       {/* ✅ Bottom Section */}
       <div className="mt-12 text-center max-w-3xl">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="text-2xl sm:text-3xl font-[400px] text-gray-900 mb-4">
           Enjoy Unlimited Browsing
         </h2>
-        <p className="mb-4 text-gray-700 text-sm sm:text-base">
+        <p className="mb-4 text-[20px]">
           Stay connected on WhatsApp, Instagram & YouTube without roaming
           charges.
         </p>
-        <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
-          <FaInstagram className="w-14 h-14 sm:w-16 sm:h-16 text-pink-500 p-2 border rounded-xl" />
-          <FaWhatsapp className="w-14 h-14 sm:w-16 sm:h-16 text-green-500 p-2 border rounded-xl" />
-          <FaYoutube className="w-14 h-14 sm:w-16 sm:h-16 text-red-500 p-2 border rounded-xl" />
-          <FaSpotify className="w-14 h-14 sm:w-16 sm:h-16 text-green-600 p-2 border rounded-xl" />
-          <FaFacebook className="w-14 h-14 sm:w-16 sm:h-16 text-blue-600 p-2 border rounded-xl" />
-          <FaVideo className="w-14 h-14 sm:w-16 sm:h-16 text-blue-500 p-2 border rounded-xl" />
+        <div className="flex flex-wrap justify-center mt-6 gap-3 sm:gap-4">
+          <Image
+            src="/social-media/Instagram.svg"
+            alt="Instagram Logo"
+            width={100}
+            height={100}
+          />
+          <Image
+            src="/social-media/Whatsapp.svg"
+            alt="whatsapp Logo"
+            width={100}
+            height={100}
+          />
+          <Image
+            src="/social-media/Youtube.svg"
+            alt="youtube Logo"
+            width={100}
+            height={100}
+          />
+          <Image
+            src="/social-media/Spotify.svg"
+            alt="spotify Logo"
+            width={100}
+            height={100}
+          />
+          <Image
+            src="/social-media/Facebook.svg"
+            alt="facebook Logo"
+            width={100}
+            height={100}
+          />
+          <Image
+            src="/social-media/Facetime.svg"
+            alt="facetime Logo"
+            width={100}
+            height={100}
+          />
         </div>
-        <p className="text-gray-600 mt-4 flex items-center justify-center text-sm sm:text-base">
-          <span className="text-green-600 mr-2">🌐</span> No VPN Required
+        <p className="gap-3 mt-8 flex items-center justify-center text-sm sm:text-base">
+          <Image
+            src="/social-media/VPN.svg"
+            alt="VPN Logo"
+            width={32}
+            height={32}
+            className="h-8 w-auto"
+          />{" "}
+          No VPN Required
         </p>
       </div>
     </div>

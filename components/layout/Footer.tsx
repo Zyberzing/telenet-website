@@ -11,7 +11,7 @@ export default function Footer() {
         {/* Logo & About */}
         <div>
           <Image
-            src="/logo.png"
+            src="/logo.svg"
             alt="Telenet Logo"
             width={32}
             height={32}

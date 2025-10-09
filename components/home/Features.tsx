@@ -323,13 +323,13 @@ export default function Features() {
 
       {/*  Video Tutorial */}
       <section className="py-16 text-center px-4">
-        <h2 className="text-2xl md:text-3xl font-bold mb-8">
+        <h2 className="text-2xl md:text-3xl font-[400px] mb-8">
           Watch Video Tutorial
         </h2>
         <div className="max-w-3xl mx-auto">
           <div className="relative aspect-video bg-black rounded-2xl overflow-hidden">
             <Image
-              src="/watch-video-tutorial.png"
+              src="/watch-video-tutorial.svg"
               alt="Play Video"
               fill
               className="object-cover rounded-2xl"

@@ -16,7 +16,7 @@ export default function HeaderAuth() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 cursor-pointer">
           <Image
-            src="/logo.png"
+            src="/logo.svg"
             alt="Telenet Logo"
             width={32}
             height={32}

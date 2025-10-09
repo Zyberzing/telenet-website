@@ -62,28 +62,23 @@ export default function FAQ() {
   return (
     <section className="w-full py-16 px-2">
       <div className="max-w-5xl mx-auto text-center">
-        <h2 className="text-3xl font-bold mb-10">Frequently Asked Questions</h2>
+        <h2 className="text-2xl sm:text-3xl font-[400px] mb-10">
+          Frequently Asked Questions
+        </h2>
 
         <div className="grid md:grid-cols-2 gap-6 text-left">
           {faqs.map((faq, index) => (
-            <>
-              <Accordion
-                type="single"
-                collapsible
-                className="bg-gradient-three p-2 px-6 border  rounded-xl border-[#F1F1F1]"
-              >
-                <AccordionItem value={`item-${index}`}>
-                  <AccordionTrigger className="text-lg font-normal text-left hover:no-underline">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <p className="text-gray-600 text-sm  leading-relaxed">
-                      {faq.answer}
-                    </p>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </>
+            <Accordion
+              key={index}
+              type="single"
+              collapsible
+              className="bg-gradient-three p-4 px-6 border rounded-xl border-[#F1F1F1]"
+            >
+              <AccordionItem value={`item-${index}`}>
+                <AccordionTrigger>{faq.question}</AccordionTrigger>
+                <AccordionContent>{faq.answer}</AccordionContent>
+              </AccordionItem>
+            </Accordion>
           ))}
         </div>
       </div>
