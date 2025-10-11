@@ -1,29 +1,37 @@
 "use client";
 
 import { ROUTES } from "@/routes";
-import { Globe, Menu, Sun } from "lucide-react";
+import { ChevronDown, Globe, Menu, Sun } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "../ui/Button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
-const COUNTRIES = [
-  { code: "US", name: "USA" },
-  { code: "UK", name: "United Kingdom" },
-  { code: "CA", name: "Canada" },
-  { code: "AE", name: "United Arab Emirates" },
+const LANGUAGE = [
+  { code: "EN", name: "English" },
+  { code: "FR", name: "Français" },
+  { code: "ES", name: "Español" },
+  { code: "DE", name: "Deutsch" },
 ];
+
 const NAV_ITEMS = [
   { label: "Plans", href: "/plans" },
-  { label: "Top Up & Recharge", href: "/top-up" },
-  { label: "Installation guide", href: "/installation" },
+  { label: "Top Up & Recharge", href: "#" },
+  { label: "About us", href: "#" },
+  { label: "Installation guide", href: "#" },
   { label: "Contact Us", href: "/contact-us" },
 ];
 export default function Header({ isDarkMode, setIsDarkMode }: any) {
   const [open, setOpen] = useState(false);
   const [countryOpen, setCountryOpen] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
+  const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGE[0]);
   const router = useRouter();
 
   return (
@@ -53,31 +61,33 @@ export default function Header({ isDarkMode, setIsDarkMode }: any) {
           ))}
 
           {/* Country Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setCountryOpen(!countryOpen)}
-              className="flex items-center gap-1 cursor-pointer text-sm px-2 py-1 dark:hover:bg-gray-800 hover:bg-gray-100"
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition">
+                <span>{selectedLanguage?.code}</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+              align="end"
+              className="min-w-[6rem] bg-white dark:bg-gray-900 text-sm shadow-lg rounded-md"
             >
-              <Globe className="h-4 w-4" />
-              {selectedCountry?.name}
-            </button>
-            {countryOpen && (
-              <ul className="absolute right-0 mt-2 bg-white shadow-lg z-50 dark:bg-gray-800">
-                {COUNTRIES.map((c) => (
-                  <li
-                    key={c.code}
-                    className="px-4 py-2 hover:bg-primary dark:hover:bg-primary cursor-pointer"
-                    onClick={() => {
-                      setSelectedCountry(c);
-                      setCountryOpen(false);
-                    }}
-                  >
-                    {c.name}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+              {LANGUAGE.map((lang) => (
+                <DropdownMenuItem
+                  key={lang.code}
+                  onClick={() => setSelectedLanguage(lang)}
+                  className={`cursor-pointer ${
+                    selectedLanguage?.code === lang.code
+                      ? "bg-gray-100 dark:bg-gray-800"
+                      : ""
+                  }`}
+                >
+                  {lang.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* Sign In */}
           <button
@@ -108,7 +118,7 @@ export default function Header({ isDarkMode, setIsDarkMode }: any) {
       {open && (
         <div className="md:hidden px-4 py-4 space-y-3 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
           <Link
-            href="#"
+            href={ROUTES.PLANS}
             className="block hover:text-primary dark:hover:text-primary"
           >
             Plans
@@ -126,7 +136,7 @@ export default function Header({ isDarkMode, setIsDarkMode }: any) {
             Installation guide
           </Link>
           <Link
-            href="#"
+            href={ROUTES.CONTACT_US}
             className="block hover:text-primary dark:hover:text-primary"
           >
             Contact Us
@@ -139,16 +149,16 @@ export default function Header({ isDarkMode, setIsDarkMode }: any) {
               className="flex items-center gap-1 cursor-pointer text-sm px-2 py-1 border rounded border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               <Globe className="h-4 w-4" />
-              {selectedCountry?.name}
+              {selectedLanguage?.name}
             </button>
             {countryOpen && (
               <ul className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded shadow-lg z-50 dark:bg-gray-800 dark:border-gray-700">
-                {COUNTRIES.map((c) => (
+                {LANGUAGE.map((c) => (
                   <li
                     key={c.code}
                     className="px-4 py-2 hover:bg-primary dark:hover:bg-primary cursor-pointer"
                     onClick={() => {
-                      setSelectedCountry(c);
+                      setSelectedLanguage(c);
                       setCountryOpen(false);
                     }}
                   >

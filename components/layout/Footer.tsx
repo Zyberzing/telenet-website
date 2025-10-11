@@ -1,49 +1,52 @@
+"use client";
+
 import { ROUTES } from "@/routes";
-import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaApple, FaGooglePlay } from "react-icons/fa";
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-gray-300">
-      <div className="mx-auto max-w-7xl px-6 py-10 grid grid-cols-1 md:grid-cols-5 gap-8 content-center">
+    <footer className="bg-black text-gray-300 px-4 sm:px-6 md:px-10 lg:px-[6em]">
+      {/* Top Section */}
+      <div className="mx-auto max-w-7xl py-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
         {/* Logo & About */}
-        <div>
+        <div className="lg:col-span-2 flex flex-col items-start text-left">
           <Image
-            src="/logo.svg"
+            src="/transparent-logo.svg"
             alt="Telenet Logo"
-            width={32}
-            height={32}
-            className="h-8 w-auto"
+            width={150}
+            height={56}
+            className="h-[56px] w-[150px]"
           />
-          <p className="mt-4 text-sm">
+          <p className="mt-4 text-[15px] sm:text-[16px] leading-relaxed">
             Telenet Global helps travelers stay connected with eSIMs in 170+
-            countries. Secure payments, instant activation, global support
+            countries. Secure payments, instant activation, global support.
           </p>
-          <div className="flex justify-center lg:justify-start gap-4 mt-6">
-            <div className="flex gap-3 items-center border border-white rounded-md px-3 py-1 bg-transparent">
-              <FaGooglePlay className="text-white text-3xl" />
-              <div className="text-start leading-none">
-                <p className="text-[10px] m-0 p-0">GET IT ON</p>
-                <p className="text-xs font-semibold m-0 p-0">Google Play</p>
-              </div>
-            </div>
 
-            <div className="flex gap-3 items-center border border-white rounded-md px-3 py-1 bg-transparent">
-              <FaApple className="text-white text-4xl" />
-              <div className="text-start leading-none">
-                <p className="text-[10px] m-0 p-0">Download on the</p>
-                <p className="text-xs font-semibold m-0 p-0">App Store</p>
-              </div>
-            </div>
+          <div className="flex justify-start mt-5 gap-4 flex-wrap">
+            <Image
+              src="/app-store.svg"
+              alt="App Store"
+              width={135}
+              height={65}
+              className="h-[55px] w-[125px]"
+            />
+            <Image
+              src="/play-store.svg"
+              alt="Play Store"
+              width={135}
+              height={65}
+              className="h-[55px] w-[125px]"
+            />
           </div>
         </div>
 
         {/* Purchase */}
-        <div>
-          <h3 className="font-semibold text-white">Purchase</h3>
-          <ul className="mt-4 space-y-2 text-sm">
+        <div className="flex flex-col items-start">
+          <h3 className="font-semibold text-[18px] sm:text-[20px] text-primary">
+            Purchase
+          </h3>
+          <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
             <li>
               <Link href="#">Destinations</Link>
             </li>
@@ -60,9 +63,11 @@ export default function Footer() {
         </div>
 
         {/* Top Destinations */}
-        <div>
-          <h3 className="font-semibold text-white">Top Destinations</h3>
-          <ul className="mt-4 space-y-2 text-sm">
+        <div className="flex flex-col items-start">
+          <h3 className="font-semibold text-[18px] sm:text-[20px] text-primary">
+            Top Destinations
+          </h3>
+          <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
             <li>
               <Link href="#">Australia</Link>
             </li>
@@ -73,21 +78,23 @@ export default function Footer() {
               <Link href="#">Thailand</Link>
             </li>
             <li>
-              <Link href="#">United States</Link>
+              <Link href="#">United States of America</Link>
             </li>
             <li>
               <Link href="#">Canada</Link>
             </li>
             <li>
-              <Link href="#">UAE</Link>
+              <Link href="#">United Arab Emirates</Link>
             </li>
           </ul>
         </div>
 
         {/* Company */}
-        <div>
-          <h3 className="font-semibold text-white">Telenet Global</h3>
-          <ul className="mt-4 space-y-2 text-sm">
+        <div className="flex flex-col items-start">
+          <h3 className="font-semibold text-[18px] sm:text-[20px] text-primary">
+            Telenet Global
+          </h3>
+          <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
             <li>
               <Link href="#">About Us</Link>
             </li>
@@ -103,10 +110,12 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* resources */}
-        <div>
-          <h3 className="font-semibold text-white">Resources</h3>
-          <ul className="mt-4 space-y-2 text-sm">
+        {/* Resources */}
+        <div className="flex flex-col items-start">
+          <h3 className="font-semibold text-[18px] sm:text-[20px] text-primary">
+            Resources
+          </h3>
+          <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
             <li>
               <Link href="#">Blog</Link>
             </li>
@@ -120,23 +129,42 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom bar */}
-      <div className="border-t border-gray-700 mt-6 py-4 px-4 flex flex-col md:flex-row justify-between items-center">
-        <p className="text-xs">
-          Copyright © www.Telnet.com | All rights reserved.
+      {/* Bottom Bar */}
+      <div className="border-t border-gray-700 mt-6 py-6 flex flex-col md:flex-row items-start justify-between gap-4 text-start">
+        {/* Copyright */}
+        <p className="text-sm sm:text-[15px]">
+          Copyright ©{" "}
+          <span className="text-primary font-medium">www.Telnet.com</span> All
+          rights reserved. v1.0.3A
         </p>
-        <div className="flex gap-4 mt-3 md:mt-0">
-          <Instagram className="w-5 h-5 cursor-pointer" />
-          <Facebook className="w-5 h-5 cursor-pointer" />
-          <Youtube className="w-5 h-5 cursor-pointer" />
-          <Linkedin className="w-5 h-5 cursor-pointer" />
+
+        {/* Social Icons */}
+        <div className="flex justify-start gap-4">
+          {[
+            "instagram-footer.svg",
+            "facebook-footer.svg",
+            "youtube-footer.svg",
+            "linkedin-footer.svg",
+            "x-footer.svg",
+          ].map((icon, idx) => (
+            <Image
+              key={idx}
+              src={`/social-media/${icon}`}
+              alt="Social Icon"
+              width={28}
+              height={28}
+              className="h-[26px] w-[26px] hover:opacity-80 transition"
+            />
+          ))}
         </div>
-        <div className="flex gap-6 items-center">
-          <p>Cookie Preference</p>
-          <p>|</p>
-          <p>Terms & Conditions</p>
-          <p>|</p>
-          <p>Privacy Policy</p>
+
+        {/* Links */}
+        <div className="flex flex-wrap justify-start gap-2 sm:gap-4 text-sm sm:text-[15px]">
+          <Link href="#">Cookie Preference</Link>
+          <span className="hidden sm:inline">|</span>
+          <Link href="#">Terms & Conditions</Link>
+          <span className="hidden sm:inline">|</span>
+          <Link href="#">Privacy Policy</Link>
         </div>
       </div>
     </footer>
