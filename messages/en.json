@@ -1,0 +1,336 @@
+{
+  "Header": {
+    "plans": "Plans",
+    "topUp": "Top Up & Recharge",
+    "about": "About us",
+    "installGuide": "Installation guide",
+    "contact": "Contact Us",
+    "signIn": "Sign In"
+  },
+  "HeaderAuth": {
+    "logoAlt": "Telenet Logo",
+    "userName": "Alex",
+    "toggleTheme": "Toggle Theme"
+  },
+  "Footer": {
+    "logoAlt": "Telenet Logo",
+    "aboutText": "Telenet Global helps travelers stay connected with eSIMs in 170+ countries. Secure payments, instant activation, global support.",
+    "purchase": "Purchase",
+    "destinations": "Destinations",
+    "regions": "Regions",
+    "topUp": "Top Up Now",
+    "downloadApp": "Download App",
+    "topDestinations": "Top Destinations",
+    "countries": {
+      "Australia": "Australia",
+      "United Kingdom": "United Kingdom",
+      "Thailand": "Thailand",
+      "USA": "United States of America",
+      "Canada": "Canada",
+      "UAE": "United Arab Emirates"
+    },
+    "company": "Telenet Global",
+    "aboutUs": "About Us",
+    "careers": "Careers",
+    "contactUs": "Contact Us",
+    "partner": "Partner with Us",
+    "resources": "Resources",
+    "blog": "Blog",
+    "helpCenter": "Help Center",
+    "events": "Events",
+    "copyright": "Copyright ©",
+    "footerlink": "www.Telnet.com",
+    "reserved": "All rights reserved. v1.0.3A",
+    "cookie": "Cookie Preference",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy Policy"
+  },
+  "LoginPage": {
+    "imageAlt": "Login illustration"
+  },
+  "LoginForm": {
+    "welcomeText": "Welcome back! 👋",
+    "loginTitle": "Login to your account",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Please enter your email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter password",
+    "loginButton": "Login",
+    "forgotPassword": "Forgot Password?",
+    "or": "or",
+    "loginWithGoogle": "Login with Google",
+    "loginWithApple": "Login with Apple",
+    "loginWithFacebook": "Login with Facebook",
+    "notRegistered": "Not registered?",
+    "createAccount": "Create an account"
+  },
+  "AboutUs": {
+    "explore": {
+      "title": "Explore the",
+      "highlight": "world of eSIMs",
+      "subtitle": "Changing the way people connect while travelling.",
+      "cards": [
+        {
+          "title": "Traveler focus",
+          "desc": "Plans tailored for tourists, business travelers, and students."
+        },
+        {
+          "title": "Premium Experience",
+          "desc": "Trusted by 80K+ users across 170+ destinations."
+        },
+        {
+          "title": "Empowering",
+          "desc": "Seamlessly switch carriers without physical SIMs."
+        }
+      ]
+    },
+    "values": {
+      "title": "Our",
+      "highlight": "Values",
+      "subtitle": "Behaviors and beliefs that connect us.",
+      "list": [
+        {
+          "title": "Relentless Innovation",
+          "desc": "Unleash your inner disruptor! We believe in constant evolution, where curiosity fuels innovation, and the status quo is just a starting point."
+        },
+        {
+          "title": "Radical Ownership",
+          "desc": "Own it like you invented it! At the heart of our culture is the belief that taking bold responsibility leads to extraordinary outcomes."
+        },
+        {
+          "title": "Fearless Exploration",
+          "desc": "Embrace the unknown, because that's where magic happens. We celebrate the brave souls who dare to explore uncharted territories, both personally and professionally."
+        },
+        {
+          "title": "Data-Driven Decisions, Heartfelt Humanity",
+          "desc": "Harness the power of data, but never forget the human touch. We make decisions with precision and empathy, ensuring that every choice resonates with both logic and heart."
+        }
+      ]
+    },
+    "impact": {
+      "title": "Impact at,",
+      "highlight": "Telenet",
+      "subtitle": "We believe travelers are bold. telenet aims to reinforce their boldness zeta times with exabytes of connectivity.",
+      "stats": [
+        { "label": "Customers Worldwide" },
+        { "label": "Serving Countries " },
+        { "label": "Years of Telecom Expertise" },
+        { "label": "App Downloads on iOS & Android" }
+      ],
+      "content": "Sophia Michelle’s journey is far from over. Her story serves as a testament to the power of passion, and perseverance.For aspiring designers, she remains a beacon of inspiration—a reminder that creativity, when nurtured, can transform lives."
+    }
+  },
+  "ContactUs": {
+    "heroAlt": "Contact Us",
+    "getInTouch": "Get in touch",
+    "introText": "Want to get in touch? We’d love to hear from you. Here’s how you can reach us.",
+    "emailTitle": "We’re always happy to help.",
+    "emailAddress": "ask@retro.ai.com",
+    "phoneTitle": "Our hotline number",
+    "phoneNumbers": "+757 889 4478, +21 377 9731",
+    "chatTitle": "Live chat",
+    "chatLink": "www.retrolivechat.com",
+    "form": {
+      "nameLabel": "Name",
+      "emailLabel": "Email",
+      "messageLabel": "Your Message",
+      "namePlaceholder": "Rashed Kabir",
+      "emailPlaceholder": "rshdkabir@gmail.com",
+      "submit": "SEND MESSAGE"
+    }
+  },
+  "Plans": {
+    "bannerAlt": "Plans banner",
+    "filterTitle": "Filter",
+    "country": "Country",
+    "region": "Region",
+    "dataSize": "Data Size",
+    "validity": "Validity",
+    "priceRange": "Price Range",
+    "network": "Network",
+    "provider": "Provider",
+    "reset": "Reset",
+    "popularPlans": "Popular Plans",
+    "filters": {
+      "cheapest": "Cheapest",
+      "mostPopular": "Most Popular",
+      "fiveGPlans": "5G Plans",
+      "yearly": "365 days",
+      "daily": "2.5GB/Day"
+    },
+    "searchPlaceholder": "Search plans",
+    "providerLogo": "Provider",
+    "bestSeller": "Best Seller",
+    "trending": "Trending",
+    "validityLabel": "Validity",
+    "data": "Data",
+    "buy": "Buy",
+    "countries": {
+      "us": "United States",
+      "uk": "United Kingdom",
+      "ca": "Canada",
+      "au": "Australia"
+    },
+    "regions": {
+      "west": "West",
+      "east": "East",
+      "north": "North",
+      "south": "South"
+    }
+  },
+  "Hero": {
+    "rating": "Rated 4.75 with 500K+ Downloads",
+    "title": "Travel",
+    "titleHighlight": "eSIM",
+    "titleCountries": "in 170+ Countries",
+    "subtitle": "Stay connected anywhere. Instant eSIM activation with secure payments.",
+    "getStarted": "Get Started",
+    "country": "Country",
+    "likeTravel": "Where would you like to Travel?",
+    "region": "Region",
+    "searchPlaceholder": "Search for United Kingdom",
+    "browsePlans": "Browse Plans"
+  },
+  "Features": {
+    "awards": {
+      "title": "Press, Media & Awards",
+      "award1": "Best Travel Tech Product in IITM Chennai, Hyderabad & Bengaluru",
+      "award2": "Most Innovative Product of the Year at BLTM, Delhi",
+      "award3": "Top 5 Best eSIM Provider at MVNO World 2025, Vienna, Austria"
+    },
+    "downloadBanner": {
+      "titleLine1": "Download Telenet",
+      "titleLine2": "25% OFF",
+      "googlePlay": {
+        "getItOn": "GET IT ON",
+        "name": "Google Play"
+      },
+      "appStore": {
+        "downloadOn": "Download on the",
+        "name": "App Store"
+      }
+    },
+    "popularCountries": {
+      "title": "Popular Countries",
+      "us": "United States of America",
+      "uk": "United Kingdom",
+      "uae": "United Arab Emirates",
+      "canada": "Canada",
+      "startsAt": "Starts @",
+      "onwards": "Onwards",
+      "viewAll": "View All"
+    },
+    "whyChooseUs": {
+      "title": "Why Choose Us",
+      "instantActivation": {
+        "title": "Instant Activation",
+        "desc": "Activate your eSIM instantly by scanning a QR code. Enjoy seamless connectivity without the need for a physical SIM card."
+      },
+      "globalCoverage": {
+        "title": "Global Coverage",
+        "desc": "Stay connected with a single device across borders, no matter where your travels take you."
+      },
+      "securePayments": {
+        "title": "Secure Payments",
+        "desc": "Enjoy a hassle-free and protected setup, eliminating the need to handle a physical card."
+      },
+      "support": {
+        "title": "24/7 Support",
+        "desc": "Our dedicated 24/7 support team is always available to help. We'll guide you through the process, ensuring a smooth and successful setup."
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1": {
+        "title": "Browse a Plan",
+        "desc": "Pick the data plan you need for your trip."
+      },
+      "step2": {
+        "title": "Buy a Plan",
+        "desc": "Your plan activates automatically when you land, no SIM swapping needed."
+      },
+      "step3": {
+        "title": "Start Browsing",
+        "desc": "Receive a QR code, scan it, and your eSIM is instantly installed."
+      }
+    },
+    "videoTutorial": {
+      "title": "Watch Video Tutorial",
+      "alt": "Play Video"
+    }
+  },
+  "Testimonials": {
+    "title": "Our Travellers say it all - they’ve picked the best network!",
+    "testimonials": {
+      "testimonial1": "Quick solutions coupled with extraordinary performance—a recommendation that’s unequivocal.",
+      "testimonial2": "Highly recommend this reliable SaaS provider for seamless workflow optimization.",
+      "testimonial3": "Great service and amazing customer support throughout my trip!",
+      "testimonial4": "Reliable connection across countries. Totally worth it!"
+    },
+    "bottom": {
+      "title": "Enjoy Unlimited Browsing",
+      "desc": "Stay connected on WhatsApp, Instagram & YouTube without roaming charges.",
+      "noVpn": "No VPN Required"
+    }
+  },
+  "FAQ": {
+    "title": "Frequently Asked Questions",
+    "faq": {
+      "q1": "What is an eSIM?",
+      "a1": "An eSIM (embedded SIM) is a digital SIM that allows you to activate a mobile data plan without needing a physical SIM card. It works just like a regular SIM but is embedded inside your device.",
+      "q2": "How do I activate an eSIM after purchase?",
+      "a2": "You can activate your eSIM by scanning the QR code provided by your carrier or following their activation steps in your device settings.",
+      "q3": "Can I keep my regular SIM and use eSIM together?",
+      "a3": "Yes, many devices support dual SIM functionality, allowing you to use both a physical SIM and an eSIM simultaneously.",
+      "q4": "Do I need internet to install the eSIM?",
+      "a4": "Yes, an internet connection is usually required to download and install the eSIM profile onto your device.",
+      "q5": "Which devices support eSIM?",
+      "a5": "Most modern smartphones, tablets, and some smartwatches support eSIM technology. Check your device settings or manufacturer details.",
+      "q6": "Can I use eSIMs while traveling abroad?",
+      "a6": "Yes, eSIMs are great for travel. You can easily switch between local carriers without changing physical SIM cards.",
+      "q7": "How long does it take to activate?",
+      "a7": "Activation usually takes just a few minutes, depending on your carrier and device.",
+      "q8": "What payment methods are accepted?",
+      "a8": "Most providers accept credit cards, debit cards, PayPal, and other popular online payment methods.",
+      "q9": "Can I top up my eSIM plan?",
+      "a9": "Yes, you can top up or recharge your eSIM plan through your provider’s app or website.",
+      "q10": "What if I face issues during installation?",
+      "a10": "If you face issues, contact your provider’s support team. They will guide you step by step to resolve the problem."
+    }
+  },
+  "InstallationGuide": {
+    "title": "Installation",
+    "highlight": "Guide",
+    "downloadPDF": "Download PDF Guide",
+    "stepsTitle": "Unlock our connectivity features by completing the following steps:",
+    "step": "Step",
+    "ios": {
+      "steps": [
+        "Install the eSIM on your device.",
+        "Activate the plan once you reach your destination."
+      ]
+    },
+    "android": {
+      "steps": [
+        "Install the eSIM on your Android device.",
+        "Activate the plan when you arrive at your destination."
+      ]
+    },
+    "step_suggestion": "Go to Settings → Mobile Data → Add eSIM",
+    "troubleshooting": {
+      "title": "Troubleshooting",
+      "qr": {
+        "title": "QR code not scanning?",
+        "desc": "Ensure good lighting and clean camera lens."
+      },
+      "activation": {
+        "title": "Activation failed?",
+        "desc": "Check Wi-Fi connection and restart device."
+      },
+      "support": {
+        "title": "Still stuck?",
+        "desc": "Contact Support at"
+      }
+    }
+  }
+}

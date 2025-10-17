@@ -6,8 +6,10 @@ import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { FaLocationDot, FaMagnifyingGlass } from "react-icons/fa6";
 import { IoIosArrowForward } from "react-icons/io";
 import { Button } from "../ui/Button";
+import { useTranslations } from "next-intl";
 
 export default function Hero() {
+  const t = useTranslations("Hero"); // <-- translation namespace
   const [travelType, setTravelType] = useState("country");
 
   return (
@@ -22,17 +24,17 @@ export default function Hero() {
             <FaStar />
             <FaStarHalfAlt />
           </div>
-          <span className="ml-2 text-black">
-            Rated 4.75 with 500K+ Downloads
-          </span>
+          <span className="ml-2 text-black">{t("rating")}</span>
         </div>
 
         {/* Title */}
         <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-3 text-gray-900 leading-snug">
-          Travel <span className="text-primary">eSIM</span> in 170+ Countries
+          {t("title")}{" "}
+          <span className="text-primary">{t("titleHighlight")}</span>{" "}
+          {t("titleCountries")}
         </h1>
         <p className="text-sm sm:text-base md:text-lg text-black mb-6 max-w-2xl mx-auto">
-          Stay connected anywhere. Instant eSIM activation with secure payments.
+          {t("subtitle")}
         </p>
 
         {/* Button */}
@@ -41,7 +43,7 @@ export default function Hero() {
           size="lg"
           className="mb-10 px-5 py-2 bg-gradient hover:bg-primary rounded-3xl text-xs sm:text-sm md:text-base"
         >
-          Get Started{" "}
+          {t("getStarted")}
           <span className="ml-2 rounded-full p-1 bg-white text-black">
             <IoIosArrowForward />
           </span>
@@ -80,25 +82,28 @@ export default function Hero() {
           {/* Left Side */}
           <div className="relative z-10 text-white w-full lg:w-1/2 text-start ml-0 sm:ml-[25px] py-[50px] ">
             <h2 className="text-base pt-[50px] md:pt-[40px] lg:pt-0 sm:pt-0 sm:text-lg md:text-3xl font-medium mb-4">
-              Where would you like to Travel?
+              {t("likeTravel")}
             </h2>
 
             {/* Radio buttons */}
             <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm md:text-base mb-5">
-              {["country", "region"].map((type) => (
+              {[
+                { key: "country", label: t("country") },
+                { key: "region", label: t("region") },
+              ].map((type) => (
                 <label
-                  key={type}
+                  key={type.key}
                   className="flex items-center gap-2 cursor-pointer select-none"
-                  onClick={() => setTravelType(type)}
+                  onClick={() => setTravelType(type.key)}
                 >
                   <span
                     className={`w-5 h-5 flex items-center justify-center border-2 rounded-full transition-all duration-200 ${
-                      travelType === type
+                      travelType === type.key
                         ? "bg-white text-primary border-white"
                         : "border-white"
                     }`}
                   >
-                    {travelType === type && (
+                    {travelType === type.key && (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="w-3 h-3"
@@ -115,7 +120,7 @@ export default function Hero() {
                       </svg>
                     )}
                   </span>
-                  <span className="capitalize">{type}</span>
+                  <span className="capitalize">{type.label}</span>
                 </label>
               ))}
             </div>
@@ -126,7 +131,7 @@ export default function Hero() {
                 <FaLocationDot className="text-primary mr-2 sm:mr-3" />
                 <input
                   type="text"
-                  placeholder="Search for United Kingdom"
+                  placeholder={t("searchPlaceholder")}
                   className="w-full border-none focus:outline-none text-black text-xs sm:text-sm md:text-base"
                 />
               </div>
@@ -136,7 +141,7 @@ export default function Hero() {
             </div>
 
             <button className="w-full sm:w-auto px-5 font-semibold py-2 sm:py-3 bg-white rounded-3xl text-black flex items-center justify-center sm:justify-between gap-3 sm:gap-4 hover:bg-gray-100 text-xs sm:text-sm md:text-base">
-              Browse Plans
+              {t("browsePlans")}
               <span className="ml-1 sm:ml-2 rounded-full p-1 bg-primary text-white">
                 <IoIosArrowForward fontSize={18} />
               </span>

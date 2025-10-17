@@ -1,30 +1,79 @@
+"use client";
+
 import Image from "next/image";
 import { FaApple, FaGooglePlay } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
 import { Button } from "../ui/Button";
+import { useTranslations } from "next-intl";
 
 export default function Features() {
+  const t = useTranslations("Features");
+
+  const awards = [
+    { img: "/award-logo.png", text: t("awards.award1") },
+    { img: "/award-logo-2.png", text: t("awards.award2") },
+    { img: "/award-logo-3.png", text: t("awards.award3") },
+  ];
+
+  const popularCountries = [
+    { flag: "/flags/usa2.svg", name: t("popularCountries.us"), price: "$0.7" },
+    { flag: "/flags/uk2.svg", name: t("popularCountries.uk"), price: "$0.7" },
+    { flag: "/flags/uae2.svg", name: t("popularCountries.uae"), price: "$0.7" },
+    {
+      flag: "/flags/canada.svg",
+      name: t("popularCountries.canada"),
+      price: "$0.7",
+    },
+  ];
+
+  const whyChooseUs = [
+    {
+      img: "/instant-activation.svg",
+      title: t("whyChooseUs.instantActivation.title"),
+      desc: t("whyChooseUs.instantActivation.desc"),
+    },
+    {
+      img: "/global-coverage.svg",
+      title: t("whyChooseUs.globalCoverage.title"),
+      desc: t("whyChooseUs.globalCoverage.desc"),
+    },
+    {
+      img: "/secure-payments.svg",
+      title: t("whyChooseUs.securePayments.title"),
+      desc: t("whyChooseUs.securePayments.desc"),
+    },
+    {
+      img: "/support.svg",
+      title: t("whyChooseUs.support.title"),
+      desc: t("whyChooseUs.support.desc"),
+    },
+  ];
+
+  const howItWorks = [
+    {
+      img: "/browse-plan.svg",
+      title: t("howItWorks.step1.title"),
+      desc: t("howItWorks.step1.desc"),
+    },
+    {
+      img: "/buy-plan.svg",
+      title: t("howItWorks.step2.title"),
+      desc: t("howItWorks.step2.desc"),
+    },
+    {
+      img: "/start-browse.svg",
+      title: t("howItWorks.step3.title"),
+      desc: t("howItWorks.step3.desc"),
+    },
+  ];
+
   return (
     <div className="w-full">
       {/* 🏆 Press & Awards */}
       <section className="py-12 text-center px-4">
-        <h2 className="text-2xl md:text-3xl  mb-8">Press, Media & Awards</h2>
-
+        <h2 className="text-2xl md:text-3xl  mb-8">{t("awards.title")}</h2>
         <div className="flex flex-col md:flex-row items-center justify-center ">
-          {[
-            {
-              img: "/award-logo.png",
-              text: "Best Travel Tech Product in IITM Chennai, Hyderabad & Bengaluru",
-            },
-            {
-              img: "/award-logo-2.png",
-              text: "Most Innovative Product of the Year at BLTM, Delhi",
-            },
-            {
-              img: "/award-logo-3.png",
-              text: "Top 5 Best eSIM Provider at MVNO World 2025, Vienna, Austria",
-            },
-          ].map((award, i) => (
+          {awards.map((award, i) => (
             <div
               key={i}
               className="flex flex-col sm:flex-row items-center w-full gap-1 text-center sm:text-left"
@@ -45,10 +94,8 @@ export default function Features() {
       {/* 📱 Download Banner */}
       <section className="max-w-6xl mx-auto px-6 pt-12">
         <div className="relative overflow-hidden bg-gradient text-white rounded-2xl pt-3 flex flex-col-reverse lg:flex-row items-center justify-between gap-6">
-          {/* background pattern */}
           <div className="absolute inset-0 bg-[url(/line-press-award.svg)] bg-center bg-no-repeat rounded-4xl" />
 
-          {/* Visual Section */}
           <div className="flex flex-1 justify-center flex-row items-center gap-4 sm:gap-6 flex-wrap sm:flex-nowrap px-4">
             <div className="relative">
               <Image
@@ -86,25 +133,25 @@ export default function Features() {
                 alt="App Promo 3"
                 width={90}
                 height={90}
-                className=""
               />
             </div>
           </div>
 
-          {/* Text + Buttons */}
           <div className="flex flex-row gap-4 px-6 text-center sm:text-left mt-6 lg:mt-0">
             <h1 className="text-2xl md:text-3xl mb-3 leading-snug">
-              Download Telenet <br />
-              25% OFF
+              {t("downloadBanner.titleLine1")} <br />
+              {t("downloadBanner.titleLine2")}
             </h1>
 
             <div className="flex justify-center sm:justify-start flex-wrap gap-4 my-4 sm:my-6 h-auto">
               <div className="flex gap-3 items-center border border-white rounded-md px-3 py-2 bg-transparent">
                 <FaGooglePlay className="text-white text-2xl sm:text-3xl" />
                 <div className="text-start leading-none">
-                  <p className="text-[10px] sm:text-xs m-0 p-0">GET IT ON</p>
+                  <p className="text-[10px] sm:text-xs m-0 p-0">
+                    {t("downloadBanner.googlePlay.getItOn")}
+                  </p>
                   <p className="text-sm sm:text-base font-semibold m-0 p-0">
-                    Google Play
+                    {t("downloadBanner.googlePlay.name")}
                   </p>
                 </div>
               </div>
@@ -113,10 +160,10 @@ export default function Features() {
                 <FaApple className="text-white text-3xl sm:text-4xl" />
                 <div className="text-start leading-none">
                   <p className="text-[10px] sm:text-xs m-0 p-0">
-                    Download on the
+                    {t("downloadBanner.appStore.downloadOn")}
                   </p>
                   <p className="text-sm sm:text-base font-semibold m-0 p-0">
-                    App Store
+                    {t("downloadBanner.appStore.name")}
                   </p>
                 </div>
               </div>
@@ -128,18 +175,10 @@ export default function Features() {
       {/* Popular Countries */}
       <section className="pb-8 my-4 text-center bg-[url(/alldots.svg)] bg-no-repeat bg-center bg-cover px-6 ">
         <h2 className="text-2xl pt-12 md:text-3xl font-[400px] mb-10">
-          Popular Countries
+          {t("popularCountries.title")}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto mb-10">
-          {[
-            { flag: "/flags/usa2.svg", name: "United States of America" },
-            { flag: "/flags/uk2.svg", name: "United Kingdom" },
-            {
-              flag: "/flags/uae2.svg",
-              name: "United Arab Emirates",
-            },
-            { flag: "/flags/canada.svg", name: "Canada" },
-          ].map((c, i) => (
+          {popularCountries.map((c, i) => (
             <div
               key={i}
               className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition justify-items-center"
@@ -155,7 +194,8 @@ export default function Features() {
                 {c.name}
               </h3>
               <p className="text-[17.34px] text-[#8606D0] mt-2">
-                Starts @ $0.7 Onwards
+                {t("popularCountries.startsAt")} {c.price}{" "}
+                {t("popularCountries.onwards")}
               </p>
             </div>
           ))}
@@ -166,7 +206,7 @@ export default function Features() {
           size="lg"
           className="mt-10 gap-8 px-5 bg-gradient hover:bg-primary rounded-3xl text-xs sm:text-sm md:text-base"
         >
-          View All{" "}
+          {t("popularCountries.viewAll")}
           <span className="ml-2 rounded-full p-1 bg-white text-black">
             <IoIosArrowForward />
           </span>
@@ -175,162 +215,69 @@ export default function Features() {
 
       {/* Why Choose Us */}
       <section className="bg-[#0D1C2B] text-white py-16 px-6 sm:px-10 md:px-16 lg:px-32">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-[400] mb-10 text-center">
-            Why Choose Us
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 rounded-3xl bg-[#0F2031] overflow-hidden">
-            {[
-              {
-                img: "/instant-activation.svg",
-                title: "Instant Activation",
-                desc: "Activate your eSIM instantly by scanning a QR code. Enjoy seamless connectivity without the need for a physical SIM card.",
-              },
-              {
-                img: "/global-coverage.svg",
-                title: "Global Coverage",
-                desc: "Stay connected with a single device across borders, no matter where your travels take you.",
-              },
-              {
-                img: "/secure-payments.svg",
-                title: "Secure Payments",
-                desc: "Enjoy a hassle-free and protected setup, eliminating the need to handle a physical card.",
-              },
-              {
-                img: "/support.svg",
-                title: "24/7 Support",
-                desc: "Our dedicated 24/7 support team is always available to help. We'll guide you through the process, ensuring a smooth and successful setup.",
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="p-8 hover:bg-[#102336] hover:rounded-3xl transition flex flex-col items-start text-left border-b border-[#13283d] sm:border-b-0 sm:border-r last:border-r-0 sm:last:border-r-0"
-              >
-                <Image
-                  src={item.img}
-                  alt={`Why choose us ${i + 1}`}
-                  width={56}
-                  height={56}
-                  className="mb-8"
-                />
-                <h3 className="font-[400] text-[24px] md:text-2xl mb-10">
-                  {item.title}
-                </h3>
-                <p className="text-[14px] leading-relaxed opacity-90">
-                  {item.desc}
-                </p>
-              </div>
-            ))}
-          </div>
+        <h2 className="text-2xl md:text-3xl font-[400] mb-10 text-center">
+          {t("whyChooseUs.title")}
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 rounded-3xl bg-[#0F2031] overflow-hidden">
+          {whyChooseUs.map((item, i) => (
+            <div
+              key={i}
+              className="p-8 hover:bg-[#102336] hover:rounded-3xl transition flex flex-col items-start text-left border-b border-[#13283d] sm:border-b-0 sm:border-r last:border-r-0 sm:last:border-r-0"
+            >
+              <Image
+                src={item.img}
+                alt={`Why choose us ${i + 1}`}
+                width={56}
+                height={56}
+                className="mb-8"
+              />
+              <h3 className="font-[400] text-[24px] md:text-2xl mb-10">
+                {item.title}
+              </h3>
+              <p className="text-[14px] leading-relaxed opacity-90">
+                {item.desc}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* How It Works */}
       <section
         className="relative py-16 text-center px-6 md:px-[8em] overflow-hidden"
-        style={{
-          background: "linear-gradient(to bottom, #F4F9FE 0%, white 100%)",
-        }}
+        // style={{
+        //   background: "linear-gradient(to bottom, #F4F9FE 0%, white 100%)",
+        // }}
       >
-        {/* Decorative Background Curves */}
-        <div className="absolute left-1 -top-28 w-[200px] md:w-[400px]">
-          <Image
-            src="/how-work-bg-curve-left.svg"
-            alt="left decorative curve"
-            width={400}
-            height={400}
-            className="opacity-80 rotate-12"
-          />
-        </div>
-        <div className="absolute right-0 bottom-0 md:bottom-[10%] w-[200px] md:w-[300px]">
-          <Image
-            src="/how-work-bg-curve-right.svg"
-            alt="right decorative curve"
-            width={300}
-            height={300}
-            className="opacity-80"
-          />
-        </div>
-
-        {/* Heading */}
         <h2 className="text-2xl md:text-3xl font-[400px] mb-10 relative z-10">
-          How It Works
+          {t("howItWorks.title")}
         </h2>
-
-        {/* Steps */}
         <div className="flex flex-col md:flex-row justify-center gap-8 md:gap-0 px-8 relative z-10">
-          {/* Step 1 */}
-          <div className="max-w-xs flex flex-col items-center relative">
-            <div className="p-4 rounded-3xl bg-white shadow transition z-10">
-              <Image
-                src="/browse-plan.svg"
-                alt="Browse a Plan"
-                width={56}
-                height={56}
-              />
+          {howItWorks.map((step, i) => (
+            <div
+              key={i}
+              className="max-w-xs flex flex-col items-center relative md:ml-[i===0?0:100px]"
+            >
+              <div className="p-4 rounded-3xl bg-white shadow transition z-10">
+                <Image src={step.img} alt={step.title} width={56} height={56} />
+              </div>
+              <h3 className="text-base md:text-lg mt-6">{step.title}</h3>
+              <p className="mt-2 text-sm md:text-base px-2">{step.desc}</p>
             </div>
-            <h3 className="text-base md:text-lg mt-6">Browse a Plan</h3>
-            <p className="mt-2 text-sm md:text-base px-2">
-              Pick the data plan you need for your trip.
-            </p>
-
-            {/* Arrow 1 */}
-            <div className="hidden md:block absolute top-8 right-[-100px] z-0">
-              <Image src="/arrow1.svg" alt="arrow" width={120} height={50} />
-            </div>
-          </div>
-
-          {/* Step 2 */}
-          <div className="max-w-xs flex flex-col items-center relative md:ml-[100px]">
-            <div className="p-4 rounded-3xl bg-white shadow transition z-10">
-              <Image
-                src="/buy-plan.svg"
-                alt="Buy a Plan"
-                width={56}
-                height={56}
-              />
-            </div>
-            <h3 className="text-base md:text-lg mt-6">Buy a Plan</h3>
-            <p className="mt-2 text-sm md:text-base px-2">
-              Your plan activates automatically when you land, no SIM swapping
-              needed.
-            </p>
-
-            {/* Arrow 2 */}
-            <div className="hidden md:block absolute top-8 right-[-100px] z-0">
-              <Image src="/arrow2.svg" alt="arrow" width={120} height={50} />
-            </div>
-          </div>
-
-          {/* Step 3 */}
-          <div className="max-w-xs flex flex-col items-center relative md:ml-[100px]">
-            <div className="p-4 rounded-3xl bg-white shadow transition z-10">
-              <Image
-                src="/start-browse.svg"
-                alt="Start Browsing"
-                width={56}
-                height={56}
-              />
-            </div>
-            <h3 className="text-base md:text-lg mt-6">Start Browsing</h3>
-            <p className="mt-2 text-sm md:text-base px-2">
-              Receive a QR code, scan it, and your eSIM is instantly installed.
-            </p>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/*  Video Tutorial */}
+      {/* Video Tutorial */}
       <section className="py-16 text-center px-4">
         <h2 className="text-2xl md:text-3xl font-[400px] mb-8">
-          Watch Video Tutorial
+          {t("videoTutorial.title")}
         </h2>
         <div className="max-w-3xl mx-auto">
           <div className="relative aspect-video bg-black rounded-2xl overflow-hidden">
             <Image
               src="/watch-video-tutorial.svg"
-              alt="Play Video"
+              alt={t("videoTutorial.alt")}
               fill
               className="object-cover rounded-2xl"
               priority

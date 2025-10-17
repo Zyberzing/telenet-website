@@ -1,10 +1,13 @@
 "use client";
 
-import { ROUTES } from "@/routes";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
+import React from "react";
 
-export default function Footer() {
+export default function Footer({ locale }: { locale: string }) {
+  const t = useTranslations("Footer");
+
   return (
     <footer className="bg-black text-gray-300 px-4 sm:px-6 md:px-10 lg:px-[6em]">
       {/* Top Section */}
@@ -13,14 +16,13 @@ export default function Footer() {
         <div className="lg:col-span-2 flex flex-col items-start text-left">
           <Image
             src="/transparent-logo.svg"
-            alt="Telenet Logo"
+            alt={t("logoAlt")}
             width={150}
             height={56}
             className="h-[56px] w-[150px]"
           />
           <p className="mt-4 text-[15px] sm:text-[16px] leading-relaxed">
-            Telenet Global helps travelers stay connected with eSIMs in 170+
-            countries. Secure payments, instant activation, global support.
+            {t("aboutText")}
           </p>
 
           <div className="flex justify-start mt-5 gap-4 flex-wrap">
@@ -44,68 +46,55 @@ export default function Footer() {
         {/* Purchase */}
         <div className="flex flex-col items-start">
           <h3 className="font-semibold text-[18px] sm:text-[20px] text-primary">
-            Purchase
+            {t("purchase")}
           </h3>
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
-            <li>
-              <Link href="#">Destinations</Link>
-            </li>
-            <li>
-              <Link href="#">Regions</Link>
-            </li>
-            <li>
-              <Link href="#">Top Up Now</Link>
-            </li>
-            <li>
-              <Link href="#">Download App</Link>
-            </li>
+            {["destinations", "regions", "topUp", "downloadApp"].map((key) => (
+              <li key={key}>
+                <Link href="#">{t(key)}</Link>
+              </li>
+            ))}
           </ul>
         </div>
 
         {/* Top Destinations */}
         <div className="flex flex-col items-start">
           <h3 className="font-semibold text-[18px] sm:text-[20px] text-primary">
-            Top Destinations
+            {t("topDestinations")}
           </h3>
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
-            <li>
-              <Link href="#">Australia</Link>
-            </li>
-            <li>
-              <Link href="#">United Kingdom</Link>
-            </li>
-            <li>
-              <Link href="#">Thailand</Link>
-            </li>
-            <li>
-              <Link href="#">United States of America</Link>
-            </li>
-            <li>
-              <Link href="#">Canada</Link>
-            </li>
-            <li>
-              <Link href="#">United Arab Emirates</Link>
-            </li>
+            {[
+              "Australia",
+              "United Kingdom",
+              "Thailand",
+              "USA",
+              "Canada",
+              "UAE",
+            ].map((country) => (
+              <li key={country}>
+                <Link href="#">{t(`countries.${country}`)}</Link>
+              </li>
+            ))}
           </ul>
         </div>
 
         {/* Company */}
         <div className="flex flex-col items-start">
           <h3 className="font-semibold text-[18px] sm:text-[20px] text-primary">
-            Telenet Global
+            {t("company")}
           </h3>
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
             <li>
-              <Link href="#">About Us</Link>
+              <Link href={`/${locale}/about-us`}>{t("aboutUs")}</Link>
             </li>
             <li>
-              <Link href="#">Careers</Link>
+              <Link href="#">{t("careers")}</Link>
             </li>
             <li>
-              <Link href={ROUTES.CONTACT_US}>Contact Us</Link>
+              <Link href={`/${locale}/contact-us`}>{t("contactUs")}</Link>
             </li>
             <li>
-              <Link href="#">Partner with Us</Link>
+              <Link href="#">{t("partner")}</Link>
             </li>
           </ul>
         </div>
@@ -113,44 +102,42 @@ export default function Footer() {
         {/* Resources */}
         <div className="flex flex-col items-start">
           <h3 className="font-semibold text-[18px] sm:text-[20px] text-primary">
-            Resources
+            {t("resources")}
           </h3>
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
-            <li>
-              <Link href="#">Blog</Link>
-            </li>
-            <li>
-              <Link href="#">Help Center</Link>
-            </li>
-            <li>
-              <Link href="#">Events</Link>
-            </li>
+            {["blog", "helpCenter", "events"].map((key) => (
+              <li key={key}>
+                <Link href="#">{t(key)}</Link>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-700 mt-6 py-6 flex flex-col md:flex-row items-start justify-between gap-4 text-start">
-        {/* Copyright */}
+      <div className="border-t border-gray-700 mt-6 py-6 flex flex-col md:flex-wrap lg:flex-row items-center justify-between gap-4 text-center md:text-left">
+        {/* Left: Copyright */}
         <p className="text-sm sm:text-[15px]">
-          Copyright ©{" "}
-          <span className="text-primary font-medium">www.Telnet.com</span> All
-          rights reserved. v1.0.3A
+          {t("copyright")}
+          <span className="text-primary font-medium mx-2">
+            {t("footerlink")}
+          </span>
+          {t("reserved")}
         </p>
 
-        {/* Social Icons */}
-        <div className="flex justify-start gap-4">
+        {/* Middle: Social Media */}
+        <div className="flex justify-center md:justify-start gap-4 flex-wrap">
           {[
-            "instagram-footer.svg",
-            "facebook-footer.svg",
-            "youtube-footer.svg",
-            "linkedin-footer.svg",
-            "x-footer.svg",
-          ].map((icon, idx) => (
+            "instagram-footer",
+            "facebook-footer",
+            "youtube-footer",
+            "linkedin-footer",
+            "x-footer",
+          ].map((icon) => (
             <Image
-              key={idx}
-              src={`/social-media/${icon}`}
-              alt="Social Icon"
+              key={icon}
+              src={`/social-media/${icon}.svg`}
+              alt={icon}
               width={28}
               height={28}
               className="h-[26px] w-[26px] hover:opacity-80 transition"
@@ -158,13 +145,14 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Links */}
-        <div className="flex flex-wrap justify-start gap-2 sm:gap-4 text-sm sm:text-[15px]">
-          <Link href="#">Cookie Preference</Link>
-          <span className="hidden sm:inline">|</span>
-          <Link href="#">Terms & Conditions</Link>
-          <span className="hidden sm:inline">|</span>
-          <Link href="#">Privacy Policy</Link>
+        {/* Right: Links */}
+        <div className="flex flex-wrap justify-center md:justify-end gap-2 sm:gap-4 text-sm sm:text-[15px]">
+          {["cookie", "terms", "privacy"].map((key, idx) => (
+            <React.Fragment key={key}>
+              <Link href="#">{t(key)}</Link>
+              {idx < 2 && <span className="hidden sm:inline">|</span>}
+            </React.Fragment>
+          ))}
         </div>
       </div>
     </footer>

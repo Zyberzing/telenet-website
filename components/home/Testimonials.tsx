@@ -1,41 +1,43 @@
 "use client";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
-const testimonials = [
+const testimonialsData = [
   {
     name: "Musa Delimuza",
     location: "Milan, Italy",
     image: "review-user-icon.png",
-    text: "Quick solutions coupled with extraordinary performance—a recommendation that’s unequivocal.",
+    textKey: "testimonials.testimonial1",
   },
   {
     name: "MD Rashed Kabir",
     location: "California, USA",
     image: "review-user-icon-2.png",
-    text: "Highly recommend this reliable SaaS provider for seamless workflow optimization.",
+    textKey: "testimonials.testimonial2",
   },
   {
     name: "Jane Doe",
     location: "London, UK",
     image: "review-user-icon.png",
-    text: "Great service and amazing customer support throughout my trip!",
+    textKey: "testimonials.testimonial3",
   },
   {
     name: "Alex Johnson",
     location: "Sydney, Australia",
     image: "review-user-icon-2.png",
-    text: "Reliable connection across countries. Totally worth it!",
+    textKey: "testimonials.testimonial4",
   },
 ];
 
 const Testimonials = () => {
+  const t = useTranslations("Testimonials");
   const [current, setCurrent] = useState(0);
   const startX = useRef(0);
   const diffX = useRef(0);
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const itemsPerSlide = isMobile ? 1 : 2;
-  const slides = Math.ceil(testimonials.length / itemsPerSlide);
+  const slides = Math.ceil(testimonialsData.length / itemsPerSlide);
 
   const handleSwipe = (distance: number) => {
     if (Math.abs(distance) > 80) {
@@ -68,10 +70,10 @@ const Testimonials = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6">
       <h1 className="text-2xl sm:text-3xl font-[400px] mb-8 text-center leading-snug">
-        Our Travellers say it all - they’ve picked the best network!
+        {t("title")}
       </h1>
 
-      {/* ✅ Carousel */}
+      {/* Carousel */}
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
@@ -89,33 +91,37 @@ const Testimonials = () => {
           {Array.from({ length: slides }).map((_, index) => (
             <div
               key={index}
-              className={`grid grid-cols-1 sm:grid-cols-2 gap-1 flex-shrink-0 px-14`}
+              className="grid grid-cols-1 sm:grid-cols-2 gap-1 flex-shrink-0 px-14"
               style={{
                 width: `${100 / slides}%`,
               }}
             >
-              {testimonials
+              {testimonialsData
                 .slice(
                   index * itemsPerSlide,
                   index * itemsPerSlide + itemsPerSlide
                 )
-                .map((t, i) => (
+                .map((tData, i) => (
                   <div
                     key={i}
-                    className="bg-white p-10 rounded-xl shadow-md hover:shadow-lg transition-all flex flex-col justify-between"
+                    className="p-10 rounded-xl shadow-md hover:shadow-lg transition-all flex flex-col justify-between"
                   >
                     <div className="flex items-center mb-4">
                       <img
-                        src={t.image}
-                        alt={t.name}
+                        src={tData.image}
+                        alt={tData.name}
                         className="w-[100px] h-[100px] rounded-full mr-4"
                       />
                     </div>
-                    <p className="text-[25px] mb-8">“{t.text}”</p>
+                    <p className="text-[25px] mb-8">“{t(tData.textKey)}”</p>
                     <div className="flex justify-between">
                       <div>
-                        <p className="text-gray-900 font-semibold">{t.name}</p>
-                        <p className="text-gray-600 text-xs">{t.location}</p>
+                        <p className="text-gray-900 font-semibold">
+                          {tData.name}
+                        </p>
+                        <p className="text-gray-600 text-xs">
+                          {tData.location}
+                        </p>
                       </div>
                       <div className="flex justify-end">
                         {Array(5)
@@ -134,7 +140,7 @@ const Testimonials = () => {
         </div>
       </div>
 
-      {/* ✅ Dots */}
+      {/* Dots */}
       <div className="flex justify-center mt-6">
         {Array.from({ length: slides }).map((_, i) => (
           <span
@@ -149,52 +155,29 @@ const Testimonials = () => {
         ))}
       </div>
 
-      {/* ✅ Bottom Section */}
+      {/* Bottom Section */}
       <div className="mt-12 text-center max-w-3xl">
         <h2 className="text-2xl sm:text-3xl font-[400px] text-gray-900 mb-4">
-          Enjoy Unlimited Browsing
+          {t("bottom.title")}
         </h2>
-        <p className="mb-4 text-[20px]">
-          Stay connected on WhatsApp, Instagram & YouTube without roaming
-          charges.
-        </p>
+        <p className="mb-4 text-[20px]">{t("bottom.desc")}</p>
         <div className="flex flex-wrap justify-center mt-6 gap-3 sm:gap-4">
-          <Image
-            src="/social-media/Instagram.svg"
-            alt="Instagram Logo"
-            width={100}
-            height={100}
-          />
-          <Image
-            src="/social-media/Whatsapp.svg"
-            alt="whatsapp Logo"
-            width={100}
-            height={100}
-          />
-          <Image
-            src="/social-media/Youtube.svg"
-            alt="youtube Logo"
-            width={100}
-            height={100}
-          />
-          <Image
-            src="/social-media/Spotify.svg"
-            alt="spotify Logo"
-            width={100}
-            height={100}
-          />
-          <Image
-            src="/social-media/Facebook.svg"
-            alt="facebook Logo"
-            width={100}
-            height={100}
-          />
-          <Image
-            src="/social-media/Facetime.svg"
-            alt="facetime Logo"
-            width={100}
-            height={100}
-          />
+          {[
+            "Instagram",
+            "Whatsapp",
+            "Youtube",
+            "Spotify",
+            "Facebook",
+            "Facetime",
+          ].map((social, i) => (
+            <Image
+              key={i}
+              src={`/social-media/${social}.svg`}
+              alt={`${social} Logo`}
+              width={100}
+              height={100}
+            />
+          ))}
         </div>
         <p className="gap-3 mt-8 flex items-center justify-center text-sm sm:text-base">
           <Image
@@ -204,7 +187,7 @@ const Testimonials = () => {
             height={32}
             className="h-8 w-auto"
           />{" "}
-          No VPN Required
+          {t("bottom.noVpn")}
         </p>
       </div>
     </div>
