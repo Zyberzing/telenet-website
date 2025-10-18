@@ -1,31 +1,31 @@
 "use client";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
-import { useTranslations } from "next-intl";
 
 const testimonialsData = [
   {
     name: "Musa Delimuza",
     location: "Milan, Italy",
-    image: "review-user-icon.png",
+    image: "/review-user-icon.png",
     textKey: "testimonials.testimonial1",
   },
   {
     name: "MD Rashed Kabir",
     location: "California, USA",
-    image: "review-user-icon-2.png",
+    image: "/review-user-icon-2.png",
     textKey: "testimonials.testimonial2",
   },
   {
     name: "Jane Doe",
     location: "London, UK",
-    image: "review-user-icon.png",
+    image: "/review-user-icon.png",
     textKey: "testimonials.testimonial3",
   },
   {
     name: "Alex Johnson",
     location: "Sydney, Australia",
-    image: "review-user-icon-2.png",
+    image: "/review-user-icon-2.png",
     textKey: "testimonials.testimonial4",
   },
 ];
@@ -33,7 +33,7 @@ const testimonialsData = [
 const Testimonials = () => {
   const t = useTranslations("Testimonials");
   const [current, setCurrent] = useState(0);
-  const startX = useRef(0);
+  const startX = useRef<number | null>(null);
   const diffX = useRef(0);
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const itemsPerSlide = isMobile ? 1 : 2;
@@ -50,12 +50,24 @@ const Testimonials = () => {
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    startX.current = e.touches[0].clientX;
+    const firstTouch = e.touches?.[0];
+    if (firstTouch) {
+      startX.current = firstTouch.clientX;
+    }
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    diffX.current = e.changedTouches[0].clientX - startX.current;
-    handleSwipe(diffX.current);
+    if (startX.current == null) return;
+
+    const lastTouch = e.changedTouches?.[0];
+    if (lastTouch) {
+      const diff = startX.current - lastTouch.clientX;
+      if (Math.abs(diff) > 50) {
+        // handle swipe left or right
+      }
+    }
+
+    startX.current = null;
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -63,6 +75,8 @@ const Testimonials = () => {
   };
 
   const handleMouseUp = (e: React.MouseEvent) => {
+    if (startX.current == null) return; // add null check
+
     diffX.current = e.clientX - startX.current;
     handleSwipe(diffX.current);
   };
@@ -107,10 +121,12 @@ const Testimonials = () => {
                     className="p-10 rounded-xl shadow-md hover:shadow-lg transition-all flex flex-col justify-between"
                   >
                     <div className="flex items-center mb-4">
-                      <img
+                      <Image
                         src={tData.image}
                         alt={tData.name}
-                        className="w-[100px] h-[100px] rounded-full mr-4"
+                        width={100}
+                        height={100}
+                        className="rounded-full mr-4 object-cover"
                       />
                     </div>
                     <p className="text-[25px] mb-8">“{t(tData.textKey)}”</p>

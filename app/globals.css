@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+
 * {
   font-family: var(--font-sans);
 }
@@ -19,11 +20,11 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -124,27 +125,27 @@
     @apply bg-background text-foreground;
   }
 }
+
 @utility custom-gradient {
-  background: linear-gradient(
-    180deg,
-    #ffffff 0%,
-    #d8ecfd 59.02%,
-    #d8ecfd 65.99%,
-    rgba(182, 220, 251, 0.6) 75.34%,
-    rgba(182, 220, 251, 0) 100%
-  );
+  background: linear-gradient(180deg,
+      #ffffff 0%,
+      #d8ecfd 59.02%,
+      #d8ecfd 65.99%,
+      rgba(182, 220, 251, 0.6) 75.34%,
+      rgba(182, 220, 251, 0) 100%);
 }
+
 @utility bg-gradient {
   background: linear-gradient(180deg, #8606d0 0%, #6005a2 100%);
 }
+
 @utility bg-gradient-two {
-  background: linear-gradient(
-    264.06deg,
-    #306cd9 4.71%,
-    #0678d0 50.53%,
-    #474ae1 98.15%
-  );
+  background: linear-gradient(264.06deg,
+      #306cd9 4.71%,
+      #0678d0 50.53%,
+      #474ae1 98.15%);
 }
+
 @utility bg-gradient-three {
   background: linear-gradient(180deg, #ffffff 0%, #f8f6fe 108.01%);
 }

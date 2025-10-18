@@ -1,7 +1,8 @@
 import { IntlConfig } from "next-intl";
 
 const config: IntlConfig = {
-  messagesDirectory: "./app/messages",
+  locale: "en", // all supported locales
+  // defaultLocale: "en", // default locale
 };
 
 export default config;

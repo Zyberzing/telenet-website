@@ -36,7 +36,7 @@ export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const t = useTranslations("Header");
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { toggleTheme } = useTheme();
 
   // Set selected language based on current URL
   useEffect(() => {

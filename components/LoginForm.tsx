@@ -1,9 +1,10 @@
 "use client";
 
-import { Mail, Lock, Chrome, Apple, Facebook } from "lucide-react";
-import { Button } from "./ui/Button";
-import { Input } from "./ui/Index";
+import { Apple, Chrome, Facebook } from "lucide-react";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { Button } from "./ui/Button";
+import { Input } from "./ui/Input";
 
 export default function LoginForm() {
   const t = useTranslations("LoginForm");
@@ -34,9 +35,9 @@ export default function LoginForm() {
 
       {/* Forgot Password */}
       <div>
-        <a href="#" className="text-sm text-primary hover:underline">
+        <Link href="#" className="text-sm text-primary hover:underline">
           {t("forgotPassword")}
-        </a>
+        </Link>
       </div>
 
       {/* Divider */}
@@ -74,9 +75,9 @@ export default function LoginForm() {
       {/* Register */}
       <div className="text-center text-sm">
         {t("notRegistered")}{" "}
-        <a href="/register" className="text-primary hover:underline">
+        <Link href="register" className="text-primary hover:underline">
           {t("createAccount")}
-        </a>
+        </Link>
       </div>
     </div>
   );

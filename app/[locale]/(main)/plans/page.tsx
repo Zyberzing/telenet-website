@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/Index";
+import { Input } from "@/components/ui/Input";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronRightIcon, SlidersHorizontal } from "lucide-react";
