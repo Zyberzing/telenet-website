@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { use } from "react";
 import Footer from "./Footer";
 import Header from "./Header";
-import "./globals.css";
+import "../../app/globals.css";
 
 export const metadata: Metadata = {
   title: "Telenet",

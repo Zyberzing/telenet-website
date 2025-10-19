@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,12 +11,30 @@ import {
 import { Input } from "@/components/ui/Input";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronRightIcon, SlidersHorizontal } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRightIcon,
+  Heart,
+  SlidersHorizontal,
+} from "lucide-react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
 
-const plans = [
+type Plan = {
+  price: number;
+  data: string;
+  validity: string;
+  tag: string;
+  tag2: string;
+  color: string;
+  basePrice: number;
+  markup: number;
+  tax: number;
+  total: number;
+};
+
+const plans: Plan[] = [
   {
     price: 15,
     data: "5GB",
@@ -23,6 +42,10 @@ const plans = [
     tag: "",
     tag2: "TRUE5G",
     color: "orange",
+    basePrice: 10.0,
+    markup: 1.5,
+    tax: 0.75,
+    total: 12.25,
   },
   {
     price: 20,
@@ -31,6 +54,10 @@ const plans = [
     tag: "",
     tag2: "TRUE5G",
     color: "purple",
+    basePrice: 15.0,
+    markup: 2.0,
+    tax: 1.0,
+    total: 18.0,
   },
   {
     price: 10,
@@ -39,6 +66,10 @@ const plans = [
     tag: "trending",
     tag2: "TRUE5G",
     color: "purple",
+    basePrice: 8.0,
+    markup: 1.0,
+    tax: 0.5,
+    total: 9.5,
   },
   {
     price: 18,
@@ -47,6 +78,10 @@ const plans = [
     tag: "",
     tag2: "TRUE5G",
     color: "purple",
+    basePrice: 14.0,
+    markup: 1.5,
+    tax: 0.75,
+    total: 16.25,
   },
   {
     price: 40,
@@ -55,6 +90,10 @@ const plans = [
     tag: "bestSeller",
     tag2: "",
     color: "yellow",
+    basePrice: 35.0,
+    markup: 2.5,
+    tax: 1.25,
+    total: 38.75,
   },
   {
     price: 140,
@@ -63,18 +102,22 @@ const plans = [
     tag: "",
     tag2: "",
     color: "purple",
+    basePrice: 130.0,
+    markup: 5.0,
+    tax: 2.5,
+    total: 137.5,
   },
 ];
 
 export default function Plans() {
   const t = useTranslations("Plans");
-
   const [country, setCountry] = useState("United States");
   const [region, setRegion] = useState("West");
   const [validity, setValidity] = useState("7 days");
   const [network, setNetwork] = useState("5G");
   const [provider, setProvider] = useState("5G");
   const [dataSize, setDataSize] = useState([50]);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
   return (
     <section className="w-full min-h-screen bg-white text-gray-900">
@@ -208,7 +251,7 @@ export default function Plans() {
 
             {/* Plans */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {plans.map((plan, i) => (
+              {plans.map((plan: Plan, i) => (
                 <div key={i}>
                   <div className="flex justify-between items-center mb-1">
                     <div className="flex gap-2">
@@ -261,6 +304,7 @@ export default function Plans() {
                             ? "text-[#E49B2C]"
                             : "text-primary"
                         )}
+                        onClick={() => setSelectedPlan(plan)}
                       />
                     </div>
 
@@ -290,6 +334,124 @@ export default function Plans() {
           </main>
         </div>
       </div>
+
+      {/* Dialog Modal */}
+      <Dialog
+        open={selectedPlan !== null}
+        onOpenChange={() => setSelectedPlan(null)}
+      >
+        <DialogContent className="max-w-md max-h-[85vh] flex flex-col rounded-2xl bg-white shadow-lg overflow-hidden">
+          {/* Header */}
+          <div className="p-4 border-b border-gray-200 flex justify-between items-start sticky top-0 bg-white z-10">
+            <div>
+              <h2 className="text-lg font-semibold">USA 5GB, 30 Days</h2>
+              <p className="text-sm text-gray-500">
+                Provider: Verizon | Network: 4G/5G
+              </p>
+            </div>
+
+            {/* ONLY CUSTOM CLOSE BUTTON */}
+            <button
+              onClick={() => setSelectedPlan(null)}
+              className="text-gray-500 hover:text-red-500 text-3xl font-[400px]"
+            >
+              &times;
+            </button>
+          </div>
+
+          {/* Scrollable Content */}
+          <div className="p-4 overflow-y-auto flex-1 space-y-4">
+            {/* Plan Details */}
+            <div>
+              <p className="text-[15px] mb-3">Plan Details</p>
+              <div className="flex justify-between text-sm gap-1">
+                <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-tl-xl">
+                  Data
+                </span>
+                <span className="text-start bg-[#F1F8FE] w-full p-2 rounded-tr-xl">
+                  5 GB
+                </span>
+              </div>
+              <div className="flex justify-between text-sm gap-1">
+                <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-bl-xl">
+                  Validity
+                </span>
+                <span className="text-start bg-[#F1F8FE] w-full p-2 rounded-br-xl">
+                  30 Days
+                </span>
+              </div>
+            </div>
+
+            {/* Price Breakdown */}
+            <div>
+              <p className="text-[15px] mb-3">Price Breakdown</p>
+              <div className="flex justify-between text-sm gap-1">
+                <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-tl-xl">
+                  Price Breakdown
+                </span>
+                <span className="text-start bg-[#F1F8FE] w-full p-2 rounded-tr-xl">
+                  $10.00
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 ">
+                  Markup
+                </span>
+                <span className="text-start bg-[#F1F8FE] w-full p-2 ">
+                  +$1.50 (15%)
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-bl-xl">
+                  Tax
+                </span>
+                <span className="text-start bg-[#F1F8FE] w-full p-2 rounded-br-xl">
+                  +$0.75
+                </span>
+              </div>
+              <div className="flex justify-between font-semibold text-sm border border-primary rounded-xl px-3 text-center py-2 gap-1 mt-2">
+                <span className="w-full text-start px-2">Total</span>
+                <span className="text-start w-full px-2">$12.25</span>
+              </div>
+            </div>
+
+            {/* Expiry & Notes */}
+            <div className="text-xs space-y-3">
+              <div>
+                <p className="text-[15px] font-[400px]">Expiry Rules:</p>
+                <p className="mt-2 text-[#565656] text-[13px]">
+                  Plan auto-expires after 30 days or when data is used.
+                </p>
+              </div>
+              <div>
+                <p className="text-[15px] font-[400px]">Notes:</p>
+                <p className="mt-2 text-[#565656] text-[13px]">
+                  Refund Policy: Refunds only if plan is not activated.
+                  <br />
+                  Device Compatibility: Supports all eSIM-enabled iPhones &
+                  Pixels.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <DialogFooter className="p-4 bg-gray-50 rounded-b-2xl flex justify-between items-center sticky bottom-0 z-10">
+            <Heart className="w-5 h-5 text-gray-400 cursor-pointer hover:text-red-500" />
+            <div className="flex gap-2 flex-1">
+              <Button className="bg-purple-600 flex-1 text-white rounded-full px-4 py-2 text-sm">
+                Buy
+              </Button>
+              <Button
+                variant="secondary"
+                className="bg-black flex-1 text-white rounded-full px-4 py-2 text-sm"
+              >
+                Add to Wallet
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

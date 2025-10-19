@@ -1,8 +1,8 @@
-/* Import Tailwind */
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* Global font */
+@custom-variant dark (&:is(.dark *));
+
 * {
   font-family: var(--font-sans);
 }
@@ -10,8 +10,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -20,11 +20,11 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -45,10 +45,12 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-table-header: var(--table-header);
 }
 
-/* CSS Variables for light mode */
+@theme {
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -84,7 +86,6 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-/* CSS Variables for dark mode */
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -119,10 +120,9 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* Base styles using Tailwind @apply */
 @layer base {
   * {
-    @apply border border-border outline-ring/50;
+    @apply border-border outline-ring/50;
   }
 
   body {
@@ -130,29 +130,26 @@
   }
 }
 
-/* Custom utilities */
-@layer utilities {
-  .custom-gradient {
-    background: linear-gradient(180deg,
-        #ffffff 0%,
-        #d8ecfd 59.02%,
-        #d8ecfd 65.99%,
-        rgba(182, 220, 251, 0.6) 75.34%,
-        rgba(182, 220, 251, 0) 100%);
-  }
+@utility custom-gradient {
+  background: linear-gradient(180deg,
+      #ffffff 0%,
+      #d8ecfd 59.02%,
+      #d8ecfd 65.99%,
+      rgba(182, 220, 251, 0.6) 75.34%,
+      rgba(182, 220, 251, 0) 100%);
+}
 
-  .bg-gradient {
-    background: linear-gradient(180deg, #8606d0 0%, #6005a2 100%);
-  }
+@utility bg-gradient {
+  background: linear-gradient(180deg, #8606d0 0%, #6005a2 100%);
+}
 
-  .bg-gradient-two {
-    background: linear-gradient(264.06deg,
-        #306cd9 4.71%,
-        #0678d0 50.53%,
-        #474ae1 98.15%);
-  }
+@utility bg-gradient-two {
+  background: linear-gradient(264.06deg,
+      #306cd9 4.71%,
+      #0678d0 50.53%,
+      #474ae1 98.15%);
+}
 
-  .bg-gradient-three {
-    background: linear-gradient(180deg, #ffffff 0%, #f8f6fe 108.01%);
-  }
+@utility bg-gradient-three {
+  background: linear-gradient(180deg, #ffffff 0%, #f8f6fe 108.01%);
 }

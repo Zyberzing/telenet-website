@@ -15,7 +15,12 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
-const LANGUAGE = [
+type Language = {
+  code: string;
+  name: string;
+};
+
+const LANGUAGE: Language[] = [
   { code: "en", name: "English" },
   { code: "fr", name: "Français" },
   { code: "es", name: "Español" },
@@ -32,7 +37,9 @@ const NAV_ITEMS = [
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [countryOpen, setCountryOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGE[0]);
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>(
+    LANGUAGE[0]!
+  );
   const router = useRouter();
   const pathname = usePathname();
   const t = useTranslations("Header");
@@ -45,17 +52,14 @@ export default function Header() {
     if (currentLocale) setSelectedLanguage(currentLocale);
   }, [pathname]);
 
-  const handleLanguageChange = (lang: any) => {
+  const handleLanguageChange = (lang: Language) => {
     setSelectedLanguage(lang);
+    const parts = pathname.split("/").filter(Boolean);
 
-    const parts = pathname.split("/").filter(Boolean); // remove empty parts
-
-    // Remove first part if it's a valid locale
     if (LANGUAGE.some((l) => l.code === parts[0])) {
       parts.shift();
     }
 
-    // Prepend the selected language
     const newPath = `/${lang.code}/${parts.join("/")}`;
     router.push(newPath);
   };

@@ -332,5 +332,41 @@
         "desc": "Contact Support at"
       }
     }
+  },
+  "profile": {
+    "headerAlt": "Profile Banner",
+    "name": "Alex Johnson",
+    "email": "alex.j@example.com",
+    "phone": "+1 555-123-4567",
+    "location": "USA, ENG, USD",
+    "editProfile": "Edit profile",
+    "settingsTitle": "Settings",
+    "changePassword": "Change Password",
+    "changeButton": "Change",
+    "notificationPreferences": "Notification Preferences",
+    "emailAlerts": "Email Alerts",
+    "smsAlerts": "SMS Alerts",
+    "pushNotifications": "Push Notifications",
+    "deleteAccount": "Delete Your Account",
+    "privacyPolicy": "Privacy Policy and Terms of Use",
+    "modal": {
+      "delete": {
+        "title": "Are you sure?",
+        "description": "Do you want to delete these records? This process cannot be undone.",
+        "cancel": "Cancel",
+        "deleteButton": "Delete"
+      },
+      "edit": {
+        "title": "Edit Profile",
+        "name": "Name",
+        "phone": "Phone",
+        "email": "Email",
+        "country": "Country",
+        "language": "Language",
+        "currency": "Currency",
+        "cancel": "Cancel",
+        "submit": "Submit"
+      }
+    }
   }
 }

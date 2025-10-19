@@ -4,4 +4,5 @@ export const ROUTES = {
   CONTACT_US: (locale: string) => `/${locale}/contact-us`,
   PLANS: (locale: string) => `/${locale}/plans`,
   INSTALLATION_GUIDE: (locale: string) => `/${locale}/installation-guide`,
+  PROFILE_SETTING: (locale: string) => `/${locale}/profile-setting`,
 };

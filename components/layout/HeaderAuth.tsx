@@ -14,7 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
-const LANGUAGE = [
+type Language = {
+  code: string;
+  name: string;
+};
+
+const LANGUAGE: Language[] = [
   { code: "en", name: "English" },
   { code: "fr", name: "Français" },
   { code: "es", name: "Español" },
@@ -22,7 +27,9 @@ const LANGUAGE = [
 
 export default function HeaderAuth() {
   const t = useTranslations("HeaderAuth");
-  const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGE[0]);
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>(
+    LANGUAGE[0]!
+  );
   const [countryOpen, setCountryOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
@@ -34,7 +41,11 @@ export default function HeaderAuth() {
     if (currentLocale) setSelectedLanguage(currentLocale);
   }, [pathname]);
 
-  const handleLanguageChange = (lang: any) => {
+  const handleUserClick = () => {
+    router.push(`/${selectedLanguage?.code}/profile-setting`);
+  };
+
+  const handleLanguageChange = (lang: Language) => {
     setSelectedLanguage(lang);
 
     const parts = pathname.split("/").filter(Boolean);
@@ -51,7 +62,10 @@ export default function HeaderAuth() {
     <header className="w-full bg-white shadow-sm px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto flex items-center justify-between h-16">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 cursor-pointer">
+        <Link
+          href={`/${selectedLanguage?.code}/`}
+          className="flex items-center gap-2 cursor-pointer"
+        >
           <Image
             src="/logo.svg"
             alt={t("logoAlt")}
@@ -68,7 +82,7 @@ export default function HeaderAuth() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition">
-                  <span>{selectedLanguage?.code.toUpperCase()}</span>
+                  <span>{selectedLanguage?.code?.toUpperCase()}</span>
                   <ChevronDown className="h-4 w-4" />
                 </button>
               </DropdownMenuTrigger>
@@ -90,7 +104,10 @@ export default function HeaderAuth() {
           </div>
 
           {/* User Menu */}
-          <div className="flex items-center gap-1 cursor-pointer text-sm">
+          <div
+            className="flex items-center gap-1 cursor-pointer text-sm"
+            onClick={handleUserClick}
+          >
             <User className="h-4 w-4" />
             <span>{t("userName")}</span>
           </div>

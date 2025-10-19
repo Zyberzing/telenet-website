@@ -332,5 +332,41 @@
         "desc": "Contactez le support à"
       }
     }
+  },
+  "profile": {
+    "headerAlt": "Bannière de profil",
+    "name": "Alex Johnson",
+    "email": "alex.j@example.com",
+    "phone": "+1 555-123-4567",
+    "location": "USA, ENG, USD",
+    "editProfile": "Modifier le profil",
+    "settingsTitle": "Paramètres",
+    "changePassword": "Changer le mot de passe",
+    "changeButton": "Changer",
+    "notificationPreferences": "Préférences de notification",
+    "emailAlerts": "Alertes par e-mail",
+    "smsAlerts": "Alertes SMS",
+    "pushNotifications": "Notifications Push",
+    "deleteAccount": "Supprimer votre compte",
+    "privacyPolicy": "Politique de confidentialité et conditions d'utilisation",
+    "modal": {
+      "delete": {
+        "title": "Êtes-vous sûr ?",
+        "description": "Voulez-vous supprimer ces enregistrements ? Ce processus est irréversible.",
+        "cancel": "Annuler",
+        "deleteButton": "Supprimer"
+      },
+      "edit": {
+        "title": "Modifier le profil",
+        "name": "Nom",
+        "phone": "Téléphone",
+        "email": "Email",
+        "country": "Pays",
+        "language": "Langue",
+        "currency": "Devise",
+        "cancel": "Annuler",
+        "submit": "Soumettre"
+      }
+    }
   }
 }

@@ -1,8 +1,14 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import "../globals.css";
 
-// 1. Create a context for dark mode
 interface ThemeContextType {
   isDarkMode: boolean;
   toggleTheme: () => void;
