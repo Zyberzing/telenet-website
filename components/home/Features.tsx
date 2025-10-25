@@ -256,7 +256,9 @@ export default function Features() {
           {howItWorks.map((step, i) => (
             <div
               key={i}
-              className="max-w-xs flex flex-col items-center relative md:ml-[i===0?0:100px]"
+              className={`max-w-xs flex flex-col items-center relative ${
+                i === 0 ? "md:ml-0" : "md:ml-[100px]"
+              }`}
             >
               <div className="p-4 rounded-3xl bg-white shadow transition z-10">
                 <Image src={step.img} alt={step.title} width={56} height={56} />
