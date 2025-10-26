@@ -10,7 +10,14 @@
   "HeaderAuth": {
     "logoAlt": "Logotipo de Telenet",
     "userName": "Alex",
-    "toggleTheme": "Cambiar tema"
+    "toggleTheme": "Cambiar tema",
+    "dashboard": "Panel",
+    "myPlans": "Mis planes",
+    "wallet": "Billetera",
+    "ordersBilling": "Pedidos y facturación",
+    "profileSettings": "Perfil y configuración",
+    "support": "Apoyo",
+    "buyNewPlan": "Comprar nuevo plan"
   },
   "Footer": {
     "logoAlt": "Logo Telenet",
@@ -368,5 +375,88 @@
         "submit": "Enviar"
       }
     }
+  },
+  "TopUp": {
+    "enterNumber": "12358000",
+    "availablePacks": "Paquetes de recarga disponibles",
+    "providerLogo": "LogoProveedor",
+    "trueSG": "TRUESG",
+    "validity": "Validez",
+    "data": "Datos",
+    "selectPack": "Seleccionar paquete",
+    "rechargeNow": "Recargar ahora",
+    "provider": "Proveedor",
+    "selectNumber": "Seleccionar Número Virtual",
+    "virtualNumber": "4451 0275",
+    "startDate": "Fecha de inicio",
+    "plan": "Plan",
+    "type": "Tipo",
+    "duration": "Duración",
+    "taxCountry": "País de impuestos",
+    "total": "Total",
+    "selectPayment": "Seleccione un método de pago",
+    "creditCard": "Tarjeta de crédito o débito",
+    "googlePay": "Google Pay",
+    "applePay": "Apple Pay",
+    "cardNumber": "Número de tarjeta",
+    "expiry": "Fecha de vencimiento",
+    "cvv": "CVV",
+    "saveCard": "Guardar datos de la tarjeta",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar"
+  },
+  "VirtualNumber": {
+    "numbers": "Números"
+  },
+  "Dashboard": {
+    "greeting": "Hola",
+    "readyForTrip": "¿Listo para tu próximo viaje?",
+    "activePlans": "Planes Activos",
+    "walletBalance": "Saldo de Billetera",
+    "lastTransaction": "Última Transacción",
+    "date": "12 sep 2025",
+    "suggestedPlans": "Planes Sugeridos",
+    "validity": "Validez",
+    "data": "Datos",
+    "buyNow": "Comprar Ahora"
+  },
+  "Wallet": {
+    "title": "Billetera",
+    "autoTopUp": "Recarga Automática",
+    "addMoney": "Agregar Dinero",
+    "walletBalance": "Saldo de Billetera",
+    "transactionHistory": "Historial de Transacciones",
+    "filter": "Filtrar",
+    "date": "Fecha",
+    "amount": "Monto",
+    "method": "Método",
+    "status": "Estado",
+    "invoice": "Factura",
+    "download": "Descargar",
+    "export": "Exportar",
+    "completed": "Completado",
+    "pending": "Pendiente",
+    "all": "Todos",
+    "sep": "Sep",
+    "aug": "Ago"
+  },
+  "OrderBilling": {
+    "filter": "Filtro",
+    "dateRange": "Rango de fechas",
+    "status": "Estado",
+    "provider": "Proveedor",
+    "resetFilters": "Restablecer filtros",
+    "orderId": "ID de pedido",
+    "planName": "Nombre del plan",
+    "paymentOption": "Método de pago",
+    "invoice": "Factura",
+    "action": "Acción",
+    "processing": "Procesando",
+    "cancelled": "Cancelado",
+    "inReview": "En revisión",
+    "refunded": "Reembolsado",
+    "active": "Activo",
+    "expired": "Expirado",
+    "download": "Descargar"
   }
 }

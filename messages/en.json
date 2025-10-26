@@ -10,7 +10,14 @@
   "HeaderAuth": {
     "logoAlt": "Telenet Logo",
     "userName": "Alex",
-    "toggleTheme": "Toggle Theme"
+    "toggleTheme": "Toggle Theme",
+    "dashboard": "Dashboard",
+    "myPlans": "My Plans",
+    "wallet": "Wallet",
+    "ordersBilling": "Orders & Billing",
+    "profileSettings": "Profile & Settings",
+    "support": "Support",
+    "buyNewPlan": "Buy New Plan"
   },
   "Footer": {
     "logoAlt": "Telenet Logo",
@@ -368,5 +375,88 @@
         "submit": "Submit"
       }
     }
+  },
+  "TopUp": {
+    "enterNumber": "12358000",
+    "availablePacks": "Available Top-Up Packs",
+    "providerLogo": "ProviderLogo",
+    "trueSG": "TRUESG",
+    "validity": "Validity",
+    "data": "Data",
+    "selectPack": "Select Pack",
+    "rechargeNow": "Recharge Now",
+    "provider": "Provider",
+    "selectNumber": "Select Virtual Number",
+    "virtualNumber": "4451 0275",
+    "startDate": "Start Date",
+    "plan": "Plan",
+    "type": "Type",
+    "duration": "Duration",
+    "taxCountry": "Tax Country",
+    "total": "Total",
+    "selectPayment": "Select a payment Method",
+    "creditCard": "Credit or debit card",
+    "googlePay": "Google Pay",
+    "applePay": "Apple Pay",
+    "cardNumber": "Card Number",
+    "expiry": "Expiry Date",
+    "cvv": "CVV",
+    "saveCard": "Save card details",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "VirtualNumber": {
+    "numbers": "Numbers"
+  },
+  "Dashboard": {
+    "greeting": "Hi",
+    "readyForTrip": "Ready for your next trip?",
+    "activePlans": "Active Plans",
+    "walletBalance": "Wallet Balance",
+    "lastTransaction": "Last Transaction",
+    "date": "12 Sep 2025",
+    "suggestedPlans": "Suggested Plans",
+    "validity": "Validity",
+    "data": "Data",
+    "buyNow": "Buy Now"
+  },
+  "Wallet": {
+    "title": "Wallet",
+    "autoTopUp": "Auto Top-Up",
+    "addMoney": "Add Money",
+    "walletBalance": "Wallet Balance",
+    "transactionHistory": "Transaction History",
+    "filter": "Filter",
+    "date": "Date",
+    "amount": "Amount",
+    "method": "Method",
+    "status": "Status",
+    "invoice": "Invoice",
+    "download": "Download",
+    "export": "Export",
+    "completed": "Completed",
+    "pending": "Pending",
+    "all": "All",
+    "sep": "Sep",
+    "aug": "Aug"
+  },
+  "OrderBilling": {
+    "filter": "Filter",
+    "dateRange": "Date Range",
+    "status": "Status",
+    "provider": "Provider",
+    "resetFilters": "Reset Filters",
+    "orderId": "Order ID",
+    "planName": "Plan Name",
+    "paymentOption": "Payment Option",
+    "invoice": "Invoice",
+    "action": "Action",
+    "processing": "Processing",
+    "cancelled": "Cancelled",
+    "inReview": "In Review",
+    "refunded": "Refunded",
+    "active": "Active",
+    "expired": "Expired",
+    "download": "Download"
   }
 }

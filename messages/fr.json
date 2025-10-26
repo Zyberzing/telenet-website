@@ -10,7 +10,14 @@
   "HeaderAuth": {
     "logoAlt": "Logo Telenet",
     "userName": "Alex",
-    "toggleTheme": "Changer le thème"
+    "toggleTheme": "Changer le thème",
+    "dashboard": "Tableau de bord",
+    "myPlans": "Mes projets",
+    "wallet": "Portefeuille",
+    "ordersBilling": "Commandes et facturation",
+    "profileSettings": "Profil et paramètres",
+    "support": "Soutien",
+    "buyNewPlan": "Acheter un nouveau plan"
   },
   "Footer": {
     "logoAlt": "Logo Telenet",
@@ -368,5 +375,88 @@
         "submit": "Soumettre"
       }
     }
+  },
+  "TopUp": {
+    "enterNumber": "12358000",
+    "availablePacks": "Forfaits de recharge disponibles",
+    "providerLogo": "LogoFournisseur",
+    "trueSG": "TRUESG",
+    "validity": "Validité",
+    "data": "Données",
+    "selectPack": "Sélectionner le forfait",
+    "rechargeNow": "Recharger maintenant",
+    "provider": "Fournisseur",
+    "selectNumber": "Sélectionnez le numéro virtuel",
+    "virtualNumber": "4451 0275",
+    "startDate": "Date de début",
+    "plan": "Forfait",
+    "type": "Type",
+    "duration": "Durée",
+    "taxCountry": "Pays de taxe",
+    "total": "Total",
+    "selectPayment": "Sélectionnez un mode de paiement",
+    "creditCard": "Carte de crédit ou débit",
+    "googlePay": "Google Pay",
+    "applePay": "Apple Pay",
+    "cardNumber": "Numéro de carte",
+    "expiry": "Date d'expiration",
+    "cvv": "CVV",
+    "saveCard": "Enregistrer les détails de la carte",
+    "cancel": "Annuler",
+    "confirm": "Confirmer"
+  },
+  "VirtualNumber": {
+    "numbers": "Nombres"
+  },
+  "Dashboard": {
+    "greeting": "Salut",
+    "readyForTrip": "Prêt pour votre prochain voyage ?",
+    "activePlans": "Forfaits Actifs",
+    "walletBalance": "Solde du Portefeuille",
+    "lastTransaction": "Dernière Transaction",
+    "date": "12 sept. 2025",
+    "suggestedPlans": "Forfaits Sugérés",
+    "validity": "Validité",
+    "data": "Données",
+    "buyNow": "Acheter Maintenant"
+  },
+  "Wallet": {
+    "title": "Portefeuille",
+    "autoTopUp": "Rechargement Automatique",
+    "addMoney": "Ajouter de l’Argent",
+    "walletBalance": "Solde du Portefeuille",
+    "transactionHistory": "Historique des Transactions",
+    "filter": "Filtrer",
+    "date": "Date",
+    "amount": "Montant",
+    "method": "Méthode",
+    "status": "Statut",
+    "invoice": "Facture",
+    "download": "Télécharger",
+    "export": "Exporter",
+    "completed": "Terminé",
+    "pending": "En attente",
+    "all": "Tous",
+    "sep": "Sept",
+    "aug": "Août"
+  },
+  "OrderBilling": {
+    "filter": "Filtrer",
+    "dateRange": "Plage de dates",
+    "status": "Statut",
+    "provider": "Fournisseur",
+    "resetFilters": "Réinitialiser les filtres",
+    "orderId": "ID de commande",
+    "planName": "Nom du forfait",
+    "paymentOption": "Mode de paiement",
+    "invoice": "Facture",
+    "action": "Action",
+    "processing": "En cours",
+    "cancelled": "Annulé",
+    "inReview": "En révision",
+    "refunded": "Remboursé",
+    "active": "Actif",
+    "expired": "Expiré",
+    "download": "Télécharger"
   }
 }

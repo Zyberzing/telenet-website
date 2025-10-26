@@ -2,7 +2,12 @@ export const ROUTES = {
   HOME: (locale: string) => `/${locale}`,
   LOGIN: (locale: string) => `/${locale}/login`,
   CONTACT_US: (locale: string) => `/${locale}/contact-us`,
+  TOP_UP: (locale: string) => `/${locale}/top-up`,
   PLANS: (locale: string) => `/${locale}/plans`,
   INSTALLATION_GUIDE: (locale: string) => `/${locale}/installation-guide`,
   PROFILE_SETTING: (locale: string) => `/${locale}/profile-setting`,
+  VIRTUAL_NUMBER: (locale: string) => `/${locale}/virtual-number`,
+  DASHBOARD: (locale: string) => `/${locale}/dashboard`,
+  WALLET: (locale: string) => `/${locale}/wallet`,
+  ORDER_BILLING: (locale: string) => `/${locale}/order-billing`,
 };

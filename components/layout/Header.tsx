@@ -28,7 +28,7 @@ const LANGUAGE: Language[] = [
 
 const NAV_ITEMS = [
   { key: "plans", href: "/plans" },
-  { key: "topUp", href: "#" },
+  { key: "topUp", href: "/top-up" },
   { key: "about", href: "/about-us" },
   { key: "installGuide", href: "/installation-guide" },
   { key: "contact", href: "/contact-us" },

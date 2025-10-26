@@ -324,6 +324,7 @@ export default function Plans() {
                         "mt-6 text-sm font-semibold rounded-full w-full",
                         plan.color === "orange" ? "bg-[#E49B2C]" : "bg-gradient"
                       )}
+                      onClick={() => setSelectedPlan(plan)}
                     >
                       {t("buy")}
                     </Button>
@@ -340,9 +341,12 @@ export default function Plans() {
         open={selectedPlan !== null}
         onOpenChange={() => setSelectedPlan(null)}
       >
-        <DialogContent className="max-w-md max-h-[85vh] flex flex-col rounded-2xl bg-white shadow-lg overflow-hidden">
+        <DialogContent
+          showCloseButton={false}
+          className="max-w-md max-h-[85vh] flex flex-col rounded-2xl bg-white shadow-lg overflow-hidden"
+        >
           {/* Header */}
-          <div className="p-4 border-b border-gray-200 flex justify-between items-start sticky top-0 bg-white z-10">
+          <div className="p-4 border-b border-gray-200 flex justify-between sticky top-0 bg-white z-10">
             <div>
               <h2 className="text-lg font-semibold">USA 5GB, 30 Days</h2>
               <p className="text-sm text-gray-500">
@@ -353,7 +357,7 @@ export default function Plans() {
             {/* ONLY CUSTOM CLOSE BUTTON */}
             <button
               onClick={() => setSelectedPlan(null)}
-              className="text-gray-500 hover:text-red-500 text-3xl font-[400px]"
+              className="text-gray-500 hover:text-red-500 text-3xl -mt-2 font-[400px] cursor-pointer self-start"
             >
               &times;
             </button>

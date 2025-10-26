@@ -1,6 +1,19 @@
 "use client";
 
-import { ChevronDown, Menu, Sun, User, X } from "lucide-react";
+import {
+  ChevronDown,
+  FileText,
+  Headphones,
+  LayoutGrid,
+  Menu,
+  Receipt,
+  Settings,
+  ShoppingCart,
+  Sun,
+  User,
+  Wallet,
+  X,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,6 +24,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
@@ -19,52 +33,56 @@ type Language = {
   name: string;
 };
 
-const LANGUAGE: Language[] = [
+const LANGUAGES: Language[] = [
   { code: "en", name: "English" },
   { code: "fr", name: "Français" },
   { code: "es", name: "Español" },
 ];
 
+const MENU_ITEMS = [
+  { href: "dashboard", icon: LayoutGrid, label: "dashboard" },
+  { href: "#", icon: FileText, label: "myPlans" },
+  { href: "wallet", icon: Wallet, label: "wallet" },
+  { href: "order-billing", icon: Receipt, label: "ordersBilling" },
+  { href: "profile-setting", icon: Settings, label: "profileSettings" },
+  { href: "#", icon: Headphones, label: "support" },
+];
+
 export default function HeaderAuth() {
   const t = useTranslations("HeaderAuth");
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
-    LANGUAGE[0]!
+    LANGUAGES[0]!
   );
-  const [countryOpen, setCountryOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileLangOpen, setMobileLangOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     const parts = pathname.split("/").filter(Boolean);
-    const currentLocale = LANGUAGE.find((l) => l.code === parts[0]);
+    const currentLocale = LANGUAGES.find((l) => l.code === parts[0]);
     if (currentLocale) setSelectedLanguage(currentLocale);
   }, [pathname]);
 
-  const handleUserClick = () => {
-    router.push(`/${selectedLanguage?.code}/profile-setting`);
-  };
-
   const handleLanguageChange = (lang: Language) => {
     setSelectedLanguage(lang);
-
     const parts = pathname.split("/").filter(Boolean);
-
-    if (LANGUAGE.some((l) => l.code === parts[0])) {
-      parts.shift();
-    }
-
+    if (LANGUAGES.some((l) => l.code === parts[0])) parts.shift();
     const newPath = `/${lang.code}/${parts.join("/")}`;
     router.push(newPath);
+    setMobileLangOpen(false);
   };
 
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+
   return (
-    <header className="w-full bg-white shadow-sm px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto flex items-center justify-between h-16">
+    <header className="w-full bg-white shadow-sm border-b">
+      <div className="max-w-7xl mx-auto flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link
-          href={`/${selectedLanguage?.code}/`}
-          className="flex items-center gap-2 cursor-pointer"
+          href={`/${selectedLanguage.code}/`}
+          className="flex items-center gap-2"
+          onClick={closeMobileMenu}
         >
           <Image
             src="/logo.svg"
@@ -77,92 +95,145 @@ export default function HeaderAuth() {
 
         {/* Desktop Controls */}
         <div className="hidden md:flex items-center gap-6">
-          {/* Language Switch */}
-          <div className="flex items-center gap-1 cursor-pointer text-sm">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition">
-                  <span>{selectedLanguage?.code?.toUpperCase()}</span>
-                  <ChevronDown className="h-4 w-4" />
-                </button>
-              </DropdownMenuTrigger>
+          {/* Language Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild className="cursor-pointer">
+              <button className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition">
+                <span>{selectedLanguage.code.toUpperCase()}</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-[6rem]">
+              {LANGUAGES.map((lang) => (
+                <DropdownMenuItem
+                  key={lang.code}
+                  onClick={() => handleLanguageChange(lang)}
+                  className="text-sm"
+                >
+                  {lang.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-              <DropdownMenuContent
-                align="end"
-                className="min-w-[6rem] bg-white dark:bg-gray-900 text-sm shadow-lg rounded-md"
-              >
-                {LANGUAGE.map((lang) => (
-                  <DropdownMenuItem
-                    key={lang.code}
-                    onClick={() => handleLanguageChange(lang)}
-                  >
-                    {lang.name}
+          {/* User Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild className="cursor-pointer">
+              <button className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition">
+                <User className="h-4 w-4" />
+                <span>{t("userName")}</span>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-64 p-2">
+              <div className="space-y-1">
+                {MENU_ITEMS.map((item) => (
+                  <DropdownMenuItem key={item.href} asChild>
+                    <Link
+                      href={`/${selectedLanguage.code}/${item.href}`}
+                      className="flex items-center gap-3 w-full px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
+                    >
+                      <item.icon className="h-4 w-4" />
+                      {t(item.label)}
+                    </Link>
                   </DropdownMenuItem>
                 ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+              </div>
 
-          {/* User Menu */}
-          <div
-            className="flex items-center gap-1 cursor-pointer text-sm"
-            onClick={handleUserClick}
-          >
-            <User className="h-4 w-4" />
-            <span>{t("userName")}</span>
-          </div>
+              <DropdownMenuSeparator className="my-2" />
+
+              <Button
+                className="w-full justify-center bg-primary hover:bg-primary text-white"
+                size="sm"
+              >
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                {t("buyNewPlan")}
+              </Button>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* Theme Toggle */}
-          <Button variant="ghost" size="lg">
+          <Button variant="ghost" size="icon">
             <Sun className="h-5 w-5 text-gray-600" />
           </Button>
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden flex items-center px-2">
-          <button onClick={() => setMenuOpen(!menuOpen)}>
-            {menuOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </button>
-        </div>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="md:hidden p-2"
+        >
+          {mobileMenuOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
+        </button>
       </div>
 
       {/* Mobile Menu */}
-      {menuOpen && (
-        <div className="md:hidden px-4 pb-4 space-y-3">
-          <div className="flex items-center gap-2 cursor-pointer text-sm">
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t bg-white dark:bg-gray-900 px-4 py-4 space-y-4">
+          {/* Language Selector */}
+          <div className="relative">
             <button
-              onClick={() => setCountryOpen(!countryOpen)}
-              className="flex items-center gap-1 cursor-pointer text-sm px-2 py-1 border rounded border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
+              onClick={() => setMobileLangOpen(!mobileLangOpen)}
+              className="flex items-center justify-between w-full px-4 py-2 text-sm font-medium border rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition"
             >
-              {selectedLanguage?.name}
+              <span>{selectedLanguage.name}</span>
+              <ChevronDown
+                className={`h-4 w-4 transition-transform ${
+                  mobileLangOpen ? "rotate-180" : ""
+                }`}
+              />
             </button>
-            {countryOpen && (
-              <ul className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded shadow-lg z-50 dark:bg-gray-800 dark:border-gray-700">
-                {LANGUAGE.map((c) => (
-                  <li
-                    key={c.code}
-                    className="px-4 py-2 hover:bg-primary dark:hover:bg-primary cursor-pointer"
-                    onClick={() => {
-                      setSelectedLanguage(c);
-                      setCountryOpen(false);
-                    }}
+
+            {mobileLangOpen && (
+              <div className="absolute left-0 right-0 mt-1 bg-white border rounded-md shadow-lg z-50 overflow-hidden">
+                {LANGUAGES.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => handleLanguageChange(lang)}
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-purple-50 dark:hover:bg-gray-800 transition"
                   >
-                    {c.name}
-                  </li>
+                    {lang.name}
+                  </button>
                 ))}
-              </ul>
+              </div>
             )}
           </div>
-          <div className="flex items-center gap-2 cursor-pointer text-sm">
-            <User className="h-4 w-4" />
-            <span>{t("userName")}</span>
+
+          {/* Mobile User Menu Items */}
+          <div className="space-y-1 pt-2 border-t">
+            {MENU_ITEMS.map((item) => (
+              <Link
+                key={item.href}
+                href={`/${selectedLanguage.code}/${item.href}`}
+                onClick={closeMobileMenu}
+                className="flex items-center gap-3 w-full px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              >
+                <item.icon className="h-4 w-4" />
+                {t(item.label)}
+              </Link>
+            ))}
           </div>
-          <Button variant="ghost" size="lg" className="w-full justify-start">
-            <Sun className="h-5 w-5 text-gray-600 mr-2" />
+
+          {/* Buy New Plan Button */}
+          <Button
+            className="w-full bg-primary hover:bg-primary text-white"
+            size="default"
+            onClick={closeMobileMenu}
+          >
+            <ShoppingCart className="h-4 w-4 mr-2" />
+            {t("buyNewPlan")}
+          </Button>
+
+          {/* Theme Toggle */}
+          <Button
+            variant="ghost"
+            className="w-full justify-start"
+            size="default"
+          >
+            <Sun className="h-5 w-5 mr-2 text-gray-600" />
             {t("toggleTheme")}
           </Button>
         </div>
