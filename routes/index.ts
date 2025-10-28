@@ -10,4 +10,6 @@ export const ROUTES = {
   DASHBOARD: (locale: string) => `/${locale}/dashboard`,
   WALLET: (locale: string) => `/${locale}/wallet`,
   ORDER_BILLING: (locale: string) => `/${locale}/order-billing`,
+  MY_PLANS: (locale: string) => `/${locale}/my-plans`,
+  SUPPORT: (locale: string) => `/${locale}/support`,
 };

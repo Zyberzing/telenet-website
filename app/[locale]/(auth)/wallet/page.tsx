@@ -72,7 +72,7 @@ export default function Wallet() {
       </div>
 
       {/* Wallet Section */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Top Controls */}
         <div className="mb-6 gap-4 w-full ">
           <div className="flex place-self-end items-center justify-between sm:justify-start gap-3">
@@ -111,7 +111,7 @@ export default function Wallet() {
               {/* Date Filter */}
               <div className="relative">
                 <Select onValueChange={setFilterDate}>
-                  <SelectTrigger className="w-[140px] text-sm text-gray-500">
+                  <SelectTrigger className="text-sm text-gray-500">
                     <SelectValue placeholder={t("date")} />
                   </SelectTrigger>
                   <SelectContent>
@@ -128,7 +128,7 @@ export default function Wallet() {
 
               {/* Method Filter */}
               <Select onValueChange={setFilterMethod}>
-                <SelectTrigger className="w-[150px] text-sm text-gray-500">
+                <SelectTrigger className="text-sm text-gray-500">
                   <SelectValue placeholder={t("method")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -141,7 +141,7 @@ export default function Wallet() {
 
               {/* Status Filter */}
               <Select onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-[150px] text-sm text-gray-500">
+                <SelectTrigger className="text-sm text-gray-500">
                   <SelectValue placeholder={t("status")} />
                 </SelectTrigger>
                 <SelectContent>

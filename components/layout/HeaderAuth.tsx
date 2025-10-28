@@ -41,11 +41,11 @@ const LANGUAGES: Language[] = [
 
 const MENU_ITEMS = [
   { href: "dashboard", icon: LayoutGrid, label: "dashboard" },
-  { href: "#", icon: FileText, label: "myPlans" },
+  { href: "my-plans", icon: FileText, label: "myPlans" },
   { href: "wallet", icon: Wallet, label: "wallet" },
   { href: "order-billing", icon: Receipt, label: "ordersBilling" },
   { href: "profile-setting", icon: Settings, label: "profileSettings" },
-  { href: "#", icon: Headphones, label: "support" },
+  { href: "support", icon: Headphones, label: "support" },
 ];
 
 export default function HeaderAuth() {
