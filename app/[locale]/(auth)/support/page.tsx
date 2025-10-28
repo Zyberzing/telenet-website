@@ -2,13 +2,7 @@
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -92,7 +86,9 @@ export default function Support() {
               <Button
                 key={status}
                 variant={tab === status ? "default" : "outline"}
-                onClick={() => setTab(status as any)}
+                onClick={() =>
+                  setTab(status as "Open" | "Pending" | "Resolved")
+                }
                 className={cn(
                   tab === status
                     ? "bg-primary text-white hover:bg-primary border border-primary"
