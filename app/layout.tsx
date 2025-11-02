@@ -1,5 +1,7 @@
+import { StoreProvider } from "@/store/providers/StoreProvider";
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 import { ThemeProvider } from "./providers/ThemeProvider";
 
@@ -21,7 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={outfit.variable}>
       <body className="antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
+        <StoreProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+          <Toaster richColors />
+        </StoreProvider>
       </body>
     </html>
   );

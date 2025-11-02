@@ -132,7 +132,7 @@ const Testimonials = () => {
                     <p className="text-[25px] mb-8">“{t(tData.textKey)}”</p>
                     <div className="flex justify-between">
                       <div>
-                        <p className="text-gray-900 font-semibold">
+                        <p className="text-gray-900 font-[400]">
                           {tData.name}
                         </p>
                         <p className="text-gray-600 text-xs">

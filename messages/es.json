@@ -69,7 +69,44 @@
     "loginWithApple": "Iniciar sesión con Apple",
     "loginWithFacebook": "Iniciar sesión con Facebook",
     "notRegistered": "¿No tienes cuenta?",
-    "createAccount": "Crea una cuenta"
+    "createAccount": "Crea una cuenta",
+    "emailRequired": "Correo electrónico no válido",
+    "passwordRequired": "Se requiere contraseña",
+    "loading": "Cargando"
+  },
+  "RegisterForm": {
+    "welcomeText": "¡Bienvenido! Crea tu cuenta a continuación.",
+    "registerTitle": "Registro",
+    "registerButton": "Crear cuenta",
+    "success": "¡Registro exitoso!",
+    "error": "Algo salió mal. Inténtalo de nuevo.",
+
+    "fields": {
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "phone": "Teléfono",
+      "countryCode": "Código de país"
+    },
+
+    "placeholders": {
+      "name": "Ingresa tu nombre completo",
+      "email": "Ingresa tu correo electrónico",
+      "password": "Ingresa tu contraseña",
+      "phone": "Ingresa tu número de teléfono",
+      "countryCode": "Ingresa el código de país (p. ej. +34)"
+    },
+
+    "validation": {
+      "nameRequired": "El nombre es obligatorio",
+      "emailInvalid": "Por favor, ingresa un correo electrónico válido",
+      "passwordMin": "La contraseña debe tener al menos 6 caracteres",
+      "phoneInvalid": "Ingresa un número de teléfono válido",
+      "countryCodeRequired": "El código de país es obligatorio"
+    },
+    "searchCountry": "Buscar país...",
+    "noCountryFound": "No se encontró ningún país",
+    "loading": "Cargando"
   },
   "AboutUs": {
     "explore": {
@@ -488,7 +525,7 @@
     "subject": "Asunto",
     "keywords": "Palabras clave",
     "provider": "Proveedor",
-    "ticketList":"Lista de entradas",
+    "ticketList": "Lista de entradas",
     "filter": "Filtrar",
     "ticketID": "ID del ticket",
     "createdOn": "Creado el",

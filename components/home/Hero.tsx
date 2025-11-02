@@ -28,7 +28,7 @@ export default function Hero() {
         </div>
 
         {/* Title */}
-        <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-3 text-gray-900 leading-snug">
+        <h1 className="text-2xl sm:text-4xl md:text-5xl font-[400] mb-3 text-gray-900 leading-snug">
           {t("title")}{" "}
           <span className="text-primary">{t("titleHighlight")}</span>{" "}
           {t("titleCountries")}
@@ -140,7 +140,7 @@ export default function Hero() {
               </span>
             </div>
 
-            <button className="w-full sm:w-auto px-5 font-semibold py-2 sm:py-3 bg-white rounded-3xl text-black flex items-center justify-center sm:justify-between gap-3 sm:gap-4 hover:bg-gray-100 text-xs sm:text-sm md:text-base">
+            <button className="w-full sm:w-auto px-5 font-[400] py-2 sm:py-3 bg-white rounded-3xl text-black flex items-center justify-center sm:justify-between gap-3 sm:gap-4 hover:bg-gray-100 text-xs sm:text-sm md:text-base">
               {t("browsePlans")}
               <span className="ml-1 sm:ml-2 rounded-full p-1 bg-primary text-white">
                 <IoIosArrowForward fontSize={18} />

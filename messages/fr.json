@@ -69,7 +69,44 @@
     "loginWithApple": "Se connecter avec Apple",
     "loginWithFacebook": "Se connecter avec Facebook",
     "notRegistered": "Pas encore inscrit ?",
-    "createAccount": "Créer un compte"
+    "createAccount": "Créer un compte",
+    "emailRequired": "Adresse e-mail invalide",
+    "passwordRequired": "Un mot de passe est requis.",
+    "loading": "Chargement"
+  },
+  "RegisterForm": {
+    "welcomeText": "Bienvenue ! Créez votre compte ci-dessous.",
+    "registerTitle": "S'inscrire",
+    "registerButton": "Créer un compte",
+    "success": "Inscription réussie !",
+    "error": "Une erreur s'est produite. Veuillez réessayer.",
+
+    "fields": {
+      "name": "Nom",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "phone": "Téléphone",
+      "countryCode": "Code du pays"
+    },
+
+    "placeholders": {
+      "name": "Entrez votre nom complet",
+      "email": "Entrez votre e-mail",
+      "password": "Entrez votre mot de passe",
+      "phone": "Entrez votre numéro de téléphone",
+      "countryCode": "Entrez le code du pays (ex. +33)"
+    },
+
+    "validation": {
+      "nameRequired": "Le nom est requis",
+      "emailInvalid": "Veuillez entrer un e-mail valide",
+      "passwordMin": "Le mot de passe doit comporter au moins 6 caractères",
+      "phoneInvalid": "Entrez un numéro de téléphone valide",
+      "countryCodeRequired": "Le code du pays est requis"
+    },
+    "searchCountry": "Rechercher un pays...",
+    "noCountryFound": "Aucun pays trouvé",
+    "loading": "Chargement"
   },
   "AboutUs": {
     "explore": {

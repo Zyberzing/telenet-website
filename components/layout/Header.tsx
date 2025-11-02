@@ -1,7 +1,7 @@
-"use client";
+// "use client";
 
 import { useTheme } from "@/app/providers/ThemeProvider";
-import { ChevronDown, Menu, Sun } from "lucide-react";
+import { ChevronDown, Menu, Sun, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
@@ -34,18 +35,24 @@ const NAV_ITEMS = [
   { key: "contact", href: "/contact-us" },
 ];
 
+type User = {
+  id: string;
+  name: string;
+  email?: string;
+};
+
 export default function Header() {
   const [open, setOpen] = useState(false);
-  const [countryOpen, setCountryOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
     LANGUAGE[0]!
   );
+  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
   const pathname = usePathname();
   const t = useTranslations("Header");
   const { toggleTheme } = useTheme();
 
-  // Set selected language based on current URL
+  // Load language from URL
   useEffect(() => {
     const parts = pathname.split("/").filter(Boolean);
     const currentLocale = LANGUAGE.find((l) => l.code === parts[0]);
@@ -64,12 +71,18 @@ export default function Header() {
     router.push(newPath);
   };
 
+  const handleLogout = async () => {
+    await fetch("/api/logout", { method: "POST" });
+    setUser(null);
+    router.push(`/${selectedLanguage.code}`);
+  };
+
   return (
     <header className="w-full border-b bg-white text-black dark:bg-gray-900 dark:text-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:py-4">
         <Link
           href={`/${selectedLanguage?.code}`}
-          className="flex items-center gap-2 text-xl font-bold"
+          className="flex items-center gap-2 text-xl font-[400]"
         >
           <Image src="/logo.svg" alt="Telenet Logo" width={156} height={56} />
         </Link>
@@ -85,6 +98,7 @@ export default function Header() {
             </Link>
           ))}
 
+          {/* 🌐 Language dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition">
@@ -108,19 +122,50 @@ export default function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <button
-            onClick={() => router.push(`/${selectedLanguage?.code}/login`)}
-            className="cursor-pointer whitespace-nowrap px-4 py-1 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
-          >
-            {t("signIn")}
-          </button>
+          {/* 👇 If logged in → show profile dropdown */}
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2 cursor-pointer">
+                  <User className="h-5 w-5" />
+                  <span>{user.name || "Profile"}</span>
+                  <ChevronDown className="h-4 w-4" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 p-2">
+                <DropdownMenuItem asChild>
+                  <Link
+                    href={`/${selectedLanguage.code}/dashboard`}
+                    className="w-full text-sm hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md px-2 py-1"
+                  >
+                    {t("dashboard")}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="text-red-500"
+                >
+                  {t("logout")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <button
+              onClick={() => router.push(`/${selectedLanguage?.code}/login`)}
+              className="cursor-pointer whitespace-nowrap px-4 py-1 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
+            >
+              {t("signIn")}
+            </button>
+          )}
 
+          {/* Theme Toggle */}
           <button className="justify-start" onClick={toggleTheme}>
             <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300" />
           </button>
         </nav>
 
-        {/* Mobile menu button */}
+        {/* Mobile Menu Toggle */}
         <button
           onClick={() => setOpen(!open)}
           className="lg:hidden p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-800"
@@ -129,7 +174,7 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile Nav */}
+      {/* 📱 Mobile Menu (you can similarly hide Sign In or show Profile) */}
       {open && (
         <div className="lg:hidden px-4 py-4 space-y-3 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
           {NAV_ITEMS.map((item) => (
@@ -142,36 +187,22 @@ export default function Header() {
             </Link>
           ))}
 
-          {/* Language selector */}
-          <div className="relative">
+          {/* Sign In / Profile logic for mobile */}
+          {user ? (
             <button
-              onClick={() => setCountryOpen(!countryOpen)}
-              className="flex items-center gap-1 cursor-pointer text-sm px-2 py-1 border rounded border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
+              onClick={handleLogout}
+              className="w-full text-left text-red-500 px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
             >
-              {selectedLanguage?.name}
+              {t("logout")}
             </button>
-            {countryOpen && (
-              <ul className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded shadow-lg z-50 dark:bg-gray-800 dark:border-gray-700">
-                {LANGUAGE.map((c) => (
-                  <li
-                    key={c.code}
-                    className="px-4 py-2 hover:bg-primary dark:hover:bg-primary cursor-pointer"
-                    onClick={() => handleLanguageChange(c)}
-                  >
-                    {c.name}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          {/* Sign In */}
-          <button
-            onClick={() => router.push(`/${selectedLanguage?.code}/login`)}
-            className="cursor-pointer whitespace-nowrap px-4 py-1 border border-gray-300 rounded hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
-          >
-            {t("signIn")}
-          </button>
+          ) : (
+            <button
+              onClick={() => router.push(`/${selectedLanguage?.code}/login`)}
+              className="cursor-pointer whitespace-nowrap px-4 py-1 border border-gray-300 rounded hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
+            >
+              {t("signIn")}
+            </button>
+          )}
 
           {/* Dark Mode Toggle */}
           <Button variant="ghost" size="sm" className="w-full justify-start">

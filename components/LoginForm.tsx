@@ -1,84 +1,190 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Apple, Chrome, Facebook } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 import { Button } from "./ui/Button";
+
+import { useLoginUserMutation } from "@/services/authApi";
+import { setCredentials } from "@/store/slices/authSlice";
+import { useDispatch } from "react-redux";
+import z from "zod/v3";
 import { Input } from "./ui/Input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
 
 export default function LoginForm() {
   const t = useTranslations("LoginForm");
+  const router = useRouter();
+  const locale = useLocale();
+  const dispatch = useDispatch();
+  const [loginUser, { isLoading }] = useLoginUserMutation();
+
+  const formSchema = z.object({
+    email: z.string().email(t("emailRequired")),
+    password: z.string().min(1, t("passwordRequired")),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { email: "", password: "" },
+  });
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    try {
+      const response = await loginUser(data).unwrap();
+
+      // Extract token correctly from your API response
+      const accessToken = response.data?.access;
+      const refreshToken = response.data?.refresh;
+
+      if (!accessToken) {
+        throw new Error("No access token returned");
+      }
+
+      // Save to Redux store
+      dispatch(
+        setCredentials({
+          user: { id: response.data?.userId, role: response.data?.role }, // if available
+          token: accessToken,
+        })
+      );
+
+      // Persist tokens
+      localStorage.setItem("token", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+
+      router.push(`/${locale}/dashboard`);
+    } catch (err: unknown) {
+      console.error("Login failed:", err);
+
+      // If error comes from RTK Query or network
+      if (err instanceof Error) {
+        form.setError("email", {
+          message: err.message || "Invalid credentials",
+        });
+      } else {
+        form.setError("email", { message: "Invalid credentials" });
+      }
+    }
+  };
 
   return (
-    <div className="w-full max-w-md space-y-6 mx-6">
-      <div className="text-start">
-        <p className="text-gray-500">{t("welcomeText")}</p>
-        <h2 className="text-2xl font-bold">{t("loginTitle")}</h2>
-      </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full max-w-md space-y-6 mx-6"
+      >
+        <div className="text-start">
+          <p className="text-gray-500">{t("welcomeText")}</p>
+          <h2 className="text-2xl font-[400]">{t("loginTitle")}</h2>
+        </div>
 
-      {/* Email */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium">{t("emailLabel")}</label>
-        <Input type="email" placeholder={t("emailPlaceholder")} />
-      </div>
+        {/* Email */}
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("emailLabel")}</FormLabel>
+              <FormControl>
+                <Input
+                  type="email"
+                  placeholder={t("emailPlaceholder")}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      {/* Password */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium">{t("passwordLabel")}</label>
-        <Input type="password" placeholder={t("passwordPlaceholder")} />
-      </div>
+        {/* Password */}
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("passwordLabel")}</FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  placeholder={t("passwordPlaceholder")}
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      {/* Login Button */}
-      <Button className="w-full bg-gradient-to-r from-primary to-indigo-600 text-white">
-        {t("loginButton")}
-      </Button>
-
-      {/* Forgot Password */}
-      <div>
-        <Link href="#" className="text-sm text-primary hover:underline">
-          {t("forgotPassword")}
-        </Link>
-      </div>
-
-      {/* Divider */}
-      <div className="flex items-center justify-center gap-2 text-gray-400 text-sm">
-        <span className="h-px w-16 bg-gray-200"></span>
-        {t("or")}
-        <span className="h-px w-16 bg-gray-200"></span>
-      </div>
-
-      {/* Social Login */}
-      <div className="flex gap-3 justify-center">
+        {/* Login Button */}
         <Button
-          variant="outline"
-          size="default"
-          aria-label={t("loginWithGoogle")}
+          type="submit"
+          className="w-full bg-gradient-to-r from-primary to-indigo-600 text-white"
         >
-          <Chrome className="h-5 w-5" />
+          {isLoading ? t("loading") : t("loginButton")}
         </Button>
-        <Button
-          variant="outline"
-          size="default"
-          aria-label={t("loginWithApple")}
-        >
-          <Apple className="h-5 w-5" />
-        </Button>
-        <Button
-          variant="outline"
-          size="default"
-          aria-label={t("loginWithFacebook")}
-        >
-          <Facebook className="h-5 w-5" />
-        </Button>
-      </div>
 
-      {/* Register */}
-      <div className="text-center text-sm">
-        {t("notRegistered")}{" "}
-        <Link href="register" className="text-primary hover:underline">
-          {t("createAccount")}
-        </Link>
-      </div>
-    </div>
+        {/* Forgot Password */}
+        <div>
+          <Link href="#" className="text-sm text-primary hover:underline">
+            {t("forgotPassword")}
+          </Link>
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center justify-center gap-2 text-gray-400 text-sm">
+          <span className="h-px w-16 bg-gray-200"></span>
+          {t("or")}
+          <span className="h-px w-16 bg-gray-200"></span>
+        </div>
+
+        {/* Social Login */}
+        <div className="flex gap-3 justify-center">
+          <Button
+            variant="outline"
+            size="default"
+            aria-label={t("loginWithGoogle")}
+          >
+            <Chrome className="h-5 w-5" />
+          </Button>
+          <Button
+            variant="outline"
+            size="default"
+            aria-label={t("loginWithApple")}
+          >
+            <Apple className="h-5 w-5" />
+          </Button>
+          <Button
+            variant="outline"
+            size="default"
+            aria-label={t("loginWithFacebook")}
+          >
+            <Facebook className="h-5 w-5" />
+          </Button>
+        </div>
+
+        {/* Register */}
+        <div className="text-center text-sm">
+          {t("notRegistered")}{" "}
+          <Link
+            href={`/${locale}/register`}
+            className="text-primary hover:underline"
+          >
+            {t("createAccount")}
+          </Link>
+        </div>
+      </form>
+    </Form>
   );
 }

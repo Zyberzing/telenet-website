@@ -1,10 +1,8 @@
-"use client";
-
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { FaApple, FaGooglePlay } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
 import { Button } from "../ui/Button";
-import { useTranslations } from "next-intl";
 
 export default function Features() {
   const t = useTranslations("Features");
@@ -150,7 +148,7 @@ export default function Features() {
                   <p className="text-[10px] sm:text-xs m-0 p-0">
                     {t("downloadBanner.googlePlay.getItOn")}
                   </p>
-                  <p className="text-sm sm:text-base font-semibold m-0 p-0">
+                  <p className="text-sm sm:text-base font-[400] m-0 p-0">
                     {t("downloadBanner.googlePlay.name")}
                   </p>
                 </div>
@@ -162,7 +160,7 @@ export default function Features() {
                   <p className="text-[10px] sm:text-xs m-0 p-0">
                     {t("downloadBanner.appStore.downloadOn")}
                   </p>
-                  <p className="text-sm sm:text-base font-semibold m-0 p-0">
+                  <p className="text-sm sm:text-base font-[400] m-0 p-0">
                     {t("downloadBanner.appStore.name")}
                   </p>
                 </div>

@@ -69,7 +69,44 @@
     "loginWithApple": "Login with Apple",
     "loginWithFacebook": "Login with Facebook",
     "notRegistered": "Not registered?",
-    "createAccount": "Create an account"
+    "createAccount": "Create an account",
+    "emailRequired": "Invalid email",
+    "passwordRequired": "Password is required",
+    "loading": "Loading"
+  },
+  "RegisterForm": {
+    "welcomeText": "Welcome! Create your account below.",
+    "registerTitle": "Register",
+    "registerButton": "Create Account",
+    "success": "Registration successful!",
+    "error": "Something went wrong. Please try again.",
+
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "phone": "Phone Number",
+      "countryCode": "Country Code"
+    },
+
+    "placeholders": {
+      "name": "Enter your full name",
+      "email": "Enter your email",
+      "password": "Enter your password",
+      "phone": "Enter your phone number",
+      "countryCode": "Enter country code (e.g. +1)"
+    },
+
+    "validation": {
+      "nameRequired": "Name is required",
+      "emailInvalid": "Please enter a valid email",
+      "passwordMin": "Password must be at least 6 characters",
+      "phoneInvalid": "Enter a valid phone number",
+      "countryCodeRequired": "Country code is required"
+    },
+    "searchCountry": "Search country...",
+    "noCountryFound": "No country found",
+    "loading": "Loading"
   },
   "AboutUs": {
     "explore": {

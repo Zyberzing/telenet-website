@@ -45,7 +45,7 @@ export default function Footer({ locale }: { locale: string }) {
 
         {/* Purchase */}
         <div className="flex flex-col items-start">
-          <h3 className="font-semibold text-[18px] sm:text-[20px] text-primary">
+          <h3 className="font-[400] text-[18px] sm:text-[20px] text-primary">
             {t("purchase")}
           </h3>
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
@@ -59,7 +59,7 @@ export default function Footer({ locale }: { locale: string }) {
 
         {/* Top Destinations */}
         <div className="flex flex-col items-start">
-          <h3 className="font-semibold text-[18px] sm:text-[20px] text-primary">
+          <h3 className="font-[400] text-[18px] sm:text-[20px] text-primary">
             {t("topDestinations")}
           </h3>
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
@@ -80,7 +80,7 @@ export default function Footer({ locale }: { locale: string }) {
 
         {/* Company */}
         <div className="flex flex-col items-start">
-          <h3 className="font-semibold text-[18px] sm:text-[20px] text-primary">
+          <h3 className="font-[400] text-[18px] sm:text-[20px] text-primary">
             {t("company")}
           </h3>
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
@@ -101,7 +101,7 @@ export default function Footer({ locale }: { locale: string }) {
 
         {/* Resources */}
         <div className="flex flex-col items-start">
-          <h3 className="font-semibold text-[18px] sm:text-[20px] text-primary">
+          <h3 className="font-[400] text-[18px] sm:text-[20px] text-primary">
             {t("resources")}
           </h3>
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
