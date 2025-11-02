@@ -11,10 +11,16 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 
+type FaqItem = {
+  _id: string;
+  question: string;
+  answer: string;
+};
+
 export default function FAQ() {
   const t = useTranslations("FAQ");
   const [getFaqs, { isLoading }] = useGetFaqMutation();
-  const [faqList, setFaqList] = useState([]);
+  const [faqList, setFaqList] = useState<FaqItem[]>([]);
 
   // 🔹 Fetch FAQs when component mounts
   useEffect(() => {
@@ -43,7 +49,7 @@ export default function FAQ() {
           <p>{t("notFound")}</p>
         ) : (
           <div className="grid md:grid-cols-2 gap-6 text-left">
-            {faqList.map((faq: any) => (
+            {faqList.map((faq: FaqItem) => (
               <Accordion
                 key={faq._id}
                 type="single"
