@@ -1,26 +1,32 @@
+"use client";
+
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useGetFaqMutation } from "@/services/cms-content/faqApi";
 import { useTranslations } from "next-intl";
-
-const faqsData = [
-  { questionKey: "faq.q1", answerKey: "faq.a1" },
-  { questionKey: "faq.q2", answerKey: "faq.a2" },
-  { questionKey: "faq.q3", answerKey: "faq.a3" },
-  { questionKey: "faq.q4", answerKey: "faq.a4" },
-  { questionKey: "faq.q5", answerKey: "faq.a5" },
-  { questionKey: "faq.q6", answerKey: "faq.a6" },
-  { questionKey: "faq.q7", answerKey: "faq.a7" },
-  { questionKey: "faq.q8", answerKey: "faq.a8" },
-  { questionKey: "faq.q9", answerKey: "faq.a9" },
-  { questionKey: "faq.q10", answerKey: "faq.a10" },
-];
+import { useEffect, useState } from "react";
+import { FaSpinner } from "react-icons/fa";
 
 export default function FAQ() {
   const t = useTranslations("FAQ");
+  const [getFaqs, { data, isLoading }] = useGetFaqMutation();
+  const [faqList, setFaqList] = useState([]);
+
+  // 🔹 Fetch FAQs when component mounts
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await getFaqs(null).unwrap();
+        setFaqList(response?.data || []);
+      } catch (error) {
+        console.error("Failed to fetch FAQs:", error);
+      }
+    })();
+  }, [getFaqs]);
 
   return (
     <section className="w-full py-16 px-2">
@@ -29,21 +35,29 @@ export default function FAQ() {
           {t("title")}
         </h2>
 
-        <div className="grid md:grid-cols-2 gap-6 text-left">
-          {faqsData.map((faq, index) => (
-            <Accordion
-              key={index}
-              type="single"
-              collapsible
-              className="p-4 px-6 border rounded-xl border-[#F1F1F1]"
-            >
-              <AccordionItem value={`item-${index}`}>
-                <AccordionTrigger>{t(faq.questionKey)}</AccordionTrigger>
-                <AccordionContent>{t(faq.answerKey)}</AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          ))}
-        </div>
+        {isLoading ? (
+          <p className="w-full items-center text-center">
+            <FaSpinner />
+          </p>
+        ) : faqList.length === 0 ? (
+          <p>{t("notFound")}</p>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-6 text-left">
+            {faqList.map((faq: any) => (
+              <Accordion
+                key={faq._id}
+                type="single"
+                collapsible
+                className="p-4 px-6 border rounded-xl border-[#F1F1F1]"
+              >
+                <AccordionItem value={faq._id}>
+                  <AccordionTrigger>{faq.question}</AccordionTrigger>
+                  <AccordionContent>{faq.answer}</AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

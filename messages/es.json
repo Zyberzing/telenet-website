@@ -340,7 +340,8 @@
       "a9": "Sí, puedes recargar tu plan eSIM a través de la app o el sitio web de tu proveedor.",
       "q10": "¿Qué pasa si tengo problemas durante la instalación?",
       "a10": "Si tienes problemas, contacta al equipo de soporte de tu proveedor. Te guiarán paso a paso para resolver el problema."
-    }
+    },
+    "notFound": "No se encontraron preguntas frecuentes."
   },
   "InstallationGuide": {
     "title": "Guía de",

@@ -340,7 +340,8 @@
       "a9": "Yes, you can top up or recharge your eSIM plan through your provider’s app or website.",
       "q10": "What if I face issues during installation?",
       "a10": "If you face issues, contact your provider’s support team. They will guide you step by step to resolve the problem."
-    }
+    },
+    "notFound": "No FAQs found."
   },
   "InstallationGuide": {
     "title": "Installation",
