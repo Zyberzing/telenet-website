@@ -13,7 +13,7 @@ import { FaSpinner } from "react-icons/fa";
 
 export default function FAQ() {
   const t = useTranslations("FAQ");
-  const [getFaqs, { data, isLoading }] = useGetFaqMutation();
+  const [getFaqs, { isLoading }] = useGetFaqMutation();
   const [faqList, setFaqList] = useState([]);
 
   // 🔹 Fetch FAQs when component mounts
