@@ -73,7 +73,8 @@ export default function RegisterForm() {
         name: data.name,
         email: data.email,
         password: data.password,
-        phone: `${data.countryCode}${data.phone}`,
+        phone: data.phone,
+        countryCode: data.countryCode,
       };
 
       const response = await registerUser(payload).unwrap();

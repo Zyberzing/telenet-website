@@ -2,8 +2,10 @@
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { RootState } from "@/store/Store";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import { useSelector } from "react-redux";
 
 interface SuggestedPlan {
   price: number;
@@ -33,6 +35,9 @@ export default function Dashboard({
   userData,
 }: DashboardProps) {
   const t = useTranslations("Dashboard");
+  const { user, token } = useSelector((state: RootState) => state.auth);
+
+  console.log("user", user, token);
 
   return (
     <div className="min-h-screen bg-white w-full">

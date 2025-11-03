@@ -10,7 +10,6 @@ import {
   Settings,
   ShoppingCart,
   Sun,
-  User,
   Wallet,
   X,
 } from "lucide-react";
@@ -24,7 +23,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
@@ -113,41 +111,6 @@ export default function HeaderAuth() {
                   {lang.name}
                 </DropdownMenuItem>
               ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* User Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild className="cursor-pointer">
-              <button className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition">
-                <User className="h-4 w-4" />
-                <span>{t("userName")}</span>
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-64 p-2">
-              <div className="space-y-1">
-                {MENU_ITEMS.map((item) => (
-                  <DropdownMenuItem key={item.href} asChild>
-                    <Link
-                      href={`/${selectedLanguage.code}/${item.href}`}
-                      className="flex items-center gap-3 w-full px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
-                    >
-                      <item.icon className="h-4 w-4" />
-                      {t(item.label)}
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
-              </div>
-
-              <DropdownMenuSeparator className="my-2" />
-
-              <Button
-                className="w-full justify-center bg-primary hover:bg-primary text-white"
-                size="sm"
-              >
-                <ShoppingCart className="h-4 w-4 mr-2" />
-                {t("buyNewPlan")}
-              </Button>
             </DropdownMenuContent>
           </DropdownMenu>
 

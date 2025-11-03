@@ -27,7 +27,16 @@ import Image from "next/image";
 import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 
-export default function ProfileSetting() {
+type User = {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  avatar?: string;
+  location?: string;
+};
+
+export default function ProfileSetting({ user }: { user: User }) {
   const t = useTranslations("profile");
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -57,7 +66,7 @@ export default function ProfileSetting() {
 
           <div className="text-center sm:text-left">
             <p className="text-[24px] font-[400px] text-gray-900">
-              {t("name")}
+              {user.name}
             </p>
             <p className="text-primary text-sm">{t("email")}</p>
             <p className="text-sm">{t("phone")}</p>

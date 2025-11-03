@@ -5,7 +5,15 @@
     "about": "Sobre nosotros",
     "installGuide": "Guía de instalación",
     "contact": "Contáctanos",
-    "signIn": "Iniciar sesión"
+    "signIn": "Iniciar sesión",
+    "dashboard": "Panel",
+    "myPlans": "Mis planes",
+    "wallet": "Billetera",
+    "ordersBilling": "Pedidos y facturación",
+    "profileSettings": "Perfil y configuración",
+    "support": "Apoyo",
+    "buyNewPlan": "Comprar nuevo plan",
+    "logout": "Finalizar la sesión"
   },
   "HeaderAuth": {
     "logoAlt": "Logotipo de Telenet",

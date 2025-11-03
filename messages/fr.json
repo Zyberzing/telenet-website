@@ -5,7 +5,15 @@
     "about": "À propos de nous",
     "installGuide": "Guide d'installation",
     "contact": "Contactez-nous",
-    "signIn": "Se connecter"
+    "signIn": "Se connecter",
+    "dashboard": "Tableau de bord",
+    "myPlans": "Mes projets",
+    "wallet": "Portefeuille",
+    "ordersBilling": "Commandes et facturation",
+    "profileSettings": "Profil et paramètres",
+    "support": "Soutien",
+    "buyNewPlan": "Acheter un nouveau plan",
+    "logout": "Déconnexion"
   },
   "HeaderAuth": {
     "logoAlt": "Logo Telenet",

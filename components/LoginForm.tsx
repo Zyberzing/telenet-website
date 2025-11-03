@@ -1,17 +1,17 @@
 "use client";
 
+import { useLoginUserMutation } from "@/services/authApi";
+import { setCredentials } from "@/store/slices/authSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { jwtDecode } from "jwt-decode";
 import { Apple, Chrome, Facebook } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { Button } from "./ui/Button";
-
-import { useLoginUserMutation } from "@/services/authApi";
-import { setCredentials } from "@/store/slices/authSlice";
 import { useDispatch } from "react-redux";
 import z from "zod/v3";
+import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 import {
   Form,
@@ -43,7 +43,6 @@ export default function LoginForm() {
     try {
       const response = await loginUser(data).unwrap();
 
-      // Extract token correctly from your API response
       const accessToken = response.data?.access;
       const refreshToken = response.data?.refresh;
 
@@ -51,30 +50,22 @@ export default function LoginForm() {
         throw new Error("No access token returned");
       }
 
-      // Save to Redux store
-      dispatch(
-        setCredentials({
-          user: { id: response.data?.userId, role: response.data?.role }, // if available
-          token: accessToken,
-        })
+      const decoded: { authId: string; role: string; exp: number } = jwtDecode(
+        accessToken.replace("Bearer ", "")
       );
 
-      // Persist tokens
-      localStorage.setItem("token", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      dispatch(
+        setCredentials({
+          token: accessToken,
+          user: { id: decoded.authId, role: decoded.role },
+          refreshToken,
+        })
+      );
 
       router.push(`/${locale}/dashboard`);
     } catch (err: unknown) {
       console.error("Login failed:", err);
-
-      // If error comes from RTK Query or network
-      if (err instanceof Error) {
-        form.setError("email", {
-          message: err.message || "Invalid credentials",
-        });
-      } else {
-        form.setError("email", { message: "Invalid credentials" });
-      }
+      form.setError("email", { message: "Invalid credentials" });
     }
   };
 

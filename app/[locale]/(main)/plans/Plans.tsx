@@ -8,9 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/Input";
 import { Slider } from "@/components/ui/slider";
-import { cn } from "@/lib/utils";
 import {
   ChevronDown,
   ChevronRightIcon,
@@ -22,21 +20,34 @@ import Image from "next/image";
 import { useState } from "react";
 
 type Plan = {
-  price: number;
+  package_id: string;
+  package_name: string;
   data: string;
-  validity: string;
-  tag: string;
-  tag2: string;
-  color: string;
-  // markup: number;
-  // tax: number;
-  // total: number;
+  validity: number;
+  coverage: string;
+  price: number;
+  tax: number;
+  finalPrice: number;
+  network: string;
+  fup_policy: string | null;
+  countries: { countryname: string; countryiso2: string }[];
+};
+
+type AdminMarkup = {
+  _id: string;
+  markupType: "percentage" | "fixed";
+  fixed: number;
+  markupCategory: string;
+  user: string;
+  percentage: number;
+  updatedAt: string;
 };
 
 type PlansProps = {
   countries: { code: string; name: string }[];
   regions: { name: string }[];
   plans: Plan[];
+  adminMarkup: AdminMarkup;
   selectedCountry: string;
   selectedRegion: string;
   setSelectedCountry: (val: string) => void;
@@ -46,19 +57,30 @@ type PlansProps = {
 export default function Plans({
   countries,
   regions,
-  plans: initialPlans = [],
+  plans = [],
+  adminMarkup,
   selectedCountry,
   selectedRegion,
   setSelectedCountry,
   setSelectedRegion,
 }: PlansProps) {
   const t = useTranslations("Plans");
-  const plans = initialPlans;
-  const [validity, setValidity] = useState("7 days");
-  const [network, setNetwork] = useState("5G");
-  const [provider, setProvider] = useState("5G");
-  const [dataSize, setDataSize] = useState([50]);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [dataSize, setDataSize] = useState([50]);
+
+  const total = (() => {
+    if (!selectedPlan) return 0;
+
+    const basePrice = selectedPlan.price || 0;
+    const markup =
+      adminMarkup?.markupType === "percentage"
+        ? (basePrice * (adminMarkup?.percentage || 0)) / 100
+        : adminMarkup?.fixed || 0;
+
+    const tax = selectedPlan.tax || 0;
+
+    return basePrice + markup + tax;
+  })();
 
   return (
     <section className="w-full min-h-screen bg-white text-gray-900">
@@ -83,25 +105,18 @@ export default function Plans({
               {t("filterTitle")}
             </h2>
 
-            {/* Dropdowns */}
+            {/* Country & Region Filters */}
             <Dropdown
               label={t("country")}
               value={selectedCountry}
               setValue={setSelectedCountry}
-              // items={countries}
-              items={countries.map((c) => ({
-                label: c.name,
-                value: c.name,
-              }))}
+              items={countries.map((c) => ({ label: c.name, value: c.name }))}
             />
             <Dropdown
               label={t("region")}
               value={selectedRegion}
               setValue={setSelectedRegion}
-              items={regions.map((r) => ({
-                label: r.name,
-                value: r.name,
-              }))}
+              items={regions.map((r) => ({ label: r.name, value: r.name }))}
             />
 
             {/* Data Size */}
@@ -121,54 +136,6 @@ export default function Plans({
                 <span>100GB</span>
               </div>
             </div>
-
-            <Dropdown
-              label={t("validity")}
-              value={validity}
-              setValue={setValidity}
-              items={[
-                { label: "7 days", value: "7" },
-                { label: "30 days", value: "30" },
-                { label: "90 days", value: "90" },
-                { label: "365 days", value: "365" },
-              ]}
-            />
-            <Dropdown
-              label={t("priceRange")}
-              value="$0"
-              setValue={() => {}}
-              items={[
-                { label: "$0", value: "0" },
-                { label: "$20", value: "20" },
-                { label: "$50", value: "50" },
-                { label: "$100", value: "100" },
-              ]}
-            />
-            <Dropdown
-              label={t("network")}
-              value={network}
-              setValue={setNetwork}
-              items={[
-                { label: "4G", value: "4G" },
-                { label: "5G", value: "5G" },
-              ]}
-            />
-            <Dropdown
-              label={t("provider")}
-              value={provider}
-              setValue={setProvider}
-              items={[
-                { label: "4G", value: "4G" },
-                { label: "5G", value: "5G" },
-              ]}
-            />
-
-            <Button
-              variant="outline"
-              className="mt-6 w-full font-medium text-sm"
-            >
-              {t("reset")}
-            </Button>
           </aside>
 
           {/* Main Content */}
@@ -177,123 +144,46 @@ export default function Plans({
               {t("popularPlans")}
             </h1>
 
-            {/* Filter Buttons + Search */}
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
-              <div className="flex flex-wrap gap-2">
-                {[
-                  t("filters.cheapest"),
-                  t("filters.mostPopular"),
-                  t("filters.fiveGPlans"),
-                  t("filters.yearly"),
-                  t("filters.daily"),
-                ].map((filter) => (
-                  <Button
-                    key={filter}
-                    variant="outline"
-                    className="rounded-full text-xs font-medium border-gray-300 hover:bg-purple-100 hover:text-purple-600"
-                  >
-                    {filter}
-                  </Button>
-                ))}
-              </div>
-              <Input
-                type="text"
-                placeholder={t("searchPlaceholder")}
-                className="w-full sm:w-[240px] text-sm"
-              />
-            </div>
-
-            {/* Plans */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {plans.length > 0 ? (
-                plans.map((plan, i) => (
-                  <div key={i}>
+                plans.map((plan) => (
+                  <div key={plan.package_id}>
                     <div className="flex justify-between items-center mb-1">
-                      <div className="flex gap-2">
-                        <span
-                          className={cn(
-                            "text-[14px] font-medium text-white rounded-[7px] px-2",
-                            // plan.color === "orange"
-                            // ? "bg-[#E49B2C]"
-                            "bg-[#A22BE6]"
-                          )}
-                        >
-                          {t("providerLogo")}
-                        </span>
-                        {plan.tag && (
-                          <span
-                            className={cn(
-                              "text-[14px] font-medium text-white rounded-[7px] px-2",
-                              plan?.tag === "bestSeller"
-                                ? "bg-[#E49B2C]"
-                                : "bg-[#9564F8]"
-                            )}
-                          >
-                            {plan?.tag === "bestSeller"
-                              ? t("bestSeller")
-                              : t("trending")}
-                          </span>
-                        )}
-                      </div>
-                      {plan.tag2 && (
-                        <span className="text-[14px] text-[#A70123] font-extrabold uppercase">
-                          {plan.tag2}
-                        </span>
-                      )}
+                      <span className="text-[14px] font-medium text-white rounded-[7px] px-2 bg-[#A22BE6]">
+                        {plan.coverage}
+                      </span>
                     </div>
 
                     <div
-                      className={cn(
-                        "rounded-b-2xl rounded-tr-2xl rounded-tl-xs p-5 shadow-sm border border-gray-100 flex flex-col justify-between transition hover:shadow-md",
-                        // plan.color === "orange"
-                        //   ? "bg-[#FFF2E0]"
-                        "bg-[#F1F8FE]"
-                      )}
+                      className="rounded-2xl p-5 shadow-sm border border-gray-100 bg-[#F1F8FE] hover:shadow-md transition flex flex-col justify-between"
+                      onClick={() => setSelectedPlan(plan)}
                     >
                       <div className="flex justify-between">
                         <h3 className="text-2xl font-[400px] mb-6">
-                          ${plan.price}
+                          ${plan.finalPrice.toFixed(2)}
                         </h3>
-                        <ChevronRightIcon
-                          className={cn(
-                            "cursor-pointer",
-                            // plan.color === "orange"
-                            //   ? "text-[#E49B2C]"
-                            "text-primary"
-                          )}
-                          onClick={() => setSelectedPlan(plan)}
-                        />
+                        <ChevronRightIcon className="cursor-pointer text-primary" />
                       </div>
 
-                      <div>
-                        <div className="flex gap-4 text-[#5d544d]">
-                          <p>{t("validity")}</p>
-                          <p>{t("data")}</p>
+                      <div className="flex gap-3">
+                        <div className="gap-4">
+                          <p className="text-[#5d544d]">{t("validity")}</p>
+                          <p>{plan.validity} days</p>
                         </div>
-                        <div className="flex gap-4">
-                          <p>{plan.validity}</p>
+                        <div className="gap-4">
+                          <p className="text-[#5d544d]">{t("data")}</p>
                           <p>{plan.data}</p>
                         </div>
                       </div>
 
-                      <Button
-                        className={cn(
-                          "mt-6 text-sm font-[400] rounded-full w-full",
-                          // plan.color === "orange"
-                          //   ? "bg-[#E49B2C]"
-                          "bg-gradient"
-                        )}
-                        onClick={() => setSelectedPlan(plan)}
-                      >
+                      <Button className="mt-6 text-sm rounded-full w-full bg-gradient">
                         {t("buy")}
                       </Button>
                     </div>
                   </div>
                 ))
               ) : (
-                <>
-                  <p className="text-[20px]">No plans available yet.</p>
-                </>
+                <p className="text-[20px]">No plans available yet.</p>
               )}
             </div>
           </main>
@@ -301,124 +191,148 @@ export default function Plans({
       </div>
 
       {/* Dialog Modal */}
-      <Dialog
-        open={selectedPlan !== null}
-        onOpenChange={() => setSelectedPlan(null)}
-      >
-        <DialogContent
-          showCloseButton={false}
-          className="max-w-md max-h-[85vh] flex flex-col rounded-2xl bg-white shadow-lg overflow-hidden"
-        >
-          {/* Header */}
-          <div className="p-4 border-b border-gray-200 flex justify-between sticky top-0 bg-white z-10">
-            <div>
-              <h2 className="text-lg font-[400]">USA 5GB, 30 Days</h2>
-              <p className="text-sm text-gray-500">
-                Provider: Verizon | Network: 4G/5G
-              </p>
-            </div>
-
-            {/* ONLY CUSTOM CLOSE BUTTON */}
-            <button
-              onClick={() => setSelectedPlan(null)}
-              className="text-gray-500 hover:text-red-500 text-3xl -mt-2 font-[400px] cursor-pointer self-start"
-            >
-              &times;
-            </button>
-          </div>
-
-          {/* Scrollable Content */}
-          <div className="p-4 overflow-y-auto flex-1 space-y-4">
-            {/* Plan Details */}
-            <div>
-              <p className="text-[15px] mb-3">Plan Details</p>
-              <div className="flex justify-between text-sm gap-1">
-                <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-tl-xl">
-                  Data
-                </span>
-                <span className="text-start bg-[#F1F8FE] w-full p-2 rounded-tr-xl">
-                  5 GB
-                </span>
-              </div>
-              <div className="flex justify-between text-sm gap-1">
-                <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-bl-xl">
-                  Validity
-                </span>
-                <span className="text-start bg-[#F1F8FE] w-full p-2 rounded-br-xl">
-                  30 Days
-                </span>
-              </div>
-            </div>
-
-            {/* Price Breakdown */}
-            <div>
-              <p className="text-[15px] mb-3">Price Breakdown</p>
-              <div className="flex justify-between text-sm gap-1">
-                <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-tl-xl">
-                  Price Breakdown
-                </span>
-                <span className="text-start bg-[#F1F8FE] w-full p-2 rounded-tr-xl">
-                  $10.00
-                </span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 ">
-                  Markup
-                </span>
-                <span className="text-start bg-[#F1F8FE] w-full p-2 ">
-                  +$1.50 (15%)
-                </span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-bl-xl">
-                  Tax
-                </span>
-                <span className="text-start bg-[#F1F8FE] w-full p-2 rounded-br-xl">
-                  +$0.75
-                </span>
-              </div>
-              <div className="flex justify-between font-[400] text-sm border border-primary rounded-xl px-3 text-center py-2 gap-1 mt-2">
-                <span className="w-full text-start px-2">Total</span>
-                <span className="text-start w-full px-2">$12.25</span>
-              </div>
-            </div>
-
-            {/* Expiry & Notes */}
-            <div className="text-xs space-y-3">
+      <Dialog open={!!selectedPlan} onOpenChange={() => setSelectedPlan(null)}>
+        {selectedPlan && (
+          <DialogContent
+            showCloseButton={false}
+            className="max-w-md max-h-[85vh] flex flex-col rounded-2xl bg-white shadow-lg overflow-hidden border-0"
+          >
+            {/* Header */}
+            <div className="p-4 border-b border-gray-200 flex justify-between sticky top-0 bg-white z-10">
               <div>
-                <p className="text-[15px] font-[400px]">Expiry Rules:</p>
-                <p className="mt-2 text-[#565656] text-[13px]">
-                  Plan auto-expires after 30 days or when data is used.
+                <h2 className="text-lg font-[400]">
+                  {selectedPlan.package_name}
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Network: {selectedPlan.coverage}
                 </p>
               </div>
-              <div>
-                <p className="text-[15px] font-[400px]">Notes:</p>
-                <p className="mt-2 text-[#565656] text-[13px]">
-                  Refund Policy: Refunds only if plan is not activated.
-                  <br />
-                  Device Compatibility: Supports all eSIM-enabled iPhones &
-                  Pixels.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <DialogFooter className="p-4 bg-gray-50 rounded-b-2xl flex justify-between items-center sticky bottom-0 z-10">
-            <Heart className="w-5 h-5 text-gray-400 cursor-pointer hover:text-red-500" />
-            <div className="flex gap-2 flex-1">
-              <Button className="bg-purple-600 flex-1 text-white rounded-full px-4 py-2 text-sm">
-                Buy
-              </Button>
-              <Button
-                variant="secondary"
-                className="bg-black flex-1 text-white rounded-full px-4 py-2 text-sm"
+              <button
+                onClick={() => setSelectedPlan(null)}
+                className="text-gray-500 hover:text-red-500 text-3xl -mt-2 font-[400px] cursor-pointer self-start"
               >
-                Add to Wallet
-              </Button>
+                &times;
+              </button>
             </div>
-          </DialogFooter>
-        </DialogContent>
+
+            {/* Scrollable Content */}
+            <div className="p-4 overflow-y-auto flex-1 space-y-4">
+              {/* Plan Details */}
+              <div>
+                <p className="text-[15px] mb-3 font-[400]">Plan Details</p>
+                <div className="flex justify-between text-sm gap-1 mb-1">
+                  <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-tl-xl">
+                    Data
+                  </span>
+                  <span className="text-start bg-[#F1F8FE] w-full p-2 rounded-tr-xl">
+                    {selectedPlan.data}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm gap-1 mb-1">
+                  <span className="text-[#565656] bg-[#F1F8FE] w-full p-2">
+                    Validity
+                  </span>
+                  <span className="text-start bg-[#F1F8FE] w-full p-2">
+                    {selectedPlan.validity}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm gap-1">
+                  <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-bl-xl">
+                    Coverage
+                  </span>
+                  <span className="text-start bg-[#F1F8FE] w-full p-2 rounded-br-xl">
+                    {selectedPlan.coverage}
+                  </span>
+                </div>
+              </div>
+
+              {/* Price Breakdown */}
+              <div>
+                <p className="text-[15px] mb-3 font-[400]">Price Breakdown</p>
+                <div className="flex justify-between text-sm gap-1 mb-1">
+                  <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-tl-xl">
+                    Base Price
+                  </span>
+                  <span className="text-start bg-[#F1F8FE] w-full p-2 rounded-tr-xl">
+                    ${selectedPlan.price.toFixed(2)}
+                  </span>
+                </div>
+
+                {adminMarkup && (
+                  <div className="flex justify-between text-sm gap-1 mb-1">
+                    <span className="text-[#565656] bg-[#F1F8FE] w-full p-2">
+                      Markup
+                    </span>
+                    <span className="text-start bg-[#F1F8FE] w-full p-2">
+                      $
+                      {(adminMarkup?.markupType === "percentage"
+                        ? ((selectedPlan?.price || 0) *
+                            (adminMarkup?.percentage || 0)) /
+                          100
+                        : adminMarkup?.fixed || 0
+                      ).toFixed(2)}{" "}
+                      ({adminMarkup?.percentage}
+                      {adminMarkup?.markupType === "percentage" ? "%" : ""})
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex justify-between text-sm gap-1">
+                  <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-bl-xl">
+                    Tax
+                  </span>
+                  <span className="text-start bg-[#F1F8FE] w-full p-2 rounded-br-xl">
+                    ${selectedPlan?.tax?.toFixed(2) || 0}
+                  </span>
+                </div>
+                <div className="flex justify-between font-[400] text-sm border border-primary rounded-xl px-3 text-center py-2 gap-1 mt-2">
+                  <span className="w-full text-start px-2">Total</span>
+                  <span className="text-start w-full px-2">
+                    ${total.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              {/* FUP / Notes */}
+              {selectedPlan.fup_policy && (
+                <div>
+                  <p className="text-[15px] font-medium">Expiry Rules:</p>
+                  <p className="mt-2 text-[#565656] text-[13px]">
+                    {selectedPlan.fup_policy}
+                  </p>
+                </div>
+              )}
+
+              {/* Countries */}
+              <div>
+                <p className="text-[15px] font-medium mb-2">Available in:</p>
+                <div className="flex flex-wrap gap-2 text-sm text-gray-700">
+                  {selectedPlan.countries.map((c) => (
+                    <span
+                      key={c.countryiso2}
+                      className="px-2 py-1 bg-gray-100 rounded-md"
+                    >
+                      {c.countryname}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <DialogFooter className="p-4 bg-gray-50 rounded-b-2xl flex justify-between items-center sticky bottom-0 z-10">
+              <Heart className="w-5 h-5 text-gray-400 cursor-pointer hover:text-red-500" />
+              <div className="flex gap-2 flex-1">
+                <Button className="bg-purple-600 flex-1 text-white rounded-full px-4 py-2 text-sm">
+                  Buy
+                </Button>
+                <Button className="bg-black flex-1 text-white rounded-full px-4 py-2 text-sm">
+                  Add to Wallet
+                </Button>
+              </div>
+            </DialogFooter>
+          </DialogContent>
+        )}
       </Dialog>
     </section>
   );

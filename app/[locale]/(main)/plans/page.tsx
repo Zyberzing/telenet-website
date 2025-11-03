@@ -62,6 +62,7 @@ export default function Page() {
       countries={countriesData?.data || []}
       regions={regionsData?.data || []}
       plans={plansData?.data?.plans || []}
+      adminMarkup={plansData?.data?.adminMarkup || []}
       selectedCountry={selectedCountry}
       selectedRegion={selectedRegion}
       setSelectedCountry={setSelectedCountry}
@@ -69,4 +70,3 @@ export default function Page() {
     />
   );
 }
-
