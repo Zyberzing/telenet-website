@@ -1,26 +1,22 @@
-"use client"; // ✅ Make it a client component
+"use client";
 
 import { useGetProfileQuery } from "@/services/authApi";
-import { useLocale } from "next-intl";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { RootState } from "@/store/Store";
+import { useSelector } from "react-redux";
 import ProfileSetting from "./ProfileSetting";
 
 export default function Page() {
-  const locale = useLocale();
-  const router = useRouter();
+  const token = useSelector((state: RootState) => state?.auth?.token);
 
-  const { data: user, isLoading, error } = useGetProfileQuery(undefined);
+  const { data, isLoading } = useGetProfileQuery(undefined, {
+    skip: !token,
+  });
 
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.push(`/${locale}/`);
-    }
-  }, [isLoading, user, router, locale]);
+  if (!token) {
+    return <p>Please log in to view your profile.</p>;
+  }
 
   if (isLoading) return <p>Loading...</p>;
 
-  if (error) return <p>Something went wrong loading your profile.</p>;
-
-  return <ProfileSetting user={user} />;
+  return <ProfileSetting user={data?.data} />;
 }

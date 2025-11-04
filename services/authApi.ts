@@ -5,12 +5,19 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE,
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token;
+    prepareHeaders: (headers, { getState, endpoint }) => {
+      const state = getState() as RootState;
+      const accessToken = state.auth.token;
+      const refreshToken = state.auth.refreshToken;
 
-      if (token) {
-        // token already includes Bearer prefix from your login response
-        headers.set("authorization", token);
+      if (
+        (endpoint === "getProfile" || endpoint === "changePassword") &&
+        accessToken
+      ) {
+        headers.set("authorization", accessToken);
+        if (refreshToken) {
+          headers.set("x-refresh-token", refreshToken);
+        }
       }
 
       return headers;
@@ -37,6 +44,13 @@ export const authApi = createApi({
         method: "GET",
       }),
     }),
+    changePassword: builder.mutation({
+      query: (body) => ({
+        url: "/auth/change-password",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -44,4 +58,5 @@ export const {
   useRegisterUserMutation,
   useLoginUserMutation,
   useGetProfileQuery,
+  useChangePasswordMutation,
 } = authApi;

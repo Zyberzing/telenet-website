@@ -16,9 +16,10 @@ import { cn } from "@/lib/utils";
 import { useRegisterUserMutation } from "@/services/authApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getCountries, getCountryCallingCode } from "libphonenumber-js";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Eye, EyeOff } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { useForm } from "react-hook-form";
 import z from "zod/v3";
@@ -38,6 +39,7 @@ export default function RegisterForm() {
   const router = useRouter();
   const locale = useLocale();
   const [registerUser, { isLoading }] = useRegisterUserMutation();
+  const [showPassword, setShowPassword] = useState(false);
 
   // 🧠 Build dynamic country data
   const countryCodes = getCountries().map((country) => ({
@@ -142,11 +144,21 @@ export default function RegisterForm() {
             <FormItem>
               <FormLabel>{t("fields.password")}</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  placeholder={t("placeholders.password")}
-                  {...field}
-                />
+                <div className="relative w-full">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder={t("placeholders.password")}
+                    {...field}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>

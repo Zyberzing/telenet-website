@@ -88,9 +88,6 @@ export default function Footer({ locale }: { locale: string }) {
               <Link href={`/${locale}/about-us`}>{t("aboutUs")}</Link>
             </li>
             <li>
-              <Link href="#">{t("careers")}</Link>
-            </li>
-            <li>
               <Link href={`/${locale}/contact-us`}>{t("contactUs")}</Link>
             </li>
             <li>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "@/app/providers/ThemeProvider";
-import { logout } from "@/store/slices/authSlice"; // 👈 your logout action
+import { logout } from "@/store/slices/authSlice";
 import { RootState } from "@/store/Store";
 import {
   ChevronDown,
@@ -65,11 +65,9 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGE[0]);
 
-  const { token, user } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
 
-  console.log("user", user, token);
-
-  // 🌍 Detect current language
+  // Detect language from URL
   useEffect(() => {
     const parts = pathname.split("/").filter(Boolean);
     const currentLocale = LANGUAGE.find((l) => l.code === parts[0]);
@@ -100,7 +98,7 @@ export default function Header() {
           <Image src="/logo.svg" alt="Telenet Logo" width={156} height={56} />
         </Link>
 
-        {/* Navigation */}
+        {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-8 font-medium capitalize">
           {NAV_ITEMS.map((item) => (
             <Link
@@ -112,7 +110,7 @@ export default function Header() {
             </Link>
           ))}
 
-          {/* 🌐 Language Dropdown */}
+          {/* Language Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition">
@@ -132,7 +130,7 @@ export default function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* 👤 Profile Section */}
+          {/* Profile / Auth Section */}
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -153,7 +151,6 @@ export default function Header() {
                   <ChevronDown className="h-4 w-4" />
                 </button>
               </DropdownMenuTrigger>
-
               <DropdownMenuContent align="end" className="w-48 p-2">
                 <div className="space-y-1">
                   {MENU_ITEMS.map((item) => (
@@ -170,7 +167,6 @@ export default function Header() {
                 </div>
 
                 <DropdownMenuSeparator />
-
                 <DropdownMenuItem
                   onClick={handleLogout}
                   className="text-primary font-[400] px-3 cursor-pointer"
@@ -195,7 +191,7 @@ export default function Header() {
           </button>
         </nav>
 
-        {/* Mobile menu toggle */}
+        {/* Mobile Menu Button */}
         <button
           onClick={() => setOpen(!open)}
           className="lg:hidden p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-800"
@@ -203,6 +199,119 @@ export default function Header() {
           <Menu className="h-6 w-6" />
         </button>
       </div>
+
+      {/* 👇 MOBILE MENU SECTION 👇 */}
+      {open && (
+        <div className="lg:hidden border-t bg-white dark:bg-gray-900">
+          <nav className="flex flex-col p-4 space-y-3 text-base">
+            {/* Links */}
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.key}
+                href={`/${selectedLanguage?.code}${item.href}`}
+                className="hover:text-primary uppercase"
+                onClick={() => setOpen(false)}
+              >
+                {t(item.key)}
+              </Link>
+            ))}
+
+            {/* Language & Theme */}
+            <div className="flex justify-between items-center pt-3 border-t border-gray-200 dark:border-gray-800">
+              <div className="flex gap-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition">
+                      <span>{selectedLanguage?.code.toUpperCase()}</span>
+                      <ChevronDown className="h-4 w-4" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    className="min-w-[6rem] text-sm"
+                  >
+                    {LANGUAGE.map((lang) => (
+                      <DropdownMenuItem
+                        key={lang.code}
+                        onClick={() => {
+                          handleLanguageChange(lang);
+                          setOpen(false);
+                        }}
+                      >
+                        {lang.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                {user ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="flex items-center gap-2">
+                        {user?.avatar ? (
+                          <Image
+                            src={user.avatar}
+                            alt="Profile"
+                            width={36}
+                            height={36}
+                            className="rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="h-9 w-9 rounded-full bg-gray-200 flex items-center justify-center">
+                            <User className="h-4 w-4 text-gray-600" />
+                          </div>
+                        )}
+                        <ChevronDown className="h-4 w-4" />
+                      </button>
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent align="start" className="w-56 p-2">
+                      <div className="space-y-1">
+                        {MENU_ITEMS.map((item) => (
+                          <DropdownMenuItem key={item.href} asChild>
+                            <Link
+                              href={`/${selectedLanguage?.code}/${item.href}`}
+                              onClick={() => setOpen(false)}
+                              className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
+                            >
+                              <item.icon className="h-4 w-4" />
+                              {t(item.label)}
+                            </Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </div>
+
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => {
+                          handleLogout();
+                          setOpen(false);
+                        }}
+                        className="text-primary font-[400] px-3 cursor-pointer"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        {t("logout")}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <button
+                    onClick={() => {
+                      router.push(`/${selectedLanguage?.code}/login`);
+                      setOpen(false);
+                    }}
+                    className="px-4 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+                  >
+                    {t("signIn")}
+                  </button>
+                )}
+              </div>
+              <button onClick={toggleTheme}>
+                <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+              </button>
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

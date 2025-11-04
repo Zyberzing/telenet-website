@@ -21,16 +21,19 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { UserRoundX } from "lucide-react";
+import { useChangePasswordMutation } from "@/services/authApi";
+import { Eye, EyeOff, UserRoundX } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
+import { toast } from "sonner";
 
 type User = {
   id: string;
   name: string;
   email: string;
+  countryCode: string;
   phone?: string;
   avatar?: string;
   location?: string;
@@ -40,6 +43,27 @@ export default function ProfileSetting({ user }: { user: User }) {
   const t = useTranslations("profile");
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [changePassword] = useChangePasswordMutation();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handlePasswordChange = async () => {
+    if (!newPassword.trim()) {
+      toast.error("Please enter a new password");
+      return;
+    }
+
+    try {
+      const res = await changePassword({ newPassword }).unwrap();
+      toast.success(res?.message || "Password changed successfully!");
+      setNewPassword("");
+    } catch (err) {
+      const errorMessage =
+        (err as { data?: { message?: string } })?.data?.message ||
+        "Failed to change password";
+      toast.error(errorMessage);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -66,11 +90,11 @@ export default function ProfileSetting({ user }: { user: User }) {
 
           <div className="text-center sm:text-left">
             <p className="text-[24px] font-[400px] text-gray-900">
-              {user.name}
+              {user?.name}
             </p>
-            <p className="text-primary text-sm">{t("email")}</p>
-            <p className="text-sm">{t("phone")}</p>
-            <p className="text-[#666666] text-sm mt-1">{t("location")}</p>
+            <p className="text-primary text-sm">{user?.email}</p>
+            <p className="text-sm">{user?.phone}</p>
+            <p className="text-[#666666] text-sm mt-1">{user?.location}</p>
           </div>
 
           <button
@@ -94,12 +118,27 @@ export default function ProfileSetting({ user }: { user: User }) {
             {t("changePassword")}
           </Label>
           <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
-            <Input
-              type="password"
-              placeholder="************"
-              className="max-w-xs"
-            />
-            <Button className="bg-primary text-white px-8">
+            <div className="relative max-w-xs w-full">
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="************"
+                className="pr-10"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            <Button
+              onClick={handlePasswordChange}
+              className="bg-primary text-white px-8"
+            >
               {t("changeButton")}
             </Button>
           </div>
@@ -188,7 +227,7 @@ export default function ProfileSetting({ user }: { user: User }) {
         <DialogContent className="sm:max-w-[600px] p-6">
           <DialogHeader className="flex items-start m-0 justify-between">
             <DialogTitle className="text-[24px] font-[400]">
-              {t("modal.edit.title")}
+              {user?.name}
             </DialogTitle>
             <DialogClose className="text-gray-500 hover:text-gray-700 text-xl" />
           </DialogHeader>
@@ -198,7 +237,7 @@ export default function ProfileSetting({ user }: { user: User }) {
               <Label htmlFor="name" className="mb-2 text-[16px] font-[400]">
                 {t("modal.edit.name")}
               </Label>
-              <Input id="name" defaultValue={t("name")} />
+              <Input id="name" defaultValue={user?.name} />
             </div>
 
             <div className="flex gap-3">
@@ -206,13 +245,17 @@ export default function ProfileSetting({ user }: { user: User }) {
                 <Label htmlFor="phone" className="mb-2 text-[16px] font-[400]">
                   {t("modal.edit.phone")}
                 </Label>
-                <Input id="phone" defaultValue={t("phone")} />
+                <Input
+                  id="phone"
+                  value={`${user?.countryCode ?? ""} ${user?.phone ?? ""}`}
+                  readOnly
+                />
               </div>
               <div className="flex-1">
                 <Label htmlFor="email" className="mb-2 text-[16px] font-[400]">
                   {t("modal.edit.email")}
                 </Label>
-                <Input id="email" defaultValue={t("email")} />
+                <Input id="email" defaultValue={user?.email} />
               </div>
             </div>
 

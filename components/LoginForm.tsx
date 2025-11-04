@@ -4,10 +4,11 @@ import { useLoginUserMutation } from "@/services/authApi";
 import { setCredentials } from "@/store/slices/authSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { jwtDecode } from "jwt-decode";
-import { Apple, Chrome, Facebook } from "lucide-react";
+import { Apple, Chrome, Eye, EyeOff, Facebook } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import z from "zod/v3";
@@ -28,6 +29,7 @@ export default function LoginForm() {
   const locale = useLocale();
   const dispatch = useDispatch();
   const [loginUser, { isLoading }] = useLoginUserMutation();
+  const [showPassword, setShowPassword] = useState(false);
 
   const formSchema = z.object({
     email: z.string().email(t("emailRequired")),
@@ -107,11 +109,21 @@ export default function LoginForm() {
             <FormItem>
               <FormLabel>{t("passwordLabel")}</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  placeholder={t("passwordPlaceholder")}
-                  {...field}
-                />
+                <div className="relative w-full">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder={t("passwordPlaceholder")}
+                    {...field}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
