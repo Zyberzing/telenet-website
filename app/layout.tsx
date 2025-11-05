@@ -12,7 +12,7 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: "Telenet",
-  description: "Global eSIM for travelers",
+  description: "Global eSIM for travellers",
 };
 
 export default function RootLayout({
