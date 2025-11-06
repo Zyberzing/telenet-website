@@ -18,6 +18,7 @@ import {
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type Plan = {
   package_id: string;
@@ -47,26 +48,42 @@ type PlansProps = {
   countries: { code: string; name: string }[];
   regions: { name: string }[];
   plans: Plan[];
-  adminMarkup: AdminMarkup;
-  selectedCountry: string;
-  selectedRegion: string;
-  setSelectedCountry: (val: string) => void;
-  setSelectedRegion: (val: string) => void;
+  adminMarkup: AdminMarkup | null;
+  initialSelectedCountry: string;
+  initialSelectedRegion: string;
 };
 
 export default function Plans({
   countries,
   regions,
-  plans = [],
+  plans,
   adminMarkup,
-  selectedCountry,
-  selectedRegion,
-  setSelectedCountry,
-  setSelectedRegion,
+  initialSelectedCountry,
+  initialSelectedRegion,
 }: PlansProps) {
   const t = useTranslations("Plans");
+  const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [dataSize, setDataSize] = useState([50]);
+
+  // Handle country/region changes with URL navigation (server-side)
+  const handleCountryChange = (countryName: string) => {
+    const params = new URLSearchParams();
+    params.set("country", countryName);
+    if (initialSelectedRegion) {
+      params.set("region", initialSelectedRegion);
+    }
+    router.push(`?${params.toString()}`);
+  };
+
+  const handleRegionChange = (regionName: string) => {
+    const params = new URLSearchParams();
+    if (initialSelectedCountry) {
+      params.set("country", initialSelectedCountry);
+    }
+    params.set("region", regionName);
+    router.push(`?${params.toString()}`);
+  };
 
   const total = (() => {
     if (!selectedPlan) return 0;
@@ -108,14 +125,14 @@ export default function Plans({
             {/* Country & Region Filters */}
             <Dropdown
               label={t("country")}
-              value={selectedCountry}
-              setValue={setSelectedCountry}
+              value={initialSelectedCountry}
+              setValue={handleCountryChange}
               items={countries.map((c) => ({ label: c.name, value: c.name }))}
             />
             <Dropdown
               label={t("region")}
-              value={selectedRegion}
-              setValue={setSelectedRegion}
+              value={initialSelectedRegion}
+              setValue={handleRegionChange}
               items={regions.map((r) => ({ label: r.name, value: r.name }))}
             />
 
@@ -155,7 +172,7 @@ export default function Plans({
                     </div>
 
                     <div
-                      className="rounded-2xl p-5 shadow-sm border border-gray-100 bg-[#F1F8FE] hover:shadow-md transition flex flex-col justify-between"
+                      className="rounded-2xl p-5 shadow-sm border border-gray-100 bg-[#F1F8FE] hover:shadow-md transition flex flex-col justify-between cursor-pointer"
                       onClick={() => setSelectedPlan(plan)}
                     >
                       <div className="flex justify-between">

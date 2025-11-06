@@ -1,72 +1,111 @@
-"use client";
-
-import {
-  useGetCountriesMutation,
-  useGetPlansMutation,
-  useGetRegionsMutation,
-} from "@/services/plansApi";
-import { useEffect, useState } from "react";
 import Plans from "./Plans";
 
-export default function Page() {
-  const [getCountries, { data: countriesData }] = useGetCountriesMutation();
-  const [getRegions, { data: regionsData }] = useGetRegionsMutation();
-  const [getPlans, { data: plansData }] = useGetPlansMutation();
+// Server-side data fetching functions
+async function fetchCountries() {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE}/plan/countries`,
+      {
+        method: "GET",
+        cache: "no-store", // Ensure fresh data on each request
+      }
+    );
 
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState("");
-
-  // ✅ Fetch countries & regions initially
-  useEffect(() => {
-    getCountries(null);
-    getRegions(null);
-  }, [getCountries, getRegions]);
-
-  // ✅ Auto-select first items only when both are available
-  useEffect(() => {
-    const countries = countriesData?.data || [];
-    const regions = regionsData?.data || [];
-
-    if (
-      countries.length > 0 &&
-      regions.length > 0 &&
-      !selectedCountry &&
-      !selectedRegion
-    ) {
-      const firstCountry = countries[0].name;
-      const firstRegion = regions[0].name;
-
-      // Set both at once
-      setSelectedCountry(firstCountry);
-      setSelectedRegion(firstRegion);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch countries: ${response.status}`);
     }
-  }, [countriesData, regionsData, selectedCountry, selectedRegion]);
 
-  // ✅ Fetch plans only when both selectedCountry & selectedRegion are set
-  useEffect(() => {
-    if (selectedCountry && selectedRegion) {
-      console.log("📡 Fetching plans with:", {
-        country_code: selectedCountry,
-        region_name: selectedRegion,
-      });
+    const data = await response.json();
+    return data?.data || [];
+  } catch (error) {
+    console.error("Error fetching countries:", error);
+    return [];
+  }
+}
 
-      getPlans({
-        country_code: selectedCountry,
-        region_name: selectedRegion,
-      });
+async function fetchRegions() {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE}/plan/regions`,
+      {
+        method: "GET",
+        cache: "no-store", // Ensure fresh data on each request
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch regions: ${response.status}`);
     }
-  }, [getPlans, selectedCountry, selectedRegion]);
+
+    const data = await response.json();
+    return data?.data || [];
+  } catch (error) {
+    console.error("Error fetching regions:", error);
+    return [];
+  }
+}
+
+async function fetchPlans(countryCode: string, regionName: string) {
+  try {
+    const response = await fetch(
+      `${
+        process.env.NEXT_PUBLIC_API_BASE
+      }/plan/package-list?filterby=Region&country_code=${encodeURIComponent(
+        countryCode
+      )}&region_name=${encodeURIComponent(regionName)}`,
+      {
+        method: "GET",
+        cache: "no-store", // Ensure fresh data on each request
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch plans: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data?.data || { plans: [], adminMarkup: null };
+  } catch (error) {
+    console.error("Error fetching plans:", error);
+    return { plans: [], adminMarkup: null };
+  }
+}
+
+type PageProps = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function Page({ searchParams }: PageProps) {
+  // Fetch countries and regions in parallel
+  const [countries, regions] = await Promise.all([
+    fetchCountries(),
+    fetchRegions(),
+  ]);
+
+  // Await searchParams and get selected country and region from URL params or use defaults
+  const params = await searchParams;
+  const urlCountry = typeof params.country === "string" ? params.country : "";
+  const urlRegion = typeof params.region === "string" ? params.region : "";
+
+  const selectedCountry =
+    urlCountry || (countries.length > 0 ? countries[0].name : "");
+  const selectedRegion =
+    urlRegion || (regions.length > 0 ? regions[0].name : "");
+
+  // Fetch plans based on selected country and region
+  let plansData = { plans: [], adminMarkup: null };
+  if (selectedCountry && selectedRegion) {
+    plansData = await fetchPlans(selectedCountry, selectedRegion);
+  }
 
   return (
     <Plans
-      countries={countriesData?.data || []}
-      regions={regionsData?.data || []}
-      plans={plansData?.data?.plans || []}
-      adminMarkup={plansData?.data?.adminMarkup || []}
-      selectedCountry={selectedCountry}
-      selectedRegion={selectedRegion}
-      setSelectedCountry={setSelectedCountry}
-      setSelectedRegion={setSelectedRegion}
+      countries={countries}
+      regions={regions}
+      plans={plansData.plans}
+      adminMarkup={plansData.adminMarkup}
+      initialSelectedCountry={selectedCountry}
+      initialSelectedRegion={selectedRegion}
     />
   );
 }
