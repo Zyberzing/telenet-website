@@ -1,18 +1,16 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+"use server";
+import { FaqItem } from "@/components/home/FAQ";
+import { fetcher } from "@/lib/fetcher";
 
-export const faqApi = createApi({
-  reducerPath: "faqApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_BASE,
-  }),
-  endpoints: (builder) => ({
-    getFaq: builder.mutation({
-      query: () => ({
-        url: "/cms-content/faq/get-list",
-        method: "GET",
-      }),
-    }),
-  }),
-});
-
-export const { useGetFaqMutation } = faqApi;
+export const getFaq = async (): Promise<FaqItem[]> => {
+  try {
+    const response = await fetcher<{ data: FaqItem }>(
+      "/cms-content/faq/get-list"
+    );
+    const data = response?.data?.list || response?.data || [];
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching FAQs:", error);
+    return [];
+  }
+};

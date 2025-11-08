@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { useChangePasswordMutation } from "@/services/authApi";
+import { changePassword } from "@/services/authApi";
 import { Eye, EyeOff, UserRoundX } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
@@ -29,14 +29,20 @@ import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { toast } from "sonner";
 
-type User = {
+export type User = {
   id: string;
   name: string;
   email: string;
   countryCode: string;
+  address?:string;
   phone?: string;
   avatar?: string;
   location?: string;
+};
+export type ChangePassword = {
+  oldPassword?: string;
+  newPassword: string;
+  confirmPassword?: string;
 };
 
 export default function ProfileSetting({ user }: { user: User }) {
@@ -44,7 +50,6 @@ export default function ProfileSetting({ user }: { user: User }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [newPassword, setNewPassword] = useState("");
-  const [changePassword] = useChangePasswordMutation();
   const [showPassword, setShowPassword] = useState(false);
 
   const handlePasswordChange = async () => {
@@ -54,7 +59,7 @@ export default function ProfileSetting({ user }: { user: User }) {
     }
 
     try {
-      const res = await changePassword({ newPassword }).unwrap();
+      const res = await changePassword({ newPassword });
       toast.success(res?.message || "Password changed successfully!");
       setNewPassword("");
     } catch (err) {

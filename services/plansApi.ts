@@ -1,34 +1,61 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+"use server";
+import { countryItems, regionItems } from "@/app/[locale]/(main)/plans/page";
+import {
+  AdminMarkup,
+  Plan,
+  PlansProps,
+} from "@/app/[locale]/(main)/plans/Plans";
+import { fetcher } from "@/lib/fetcher";
 
-export const plansApi = createApi({
-  reducerPath: "plansApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_BASE,
-  }),
-  endpoints: (builder) => ({
-    getCountries: builder.mutation({
-      query: () => ({
-        url: "/plan/countries",
-        method: "GET",
-      }),
-    }),
-    getRegions: builder.mutation({
-      query: () => ({
-        url: "/plan/regions",
-        method: "GET",
-      }),
-    }),
-    getPlans: builder.mutation({
-      query: ({ country_code, region_name, filterby = "Region" }) => ({
-        url: `/plan/package-list?filterby=${filterby}&country_code=${country_code}&region_name=${region_name}`,
-        method: "GET",
-      }),
-    }),
-  }),
-});
+export const getCountries = async (): Promise<countryItems[]> => {
+  try {
+    const response = await fetcher<{ data: countryItems }>("/plan/countries");
+    const data = response?.data || [];
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching countries:", error);
+    return [];
+  }
+};
 
-export const {
-  useGetCountriesMutation,
-  useGetRegionsMutation,
-  useGetPlansMutation,
-} = plansApi;
+export const getRegions = async (): Promise<regionItems[]> => {
+  try {
+    const response = await fetcher<{ data: regionItems }>("/plan/regions");
+    const data = response?.data || [];
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching regions:", error);
+    return [];
+  }
+};
+
+export type GetPlansResponse = {
+  plans: Plan[];
+  adminMarkup: AdminMarkup | null;
+};
+
+export const getPlans = async ({
+  country_code,
+  region_name,
+  filterby = "Region",
+}: {
+  country_code: string;
+  region_name: string;
+  filterby?: string;
+}): Promise<GetPlansResponse> => {
+  try {
+    const params = new URLSearchParams({ country_code, region_name, filterby });
+    const response = await fetcher<{ data: PlansProps }>(
+      `/plan/package-list?${params.toString()}`
+    );
+    const data = response?.data || {};
+
+    return {
+      plans: data.plans || [],
+      adminMarkup: data.adminMarkup || null,
+    };
+  } catch (error) {
+    console.error("Error fetching plans:", error);
+    return { plans: [], adminMarkup: null };
+  }
+};

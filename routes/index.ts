@@ -13,4 +13,6 @@ export const ROUTES = {
   ORDER_BILLING: (locale: string) => `/${locale}/order-billing`,
   MY_PLANS: (locale: string) => `/${locale}/my-plans`,
   SUPPORT: (locale: string) => `/${locale}/support`,
+  SUCCESS: (locale: string) => `/${locale}/success`,
+  CANCLE: (locale: string) => `/${locale}/cancle`,
 };

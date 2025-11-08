@@ -1,8 +1,6 @@
 import Dashboard from "./Dashboard";
 
 export default async function Page() {
-  // const token = await getAccessToken();
-  // console.log("Access Token:", token);
   const suggestedPlans = [
     { price: 10, validity: "15 days", data: "3 GB" },
     { price: 30, validity: "60 days", data: "10 GB" },

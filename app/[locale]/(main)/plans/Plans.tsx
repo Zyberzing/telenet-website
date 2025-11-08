@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Slider } from "@/components/ui/slider";
+import { createOrder } from "@/services/order";
 import {
   ChevronDown,
   ChevronRightIcon,
@@ -18,8 +19,10 @@ import {
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
+import { toast } from "sonner";
+import { User } from "../profile-setting/ProfileSetting";
 
-type Plan = {
+export type Plan = {
   package_id: string;
   package_name: string;
   data: string;
@@ -33,7 +36,7 @@ type Plan = {
   countries: { countryname: string; countryiso2: string }[];
 };
 
-type AdminMarkup = {
+export type AdminMarkup = {
   _id: string;
   markupType: "percentage" | "fixed";
   fixed: number;
@@ -43,15 +46,27 @@ type AdminMarkup = {
   updatedAt: string;
 };
 
-type PlansProps = {
+export type PlansProps = {
   countries: { code: string; name: string }[];
   regions: { name: string }[];
   plans: Plan[];
-  adminMarkup: AdminMarkup;
+  adminMarkup: AdminMarkup | null;
   selectedCountry: string;
   selectedRegion: string;
   setSelectedCountry: (val: string) => void;
   setSelectedRegion: (val: string) => void;
+  userProfile: User | null;
+};
+
+export type orderDetails = {
+  packageData: Plan;
+  country: string;
+  firstName: string;
+  lastName: string;
+  address?: string;
+  email: string;
+  total: number;
+  device: "webapp";
 };
 
 export default function Plans({
@@ -63,6 +78,7 @@ export default function Plans({
   selectedRegion,
   setSelectedCountry,
   setSelectedRegion,
+  userProfile,
 }: PlansProps) {
   const t = useTranslations("Plans");
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
@@ -81,6 +97,55 @@ export default function Plans({
 
     return basePrice + markup + tax;
   })();
+
+  const cleanPlan: Plan = {
+    ...selectedPlan!, // use ! because selectedPlan is guaranteed to exist here
+    finalPrice: Number(total.toFixed(2)), // override only finalPrice
+  };
+
+  // inside Plans component
+  const handleBuy = async () => {
+    if (!selectedPlan || !userProfile) return;
+
+    const fullName = userProfile.name || "Unknown";
+    const [firstNameRaw, ...rest] = fullName.split(" ");
+    const firstName = firstNameRaw || "Unknown";
+    const lastName = rest.join(" ") || firstName;
+
+    const orderBody: orderDetails = {
+      packageData: cleanPlan,
+      country: selectedCountry,
+      firstName: firstName,
+      lastName: lastName,
+      email: userProfile.email,
+      total: Number(total.toFixed(2)),
+      device: "webapp",
+      ...(userProfile.address && { address: userProfile.address }),
+    };
+
+    try {
+      const res = await createOrder(orderBody);
+      console.log("Order created:", res);
+      toast.success("Order successfully created!");
+
+      // ✅ Close the dialog
+      setSelectedPlan(null);
+
+      if (res?.data?.url) {
+        window.location.href = res.data.url;
+      } else {
+        toast.error("Checkout URL not found");
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+        console.error(err);
+      } else {
+        toast.error("Failed to create order");
+        console.error(err);
+      }
+    }
+  };
 
   return (
     <section className="w-full min-h-screen bg-white text-gray-900">
@@ -323,7 +388,10 @@ export default function Plans({
             <DialogFooter className="p-4 bg-gray-50 rounded-b-2xl flex justify-between items-center sticky bottom-0 z-10">
               <Heart className="w-5 h-5 text-gray-400 cursor-pointer hover:text-red-500" />
               <div className="flex gap-2 flex-1">
-                <Button className="bg-purple-600 flex-1 text-white rounded-full px-4 py-2 text-sm">
+                <Button
+                  onClick={handleBuy}
+                  className="bg-purple-600 flex-1 text-white rounded-full px-4 py-2 text-sm"
+                >
                   Buy
                 </Button>
                 <Button className="bg-black flex-1 text-white rounded-full px-4 py-2 text-sm">

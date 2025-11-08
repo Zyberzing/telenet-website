@@ -1,17 +1,17 @@
 "use client";
 
-import { useLoginUserMutation } from "@/services/authApi";
+import { saveSession } from "@/lib/session";
+import { loginUser } from "@/services/authApi";
 import { setCredentials } from "@/store/slices/authSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { jwtDecode } from "jwt-decode";
 import { Apple, Chrome, Eye, EyeOff, Facebook } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import z from "zod/v3";
+import { z } from "zod";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 import {
@@ -23,39 +23,63 @@ import {
   FormMessage,
 } from "./ui/form";
 
+export const formSchema = z.object({
+  email: z.string().email("Invalid email"),
+  password: z.string().min(1, "Password is required"),
+});
+
+export type LoginFormSchemaType = z.infer<typeof formSchema>;
+
 export default function LoginForm() {
   const t = useTranslations("LoginForm");
   const router = useRouter();
   const locale = useLocale();
   const dispatch = useDispatch();
-  const [loginUser, { isLoading }] = useLoginUserMutation();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const formSchema = z.object({
-    email: z.string().email(t("emailRequired")),
-    password: z.string().min(1, t("passwordRequired")),
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<LoginFormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: LoginFormSchemaType) => {
     try {
-      const response = await loginUser(data).unwrap();
+      setLoading(true);
 
-      const accessToken = response.data?.access;
-      const refreshToken = response.data?.refresh;
+      const res = await loginUser(values);
+      console.log("token", res)
+      const accessTokenRaw = res.access; // directly from response
+      const refreshTokenRaw = res.refresh;
 
-      if (!accessToken) {
-        throw new Error("No access token returned");
-      }
+      if (!accessTokenRaw) throw new Error("Access token missing");
 
-      const decoded: { authId: string; role: string; exp: number } = jwtDecode(
-        accessToken.replace("Bearer ", "")
-      );
+      const accessToken = accessTokenRaw.replace(/^Bearer\s+/i, "");
+      const refreshToken = refreshTokenRaw?.replace(/^Bearer\s+/i, "");
 
+      // const { accessToken:access, refreshToken:refresh } = await loginUser(values);
+
+      // // Strip "Bearer " prefix
+      // const accessToken = access.replace(/^Bearer\s+/i, "");
+      // const refreshToken = refresh.replace(/^Bearer\s+/i, "");
+
+      if (!accessToken) throw new Error("Access token missing");
+
+      // Decode access token to get user info
+      const decoded: { authId: string; role: string; exp: number } =
+        jwtDecode(accessToken);
+
+      // Save session (localStorage / cookie)
+      saveSession({
+        user: decoded.authId,
+        token: accessToken,
+        refreshToken,
+        accessToken: accessToken,
+        access: accessToken,
+        refresh: refreshToken
+      });
+
+      // Store in Redux
       dispatch(
         setCredentials({
           token: accessToken,
@@ -65,9 +89,11 @@ export default function LoginForm() {
       );
 
       router.push(`/${locale}/dashboard`);
-    } catch (err: unknown) {
+    } catch (err) {
       console.error("Login failed:", err);
       form.setError("email", { message: "Invalid credentials" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -117,7 +143,7 @@ export default function LoginForm() {
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword((prev) => !prev)}
+                    onClick={() => setShowPassword((p) => !p)}
                     className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
                     tabIndex={-1}
                   >
@@ -130,19 +156,20 @@ export default function LoginForm() {
           )}
         />
 
-        {/* Login Button */}
+        {/* Submit Button */}
         <Button
           type="submit"
+          disabled={loading}
           className="w-full bg-gradient-to-r from-primary to-indigo-600 text-white"
         >
-          {isLoading ? t("loading") : t("loginButton")}
+          {loading ? t("loading") : t("loginButton")}
         </Button>
 
         {/* Forgot Password */}
         <div>
-          <Link href="#" className="text-sm text-primary hover:underline">
+          <p className="text-sm text-primary hover:underline cursor-pointer">
             {t("forgotPassword")}
-          </Link>
+          </p>
         </div>
 
         {/* Divider */}
@@ -178,14 +205,14 @@ export default function LoginForm() {
         </div>
 
         {/* Register */}
-        <div className="text-center text-sm">
+        <div className="text-center text-sm flex gap-2 justify-center">
           {t("notRegistered")}{" "}
-          <Link
-            href={`/${locale}/register`}
-            className="text-primary hover:underline"
+          <p
+            onClick={() => router.push(`/${locale}/register`)}
+            className="text-primary hover:underline cursor-pointer"
           >
             {t("createAccount")}
-          </Link>
+          </p>
         </div>
       </form>
     </Form>

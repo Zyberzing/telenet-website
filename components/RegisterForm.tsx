@@ -12,8 +12,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  commonFieldSchema,
+  countryCodeSchema,
+  emailSchema,
+  passwordSchema,
+  phoneNumberSchema,
+} from "@/lib/formSchemaFunctions";
+import handleAsync from "@/lib/handleAsync";
 import { cn } from "@/lib/utils";
-import { useRegisterUserMutation } from "@/services/authApi";
+import { createUser } from "@/services/authApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getCountries, getCountryCallingCode } from "libphonenumber-js";
 import { Check, ChevronsUpDown, Eye, EyeOff } from "lucide-react";
@@ -22,7 +30,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { useForm } from "react-hook-form";
-import z from "zod/v3";
+import z from "zod";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 import {
@@ -34,31 +42,27 @@ import {
   FormMessage,
 } from "./ui/form";
 
+const formSchema = z.object({
+  name: commonFieldSchema(),
+  email: emailSchema(),
+  password: passwordSchema(),
+  phone: phoneNumberSchema(),
+  countryCode: countryCodeSchema(),
+});
+export type RegistrationFormSchemaType = z.infer<typeof formSchema>;
+
 export default function RegisterForm() {
   const t = useTranslations("RegisterForm");
   const router = useRouter();
   const locale = useLocale();
-  const [registerUser, { isLoading }] = useRegisterUserMutation();
   const [showPassword, setShowPassword] = useState(false);
 
-  // 🧠 Build dynamic country data
   const countryCodes = getCountries().map((country) => ({
     code: `+${getCountryCallingCode(country)}`,
     country,
   }));
 
-  const formSchema = z.object({
-    name: z.string().min(1, t("validation.nameRequired")),
-    email: z.string().email(t("validation.emailInvalid")),
-    password: z.string().min(8, t("validation.passwordMin")),
-    phone: z
-      .string()
-      .min(8, t("validation.phoneInvalid"))
-      .regex(/^[0-9]+$/, t("validation.phoneInvalid")),
-    countryCode: z.string().min(1, t("validation.countryCodeRequired")),
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<RegistrationFormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -69,7 +73,7 @@ export default function RegisterForm() {
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const onSubmit = handleAsync(async (data: RegistrationFormSchemaType) => {
     try {
       const payload = {
         name: data.name,
@@ -79,8 +83,7 @@ export default function RegisterForm() {
         countryCode: data.countryCode,
       };
 
-      const response = await registerUser(payload).unwrap();
-      console.log("register", response);
+      await createUser(payload);
       router.push(`/${locale}/login`);
     } catch (err: unknown) {
       console.error("Registration failed:", err);
@@ -93,7 +96,7 @@ export default function RegisterForm() {
         form.setError("email", { message: "Invalid credentials" });
       }
     }
-  };
+  });
 
   return (
     <Form {...form}>
@@ -256,8 +259,18 @@ export default function RegisterForm() {
           type="submit"
           className="w-full bg-gradient-to-r from-primary to-indigo-600 text-white"
         >
-          {isLoading ? t("loading") : t("registerButton")}
+          {t("registerButton")}
         </Button>
+
+        <div className="text-center text-sm flex gap-2 justify-center">
+          Already log-in?{" "}
+          <p
+            onClick={() => router.push(`/${locale}/login`)}
+            className="text-primary hover:underline cursor-pointer"
+          >
+            LogIn
+          </p>
+        </div>
       </form>
     </Form>
   );

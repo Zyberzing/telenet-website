@@ -1,53 +1,38 @@
-import type { Plan } from "./MyPlansClient";
+import { getMyPlans } from "@/services/order";
 import MyPlans from "./MyPlansClient";
+import { Plan } from "./MyPlansClient";
 
-export default async function Page() {
-  const plans: Plan[] = [
-    {
-      id: "1",
-      country: "USA",
-      provider: "Verizon 4G/5G/VoLTE",
-      flag: "/flags/usa.svg",
-      dataLeft: "4.2 GB",
-      totalData: "5 GB",
-      validUntil: "22 Oct 2025",
-      price: "$15",
-      status: "active",
-    },
-    {
-      id: "2",
-      country: "UK",
-      provider: "Telefone 5G/VoLTE",
-      flag: "/flags/uk.svg",
-      dataLeft: "4.2 GB",
-      totalData: "5 GB",
-      validUntil: "22 Oct 2025",
-      price: "$15",
-      status: "active",
-    },
-    {
-      id: "3",
-      country: "Japan",
-      provider: "NTT DocNet",
-      flag: "/flags/uk.svg",
-      expiredOn: "10 Sep 2025",
-      lastPlan: "5 GB • 30 Days",
-      price: "$15",
-      totalData: "",
-      status: "expired",
-    },
-    {
-      id: "4",
-      country: "Australia",
-      provider: "Telstra",
-      flag: "/flags/uk.svg",
-      expiredOn: "03 Sep 2025",
-      lastPlan: "5 GB • 30 Days",
-      price: "$15",
-      totalData: "",
-      status: "expired",
-    },
-  ];
-
-  return <MyPlans plans={plans} />;
+interface GetMyPlansResponse {
+  // status: string;
+  // message: string;
+  // data: {
+    result: Plan[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
+  // };
+  // statusCode: number;
 }
+
+const Page = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; limit?: string }>;
+}) => {
+  const params = await searchParams;
+  const { page = "1", limit = "10" } = params;
+
+  const response = (await getMyPlans({
+    page,
+    limit,
+  })) as GetMyPlansResponse | null;
+
+  const myPlans: Plan[] = response?.result || [];
+console.log("ress", response)
+  return <MyPlans plans={myPlans} />;
+};
+
+export default Page;

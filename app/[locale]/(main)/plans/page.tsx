@@ -1,72 +1,91 @@
 "use client";
 
-import {
-  useGetCountriesMutation,
-  useGetPlansMutation,
-  useGetRegionsMutation,
-} from "@/services/plansApi";
+import { getProfile } from "@/services/authApi";
+import { getCountries, getPlans, getRegions } from "@/services/plansApi";
 import { useEffect, useState } from "react";
-import Plans from "./Plans";
+import { User } from "../profile-setting/ProfileSetting";
+import Plans, { AdminMarkup, Plan } from "./Plans";
+
+export type countryItems = {
+  _id: string;
+  name: string;
+};
+
+export type regionItems = {
+  _id: string;
+  name: string;
+};
 
 export default function Page() {
-  const [getCountries, { data: countriesData }] = useGetCountriesMutation();
-  const [getRegions, { data: regionsData }] = useGetRegionsMutation();
-  const [getPlans, { data: plansData }] = useGetPlansMutation();
+  const [countries, setCountries] = useState<countryItems[]>([]);
+  const [regions, setRegions] = useState<regionItems[]>([]);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [adminMarkup, setAdminMarkup] = useState<AdminMarkup | null>(null);
 
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("");
 
-  // ✅ Fetch countries & regions initially
+  const [userProfile, setUserProfile] = useState<User | null>(null);
+
   useEffect(() => {
-    getCountries(null);
-    getRegions(null);
-  }, [getCountries, getRegions]);
+    const fetchUserProfile = async () => {
+      try {
+        const profile = await getProfile();
+        setUserProfile(profile);
+      } catch (err) {
+        console.error("Failed to fetch profile:", err);
+      }
+    };
 
-  // ✅ Auto-select first items only when both are available
+    fetchUserProfile();
+  }, []);
+
+  // Fetch countries & regions initially
   useEffect(() => {
-    const countries = countriesData?.data || [];
-    const regions = regionsData?.data || [];
+    const fetchCountriesAndRegions = async () => {
+      const countriesData = (await getCountries()) || [];
+      const regionsData = (await getRegions()) || [];
 
-    if (
-      countries.length > 0 &&
-      regions.length > 0 &&
-      !selectedCountry &&
-      !selectedRegion
-    ) {
-      const firstCountry = countries[0].name;
-      const firstRegion = regions[0].name;
+      setCountries(countriesData);
+      setRegions(regionsData);
 
-      // Set both at once
-      setSelectedCountry(firstCountry);
-      setSelectedRegion(firstRegion);
-    }
-  }, [countriesData, regionsData, selectedCountry, selectedRegion]);
+      if (countriesData.length > 0 && regionsData.length > 0) {
+        setSelectedCountry(countriesData[0]?.name || "");
+        setSelectedRegion(regionsData[0]?.name || "");
+      }
+    };
 
-  // ✅ Fetch plans only when both selectedCountry & selectedRegion are set
+    fetchCountriesAndRegions();
+  }, []);
+
+  // Fetch plans when selectedCountry & selectedRegion are set
   useEffect(() => {
-    if (selectedCountry && selectedRegion) {
-      console.log("📡 Fetching plans with:", {
+    if (!selectedCountry || !selectedRegion) return;
+
+    const fetchPlansData = async () => {
+      const plansData = await getPlans({
         country_code: selectedCountry,
         region_name: selectedRegion,
       });
 
-      getPlans({
-        country_code: selectedCountry,
-        region_name: selectedRegion,
-      });
-    }
-  }, [getPlans, selectedCountry, selectedRegion]);
+      setPlans(plansData.plans || []);
+      setAdminMarkup(plansData.adminMarkup || null);
+    };
+
+    fetchPlansData();
+  }, [selectedCountry, selectedRegion]);
 
   return (
     <Plans
-      countries={countriesData?.data || []}
-      regions={regionsData?.data || []}
-      plans={plansData?.data?.plans || []}
-      adminMarkup={plansData?.data?.adminMarkup || []}
+      countries={countries.map((c) => ({ code: c._id, name: c.name }))}
+      regions={regions.map((r) => ({ name: r.name }))}
+      plans={plans}
+      adminMarkup={adminMarkup}
       selectedCountry={selectedCountry}
       selectedRegion={selectedRegion}
       setSelectedCountry={setSelectedCountry}
       setSelectedRegion={setSelectedRegion}
+      userProfile={userProfile}
     />
   );
 }

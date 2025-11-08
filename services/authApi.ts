@@ -1,62 +1,77 @@
-import { RootState } from "@/store/Store";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+"use server";
+import {
+  ChangePassword,
+  User,
+} from "@/app/[locale]/(main)/profile-setting/ProfileSetting";
+import { LoginFormSchemaType } from "@/components/LoginForm";
+import { RegistrationFormSchemaType } from "@/components/RegisterForm";
+import { authFetcher } from "@/lib/authFetcher";
+import { fetcher } from "@/lib/fetcher";
+import { saveSession } from "@/lib/session";
+import { UserSession } from "@/lib/types";
 
-export const authApi = createApi({
-  reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_BASE,
-    prepareHeaders: (headers, { getState, endpoint }) => {
-      const state = getState() as RootState;
-      const accessToken = state.auth.token;
-      const refreshToken = state.auth.refreshToken;
+export const createUser = async (
+  body: RegistrationFormSchemaType
+): Promise<any> => {
+  const result = await fetcher("/auth/signup", {
+    method: "POST",
+    body,
+  });
+  return result;
+};
 
-      if (
-        (endpoint === "getProfile" || endpoint === "changePassword") &&
-        accessToken
-      ) {
-        headers.set("authorization", accessToken);
-        if (refreshToken) {
-          headers.set("x-refresh-token", refreshToken);
-        }
-      }
+export async function loginUser(formData: LoginFormSchemaType) {
+  const res = await fetcher<{
+    status: string;
+    message: string;
+    data: UserSession;
+  }>("/auth/signin", {
+    method: "POST",
+    body: formData,
+  });
 
-      return headers;
-    },
-  }),
-  endpoints: (builder) => ({
-    registerUser: builder.mutation({
-      query: (userData) => ({
-        url: "/auth/signup",
-        method: "POST",
-        body: userData,
-      }),
-    }),
-    loginUser: builder.mutation({
-      query: (credentials) => ({
-        url: "/auth/signin",
-        method: "POST",
-        body: credentials,
-      }),
-    }),
-    getProfile: builder.query({
-      query: () => ({
-        url: "/auth/profile",
-        method: "GET",
-      }),
-    }),
-    changePassword: builder.mutation({
-      query: (body) => ({
-        url: "/auth/change-password",
-        method: "POST",
-        body,
-      }),
-    }),
-  }),
-});
+  if (res.status !== "success") {
+    throw new Error(res.message || "Login failed");
+  }
 
-export const {
-  useRegisterUserMutation,
-  useLoginUserMutation,
-  useGetProfileQuery,
-  useChangePasswordMutation,
-} = authApi;
+  const { accessToken: access, refreshToken: refresh, user } = res.data;
+
+  await saveSession({
+    token: access,
+    refreshToken: refresh,
+    user,
+    accessToken: access,
+    access: access,
+    refresh: refresh,
+  });
+
+  return res.data;
+}
+
+export const getProfile = async (): Promise<User | null> => {
+  try {
+    const response = await authFetcher<{ status: "success"; data: User }>(
+      "/auth/profile"
+    );
+    return response?.data || null;
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    return null;
+  }
+};
+
+export const changePassword = async (body: ChangePassword): Promise<any> => {
+  const response = await authFetcher<{ status: "success"; message: string }>(
+    "/auth/change-password",
+    {
+      method: "POST",
+      body,
+    }
+  );
+
+  if (response?.status !== "success") {
+    throw new Error(response?.message || "Failed to change password");
+  }
+
+  return response;
+};

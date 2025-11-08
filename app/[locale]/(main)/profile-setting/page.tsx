@@ -1,22 +1,15 @@
-"use client";
+import { getProfile } from "@/services/authApi";
+import ProfileSetting, { User } from "./ProfileSetting"; // adjust path
 
-import { useGetProfileQuery } from "@/services/authApi";
-import { RootState } from "@/store/Store";
-import { useSelector } from "react-redux";
-import ProfileSetting from "./ProfileSetting";
+export default async function Page() {
+  let user: User | null = null;
 
-export default function Page() {
-  const token = useSelector((state: RootState) => state?.auth?.token);
-
-  const { data, isLoading } = useGetProfileQuery(undefined, {
-    skip: !token,
-  });
-
-  if (!token) {
-    return <p>Please log in to view your profile.</p>;
+  try {
+    const profile = await getProfile();
+    user = profile;
+  } catch (err) {
+    console.error("Failed to fetch profile:", err);
   }
 
-  if (isLoading) return <p>Loading...</p>;
-
-  return <ProfileSetting user={data?.data} />;
+  return <ProfileSetting user={user!} />;
 }
