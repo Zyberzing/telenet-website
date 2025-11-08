@@ -31,7 +31,7 @@ import { useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { Button } from "./ui/Button";
+import { LoadingButton } from "./ui/loading-button";
 import { Input } from "./ui/Input";
 import {
   Form,
@@ -56,6 +56,7 @@ export default function RegisterForm() {
   const router = useRouter();
   const locale = useLocale();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const countryCodes = getCountries().map((country) => ({
     code: `+${getCountryCallingCode(country)}`,
@@ -73,8 +74,9 @@ export default function RegisterForm() {
     },
   });
 
-  const onSubmit = handleAsync(async (data: RegistrationFormSchemaType) => {
+  const onSubmit = async (data: RegistrationFormSchemaType) => {
     try {
+      setLoading(true);
       const payload = {
         name: data.name,
         email: data.email,
@@ -95,8 +97,10 @@ export default function RegisterForm() {
       } else {
         form.setError("email", { message: "Invalid credentials" });
       }
+    } finally {
+      setLoading(false);
     }
-  });
+  };
 
   return (
     <Form {...form}>
@@ -255,12 +259,12 @@ export default function RegisterForm() {
           )}
         />
 
-        <Button
+        <LoadingButton
           type="submit"
+          loading={loading}
+          label={loading ? t("loading") : t("registerButton")}
           className="w-full bg-gradient-to-r from-primary to-indigo-600 text-white"
-        >
-          {t("registerButton")}
-        </Button>
+        />
 
         <div className="text-center text-sm flex gap-2 justify-center">
           Already log-in?{" "}

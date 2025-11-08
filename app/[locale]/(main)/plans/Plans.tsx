@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import { LoadingButton } from "@/components/ui/loading-button";
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -18,7 +19,8 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { User } from "../profile-setting/ProfileSetting";
 
@@ -53,8 +55,8 @@ export type PlansProps = {
   adminMarkup: AdminMarkup | null;
   selectedCountry: string;
   selectedRegion: string;
-  setSelectedCountry: (val: string) => void;
-  setSelectedRegion: (val: string) => void;
+  // setSelectedCountry: (val: string) => void;
+  // setSelectedRegion: (val: string) => void;
   userProfile: User | null;
 };
 
@@ -76,13 +78,40 @@ export default function Plans({
   adminMarkup,
   selectedCountry,
   selectedRegion,
-  setSelectedCountry,
-  setSelectedRegion,
   userProfile,
 }: PlansProps) {
   const t = useTranslations("Plans");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [dataSize, setDataSize] = useState([50]);
+  const [internalSelectedCountry, setInternalSelectedCountry] =
+    useState(selectedCountry);
+  const [internalSelectedRegion, setInternalSelectedRegion] =
+    useState(selectedRegion);
+  const [orderLoading, setOrderLoading] = useState(false);
+
+  // Update URL when internal selections change
+  useEffect(() => {
+    if (!internalSelectedCountry || !internalSelectedRegion) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("country", internalSelectedCountry);
+    params.set("region", internalSelectedRegion);
+
+    // Update URL without triggering a page reload
+    router.replace(`?${params.toString()}`, { scroll: false });
+  }, [internalSelectedCountry, internalSelectedRegion, router, searchParams]);
+
+  // Handlers for dropdown changes
+  const handleCountryChange = (country: string) => {
+    setInternalSelectedCountry(country);
+  };
+
+  const handleRegionChange = (region: string) => {
+    setInternalSelectedRegion(region);
+  };
 
   const total = (() => {
     if (!selectedPlan) return 0;
@@ -105,7 +134,7 @@ export default function Plans({
 
   // inside Plans component
   const handleBuy = async () => {
-    if (!selectedPlan || !userProfile) return;
+    if (!selectedPlan || !userProfile || orderLoading) return;
 
     const fullName = userProfile.name || "Unknown";
     const [firstNameRaw, ...rest] = fullName.split(" ");
@@ -124,6 +153,7 @@ export default function Plans({
     };
 
     try {
+      setOrderLoading(true);
       const res = await createOrder(orderBody);
       console.log("Order created:", res);
       toast.success("Order successfully created!");
@@ -144,6 +174,8 @@ export default function Plans({
         toast.error("Failed to create order");
         console.error(err);
       }
+    } finally {
+      setOrderLoading(false);
     }
   };
 
@@ -173,14 +205,14 @@ export default function Plans({
             {/* Country & Region Filters */}
             <Dropdown
               label={t("country")}
-              value={selectedCountry}
-              setValue={setSelectedCountry}
+              value={internalSelectedCountry}
+              setValue={handleCountryChange}
               items={countries.map((c) => ({ label: c.name, value: c.name }))}
             />
             <Dropdown
               label={t("region")}
-              value={selectedRegion}
-              setValue={setSelectedRegion}
+              value={internalSelectedRegion}
+              setValue={handleRegionChange}
               items={regions.map((r) => ({ label: r.name, value: r.name }))}
             />
 
@@ -388,12 +420,12 @@ export default function Plans({
             <DialogFooter className="p-4 bg-gray-50 rounded-b-2xl flex justify-between items-center sticky bottom-0 z-10">
               <Heart className="w-5 h-5 text-gray-400 cursor-pointer hover:text-red-500" />
               <div className="flex gap-2 flex-1">
-                <Button
+                <LoadingButton
                   onClick={handleBuy}
+                  loading={orderLoading}
+                  label={orderLoading ? "Processing..." : "Buy"}
                   className="bg-purple-600 flex-1 text-white rounded-full px-4 py-2 text-sm"
-                >
-                  Buy
-                </Button>
+                />
                 <Button className="bg-black flex-1 text-white rounded-full px-4 py-2 text-sm">
                   Add to Wallet
                 </Button>

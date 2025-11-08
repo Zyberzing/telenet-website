@@ -5,15 +5,14 @@ import {
 } from "@/app/[locale]/(main)/profile-setting/ProfileSetting";
 import { LoginFormSchemaType } from "@/components/LoginForm";
 import { RegistrationFormSchemaType } from "@/components/RegisterForm";
-import { authFetcher } from "@/lib/authFetcher";
-import { fetcher } from "@/lib/fetcher";
+import { enhancedAuthFetcher, enhancedFetcher } from "@/lib/enhancedAuthFetcher";
 import { saveSession } from "@/lib/session";
 import { UserSession } from "@/lib/types";
 
 export const createUser = async (
   body: RegistrationFormSchemaType
 ): Promise<any> => {
-  const result = await fetcher("/auth/signup", {
+  const result = await enhancedFetcher("/auth/signup", {
     method: "POST",
     body,
   });
@@ -21,7 +20,7 @@ export const createUser = async (
 };
 
 export async function loginUser(formData: LoginFormSchemaType) {
-  const res = await fetcher<{
+  const res = await enhancedFetcher<{
     status: string;
     message: string;
     data: UserSession;
@@ -50,7 +49,7 @@ export async function loginUser(formData: LoginFormSchemaType) {
 
 export const getProfile = async (): Promise<User | null> => {
   try {
-    const response = await authFetcher<{ status: "success"; data: User }>(
+    const response = await enhancedAuthFetcher<{ status: "success"; data: User }>(
       "/auth/profile"
     );
     return response?.data || null;
@@ -61,7 +60,7 @@ export const getProfile = async (): Promise<User | null> => {
 };
 
 export const changePassword = async (body: ChangePassword): Promise<any> => {
-  const response = await authFetcher<{ status: "success"; message: string }>(
+  const response = await enhancedAuthFetcher<{ status: "success"; message: string }>(
     "/auth/change-password",
     {
       method: "POST",
