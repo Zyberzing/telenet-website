@@ -105,7 +105,15 @@ export default function Plans({
 
   // inside Plans component
   const handleBuy = async () => {
-    if (!selectedPlan || !userProfile) return;
+    if (!userProfile) {
+      toast.error("Please login first");
+      return;
+    }
+
+    if (!selectedPlan) {
+      toast.error("Please select a plan");
+      return;
+    }
 
     const fullName = userProfile.name || "Unknown";
     const [firstNameRaw, ...rest] = fullName.split(" ");
