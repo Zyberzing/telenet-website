@@ -1,16 +1,49 @@
 "use client";
 
+import { getCountries, getRegions } from "@/services/plansApi";
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
-import { useState } from "react";
-import { FaStar, FaStarHalfAlt } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { FaSpinner, FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { FaLocationDot, FaMagnifyingGlass } from "react-icons/fa6";
 import { IoIosArrowForward } from "react-icons/io";
 import { Button } from "../ui/Button";
-import { useTranslations } from "next-intl";
 
 export default function Hero() {
-  const t = useTranslations("Hero"); // <-- translation namespace
-  const [travelType, setTravelType] = useState("country");
+  const t = useTranslations("Hero");
+  const router = useRouter();
+  const locale = useLocale();
+
+  const [travelType, setTravelType] = useState<"country" | "region">("country");
+  const [options, setOptions] = useState<{ _id: string; name: string }[]>([]);
+  const [selectedOption, setSelectedOption] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    async function fetchOptions() {
+      setLoading(true);
+      try {
+        const response =
+          travelType === "country" ? await getCountries() : await getRegions();
+        setOptions(response || []);
+      } catch (err) {
+        console.error("Error fetching options:", err);
+        setOptions([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchOptions();
+  }, [travelType]);
+
+  const handleBrowse = () => {
+    if (!selectedOption) return;
+    const paramKey = travelType === "country" ? "country" : "region";
+    router.push(
+      `/${locale}/plans?${paramKey}=${encodeURIComponent(selectedOption)}`
+    );
+  };
 
   return (
     <section className="w-full bg-[url(/grid.svg)] bg-center bg-cover bg-no-repeat">
@@ -37,10 +70,11 @@ export default function Hero() {
           {t("subtitle")}
         </p>
 
-        {/* Button */}
+        {/* CTA Button */}
         <Button
           variant="default"
           size="lg"
+          onClick={() => router.push(`/${locale}/plans`)}
           className="mb-10 px-5 py-2 bg-gradient hover:bg-primary rounded-3xl text-xs sm:text-sm md:text-base"
         >
           {t("getStarted")}
@@ -80,7 +114,7 @@ export default function Hero() {
           />
 
           {/* Left Side */}
-          <div className="relative z-10 text-white w-full lg:w-1/2 text-start ml-0 sm:ml-[25px] py-[50px] ">
+          <div className="relative z-10 text-white w-full lg:w-1/2 text-start ml-0 sm:ml-[25px] py-[50px]">
             <h2 className="text-base pt-[50px] md:pt-[40px] lg:pt-0 sm:pt-0 sm:text-lg md:text-3xl font-medium mb-4">
               {t("likeTravel")}
             </h2>
@@ -94,7 +128,9 @@ export default function Hero() {
                 <label
                   key={type.key}
                   className="flex items-center gap-2 cursor-pointer select-none"
-                  onClick={() => setTravelType(type.key)}
+                  onClick={() =>
+                    setTravelType(type.key as "country" | "region")
+                  }
                 >
                   <span
                     className={`w-5 h-5 flex items-center justify-center border-2 rounded-full transition-all duration-200 ${
@@ -125,22 +161,57 @@ export default function Hero() {
               ))}
             </div>
 
-            {/* Search */}
+            {/* Search Select */}
             <div className="flex gap-3 sm:gap-4 mb-5 bg-[#B882DB] p-2 sm:p-3 rounded-[40px] w-full">
               <div className="flex items-center w-full p-2 px-3 sm:px-4 bg-white rounded-3xl shadow-sm">
                 <FaLocationDot className="text-primary mr-2 sm:mr-3" />
-                <input
-                  type="text"
-                  placeholder={t("searchPlaceholder")}
-                  className="w-full border-none focus:outline-none text-black text-xs sm:text-sm md:text-base"
-                />
+                {loading ? (
+                  <span className="text-gray-500 text-sm flex gap-2 items-center">
+                    <FaSpinner />
+                    Loading...
+                  </span>
+                ) : (
+                  <select
+                    className="w-full bg-transparent border-none focus:outline-none text-black text-xs sm:text-sm md:text-base"
+                    value={selectedOption}
+                    onChange={(e) => setSelectedOption(e.target.value)}
+                  >
+                    <option value="">{t("searchPlaceholder")}</option>
+                    {options.map((opt) => (
+                      <option key={opt._id} value={opt.name}>
+                        {opt.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
-              <span className="flex items-center justify-center text-white bg-gradient rounded-full p-3 sm:p-4 cursor-pointer">
+              <span
+                onClick={selectedOption ? handleBrowse : undefined}
+                className={`flex items-center justify-center rounded-full p-3 sm:p-4 transition ${
+                  selectedOption
+                    ? "cursor-pointer bg-gradient text-white hover:opacity-90"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+                title={
+                  selectedOption
+                    ? "Search plans"
+                    : "Select a country or region first"
+                }
+              >
                 <FaMagnifyingGlass className="text-sm sm:text-base md:text-lg" />
               </span>
             </div>
 
-            <button className="w-full sm:w-auto px-5 font-[400] py-2 sm:py-3 bg-white rounded-3xl text-black flex items-center justify-center sm:justify-between gap-3 sm:gap-4 hover:bg-gray-100 text-xs sm:text-sm md:text-base">
+            {/* Browse Plans */}
+            <button
+              onClick={handleBrowse}
+              disabled={!selectedOption}
+              className={`w-full sm:w-auto px-5 font-[400] py-2 sm:py-3 rounded-3xl flex items-center justify-center sm:justify-between gap-3 sm:gap-4 text-xs sm:text-sm md:text-base transition ${
+                selectedOption
+                  ? "bg-white text-black hover:bg-gray-100 cursor-pointer"
+                  : "bg-gray-300 text-gray-600 cursor-not-allowed"
+              }`}
+            >
               {t("browsePlans")}
               <span className="ml-1 sm:ml-2 rounded-full p-1 bg-primary text-white">
                 <IoIosArrowForward fontSize={18} />
@@ -150,7 +221,6 @@ export default function Hero() {
 
           {/* Right Side */}
           <div className="relative z-10 w-full lg:w-1/2 flex justify-center hidden lg:flex">
-            {/* Image Wrapper */}
             <div className="absolute -top-10 sm:-top-16 md:-top-[20em] lg:-top-[13.3em] xl:-top-[14.4em]">
               <Image
                 src="/home-hero-banner.png"
@@ -174,7 +244,6 @@ export default function Hero() {
                 </span>
               </div>
 
-              {/* United Arab Emirates */}
               <div className="absolute bottom-[7rem] -left-[0.8rem] bg-white rounded-b-md shadow-md flex flex-col items-center w-[70px]">
                 <Image
                   src="/flags/uae.svg"
@@ -189,7 +258,6 @@ export default function Hero() {
                 </span>
               </div>
 
-              {/* United Kingdom */}
               <div className="absolute bottom-[3.2rem] right-[2rem] bg-white rounded-b-md shadow-md flex flex-col items-center w-[70px]">
                 <Image
                   src="/flags/uk.svg"

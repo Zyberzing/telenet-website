@@ -1,7 +1,6 @@
 "use client";
 
 import { useTheme } from "@/app/providers/ThemeProvider";
-import { logout } from "@/store/slices/authSlice";
 import { RootState } from "@/store/Store";
 import {
   ChevronDown,
@@ -20,9 +19,9 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { destroyCookie } from "nookies"; // if using 'nookies' to manage cookies
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import LogoutConfirm from "../shared/LogoutConfirm";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,7 +60,6 @@ export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const t = useTranslations("Header");
-  const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGE[0]);
@@ -81,23 +79,6 @@ export default function Header() {
     if (LANGUAGE.some((l) => l.code === parts[0])) parts.shift();
     const newPath = `/${lang.code}/${parts.join("/")}`;
     router.push(newPath);
-  };
-
-  const handleLogout = () => {
-    dispatch(logout());
-
-    localStorage.clear();
-    sessionStorage.clear();
-
-    destroyCookie(null, "session"); // replace "session" with your cookie name
-    destroyCookie(null, "token"); // if you have a token cookie
-    document.cookie.split(";").forEach((c) => {
-      document.cookie = c
-        .replace(/^ +/, "")
-        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-    });
-
-    router.push(`/${selectedLanguage?.code}/`);
   };
 
   return (
@@ -181,11 +162,13 @@ export default function Header() {
 
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={handleLogout}
+                  onSelect={(e) => e.preventDefault()}
                   className="text-primary font-[400] px-3 cursor-pointer"
                 >
-                  <LogOut className="h-4 w-4" />
-                  {t("logout")}
+                  <LogoutConfirm className="flex gap-3">
+                    <LogOut className="h-4 w-4" />
+                    {t("logout")}
+                  </LogoutConfirm>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -295,14 +278,17 @@ export default function Header() {
 
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        onClick={() => {
-                          handleLogout();
-                          setOpen(false);
-                        }}
+                        onSelect={(e) => e.preventDefault()}
+                        // onClick={() => {
+                        //   handleLogout();
+                        //   setOpen(false);
+                        // }}
                         className="text-primary font-[400] px-3 cursor-pointer"
                       >
-                        <LogOut className="h-4 w-4" />
-                        {t("logout")}
+                        <LogoutConfirm className="flex gap-3">
+                          <LogOut className="h-4 w-4" />
+                          {t("logout")}
+                        </LogoutConfirm>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

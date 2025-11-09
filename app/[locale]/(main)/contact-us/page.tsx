@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { contactUS } from "@/services/contactUs";
 import { FaSpinner } from "react-icons/fa";
+import { Button } from "@/components/ui/Button";
 
 export interface ContactUs {
   name: string;
@@ -173,13 +174,13 @@ const ContactUs = () => {
               {error && <p className="text-red-500 text-sm">{error}</p>}
               {success && <p className="text-green-500 text-sm">{success}</p>}
 
-              <button
+              <Button
                 type="submit"
                 disabled={loading}
                 className="w-full bg-primary text-white font-medium py-3 rounded-md mt-2 hover:opacity-90 transition-all duration-200"
               >
                 {loading ? <FaSpinner color="text-primary" /> : t("form.submit")}
-              </button>
+              </Button>
             </form>
           </div>
         </div>

@@ -19,7 +19,6 @@ import {
   passwordSchema,
   phoneNumberSchema,
 } from "@/lib/formSchemaFunctions";
-import handleAsync from "@/lib/handleAsync";
 import { cn } from "@/lib/utils";
 import { createUser } from "@/services/authApi";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,7 +30,7 @@ import { useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { LoadingButton } from "./ui/loading-button";
+import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 import {
   Form,
@@ -41,6 +40,7 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
+import { LoadingButton } from "./ui/loading-button";
 
 const formSchema = z.object({
   name: commonFieldSchema(),

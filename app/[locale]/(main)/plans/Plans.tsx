@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
-import { LoadingButton } from "@/components/ui/loading-button";
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -9,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { LoadingButton } from "@/components/ui/loading-button";
 import { Slider } from "@/components/ui/slider";
 import { createOrder } from "@/services/order";
 import {
@@ -19,8 +19,8 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { User } from "../profile-setting/ProfileSetting";
 
@@ -131,10 +131,18 @@ export default function Plans({
     ...selectedPlan!, // use ! because selectedPlan is guaranteed to exist here
     finalPrice: Number(total.toFixed(2)), // override only finalPrice
   };
+  console.log("profile", selectedPlan, userProfile, orderLoading);
 
   // inside Plans component
-  const handleBuy = async () => {
-    if (!selectedPlan || !userProfile || orderLoading) return;
+  const handleBuy = async (): Promise<void> => {
+    if (!userProfile) {
+      toast.error("Please login first to buy.");
+      return Promise.resolve();
+    }
+
+    if (!selectedPlan || orderLoading) {
+      return Promise.resolve();
+    }
 
     const fullName = userProfile.name || "Unknown";
     const [firstNameRaw, ...rest] = fullName.split(" ");
@@ -144,8 +152,8 @@ export default function Plans({
     const orderBody: orderDetails = {
       packageData: cleanPlan,
       country: selectedCountry,
-      firstName: firstName,
-      lastName: lastName,
+      firstName,
+      lastName,
       email: userProfile.email,
       total: Number(total.toFixed(2)),
       device: "webapp",
@@ -155,10 +163,8 @@ export default function Plans({
     try {
       setOrderLoading(true);
       const res = await createOrder(orderBody);
-      console.log("Order created:", res);
       toast.success("Order successfully created!");
 
-      // ✅ Close the dialog
       setSelectedPlan(null);
 
       if (res?.data?.url) {
@@ -177,6 +183,8 @@ export default function Plans({
     } finally {
       setOrderLoading(false);
     }
+
+    return Promise.resolve();
   };
 
   return (
