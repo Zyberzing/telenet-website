@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { contactUS } from "@/services/contactUs";
+import { FaSpinner } from "react-icons/fa";
 
 export interface ContactUs {
   name: string;
@@ -177,7 +178,7 @@ const ContactUs = () => {
                 disabled={loading}
                 className="w-full bg-primary text-white font-medium py-3 rounded-md mt-2 hover:opacity-90 transition-all duration-200"
               >
-                {loading ? "Sending..." : t("form.submit")}
+                {loading ? <FaSpinner color="text-primary" /> : t("form.submit")}
               </button>
             </form>
           </div>

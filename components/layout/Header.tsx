@@ -20,6 +20,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { destroyCookie } from "nookies"; // if using 'nookies' to manage cookies
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -84,6 +85,18 @@ export default function Header() {
 
   const handleLogout = () => {
     dispatch(logout());
+
+    localStorage.clear();
+    sessionStorage.clear();
+
+    destroyCookie(null, "session"); // replace "session" with your cookie name
+    destroyCookie(null, "token"); // if you have a token cookie
+    document.cookie.split(";").forEach((c) => {
+      document.cookie = c
+        .replace(/^ +/, "")
+        .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+
     router.push(`/${selectedLanguage?.code}/`);
   };
 

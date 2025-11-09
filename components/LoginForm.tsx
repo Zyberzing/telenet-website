@@ -22,6 +22,7 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
+import { FaSpinner } from "react-icons/fa";
 
 export const formSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -162,7 +163,7 @@ export default function LoginForm() {
           disabled={loading}
           className="w-full bg-gradient-to-r from-primary to-indigo-600 text-white"
         >
-          {loading ? t("loading") : t("loginButton")}
+          {loading ? <FaSpinner color="text-primary" /> : t("loginButton")}
         </Button>
 
         {/* Forgot Password */}
