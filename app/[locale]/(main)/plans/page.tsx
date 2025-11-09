@@ -1,10 +1,7 @@
-"use client";
-
 import { getProfile } from "@/services/authApi";
 import { getCountries, getPlans, getRegions } from "@/services/plansApi";
-import { useEffect, useState } from "react";
-import { User } from "../profile-setting/ProfileSetting";
 import Plans, { AdminMarkup, Plan } from "./Plans";
+import { Metadata } from "next";
 
 export type countryItems = {
   _id: string;
@@ -16,76 +13,91 @@ export type regionItems = {
   name: string;
 };
 
-export default function Page() {
-  const [countries, setCountries] = useState<countryItems[]>([]);
-  const [regions, setRegions] = useState<regionItems[]>([]);
-  const [plans, setPlans] = useState<Plan[]>([]);
-  const [adminMarkup, setAdminMarkup] = useState<AdminMarkup | null>(null);
+interface PageProps {
+  searchParams: Promise<{
+    country?: string;
+    region?: string;
+  }>;
+}
 
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState("");
+export async function generateMetadata({
+  searchParams,
+}: PageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const country = params.country;
+  const region = params.region;
 
-  const [userProfile, setUserProfile] = useState<User | null>(null);
+  let title = "eSIM Plans - Telenet";
+  let description = "Browse and purchase eSIM plans for global connectivity.";
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const profile = await getProfile();
-        setUserProfile(profile);
-      } catch (err) {
-        console.error("Failed to fetch profile:", err);
-      }
-    };
+  if (country && region) {
+    title = `eSIM Plans for ${country} - ${region} | Telenet`;
+    description = `Find the best eSIM plans for ${country} in the ${region} region. Instant activation, global coverage, and competitive prices.`;
+  } else if (country) {
+    title = `eSIM Plans for ${country} | Telenet`;
+    description = `Discover eSIM plans for ${country}. Stay connected with our reliable data plans and instant activation.`;
+  }
 
-    fetchUserProfile();
-  }, []);
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+    },
+  };
+}
 
-  // Fetch countries & regions initially
-  useEffect(() => {
-    const fetchCountriesAndRegions = async () => {
-      const countriesData = (await getCountries()) || [];
-      const regionsData = (await getRegions()) || [];
+export default async function Page({ searchParams }: PageProps) {
+  const params = await searchParams;
 
-      setCountries(countriesData);
-      setRegions(regionsData);
+  // Fetch all data server-side in parallel
+  const [countriesData, regionsData, userProfile] = await Promise.allSettled([
+    getCountries(),
+    getRegions(),
+    getProfile(),
+  ]);
 
-      if (countriesData.length > 0 && regionsData.length > 0) {
-        setSelectedCountry(countriesData[0]?.name || "");
-        setSelectedRegion(regionsData[0]?.name || "");
-      }
-    };
+  // Extract data from settled promises
+  const countries =
+    countriesData.status === "fulfilled" ? countriesData.value : [];
+  const regions = regionsData.status === "fulfilled" ? regionsData.value : [];
+  const profile = userProfile.status === "fulfilled" ? userProfile.value : null;
 
-    fetchCountriesAndRegions();
-  }, []);
+  // Determine selected country and region from query params or defaults
+  const selectedCountry =
+    params.country || (countries.length > 0 ? countries[0]?.name || "" : "");
+  const selectedRegion =
+    params.region || (regions.length > 0 ? regions[0]?.name || "" : "");
 
-  // Fetch plans when selectedCountry & selectedRegion are set
-  useEffect(() => {
-    if (!selectedCountry || !selectedRegion) return;
+  // Get initial plans for the selected country and region
+  let initialPlans: Plan[] = [];
+  let initialAdminMarkup: AdminMarkup | null = null;
 
-    const fetchPlansData = async () => {
+  if (selectedCountry && selectedRegion) {
+    try {
       const plansData = await getPlans({
         country_code: selectedCountry,
         region_name: selectedRegion,
       });
-
-      setPlans(plansData.plans || []);
-      setAdminMarkup(plansData.adminMarkup || null);
-    };
-
-    fetchPlansData();
-  }, [selectedCountry, selectedRegion]);
+      initialPlans = plansData.plans || [];
+      initialAdminMarkup = plansData.adminMarkup || null;
+    } catch (error) {
+      console.error("Error fetching initial plans:", error);
+    }
+  }
+  console.log("initialPlans", initialPlans);
 
   return (
     <Plans
       countries={countries.map((c) => ({ code: c._id, name: c.name }))}
       regions={regions.map((r) => ({ name: r.name }))}
-      plans={plans}
-      adminMarkup={adminMarkup}
+      plans={initialPlans}
+      adminMarkup={initialAdminMarkup}
       selectedCountry={selectedCountry}
       selectedRegion={selectedRegion}
-      setSelectedCountry={setSelectedCountry}
-      setSelectedRegion={setSelectedRegion}
-      userProfile={userProfile}
+      userProfile={profile}
     />
   );
 }

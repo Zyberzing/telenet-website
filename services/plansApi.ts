@@ -5,11 +5,11 @@ import {
   Plan,
   PlansProps,
 } from "@/app/[locale]/(main)/plans/Plans";
-import { fetcher } from "@/lib/fetcher";
+import { enhancedFetcher } from "@/lib/enhancedAuthFetcher";
 
 export const getCountries = async (): Promise<countryItems[]> => {
   try {
-    const response = await fetcher<{ data: countryItems }>("/plan/countries");
+    const response = await enhancedFetcher<{ data: countryItems }>("/plan/countries");
     const data = response?.data || [];
     return Array.isArray(data) ? data : [];
   } catch (error) {
@@ -20,7 +20,7 @@ export const getCountries = async (): Promise<countryItems[]> => {
 
 export const getRegions = async (): Promise<regionItems[]> => {
   try {
-    const response = await fetcher<{ data: regionItems }>("/plan/regions");
+    const response = await enhancedFetcher<{ data: regionItems }>("/plan/regions");
     const data = response?.data || [];
     return Array.isArray(data) ? data : [];
   } catch (error) {
@@ -45,7 +45,7 @@ export const getPlans = async ({
 }): Promise<GetPlansResponse> => {
   try {
     const params = new URLSearchParams({ country_code, region_name, filterby });
-    const response = await fetcher<{ data: PlansProps }>(
+    const response = await enhancedFetcher<{ data: PlansProps }>(
       `/plan/package-list?${params.toString()}`
     );
     const data = response?.data || {};
