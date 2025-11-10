@@ -10,7 +10,9 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { FaSpinner } from "react-icons/fa";
 import { useDispatch } from "react-redux";
+import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
@@ -22,7 +24,6 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
-import { FaSpinner } from "react-icons/fa";
 
 export const formSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -31,7 +32,7 @@ export const formSchema = z.object({
 
 export type LoginFormSchemaType = z.infer<typeof formSchema>;
 
-export default function LoginForm() {
+export default function   LoginForm() {
   const t = useTranslations("LoginForm");
   const router = useRouter();
   const locale = useLocale();
@@ -50,6 +51,7 @@ export default function LoginForm() {
 
       const res = await loginUser(values);
       console.log("token", res)
+      toast.success("Signed in successfully.")
       const accessTokenRaw = res.access; // directly from response
       const refreshTokenRaw = res.refresh;
 

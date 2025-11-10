@@ -29,6 +29,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
@@ -85,8 +86,13 @@ export default function RegisterForm() {
         countryCode: data.countryCode,
       };
 
-      await createUser(payload);
-      router.push(`/${locale}/login`);
+      const res = await createUser(payload);
+      sessionStorage.setItem(
+        "registrationState",
+        JSON.stringify({ email: data.email })
+      );
+      toast.success(res.message);
+      router.push(`/${locale}/otp`);
     } catch (err: unknown) {
       console.error("Registration failed:", err);
 

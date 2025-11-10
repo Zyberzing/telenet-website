@@ -9,7 +9,9 @@ import { enhancedFetcher } from "@/lib/enhancedAuthFetcher";
 
 export const getCountries = async (): Promise<countryItems[]> => {
   try {
-    const response = await enhancedFetcher<{ data: countryItems }>("/plan/countries");
+    const response = await enhancedFetcher<{ data: countryItems }>(
+      "/plan/countries"
+    );
     const data = response?.data || [];
     return Array.isArray(data) ? data : [];
   } catch (error) {
@@ -20,7 +22,9 @@ export const getCountries = async (): Promise<countryItems[]> => {
 
 export const getRegions = async (): Promise<regionItems[]> => {
   try {
-    const response = await enhancedFetcher<{ data: regionItems }>("/plan/regions");
+    const response = await enhancedFetcher<{ data: regionItems }>(
+      "/plan/regions"
+    );
     const data = response?.data || [];
     return Array.isArray(data) ? data : [];
   } catch (error) {
@@ -38,13 +42,18 @@ export const getPlans = async ({
   country_code,
   region_name,
   filterby = "Region",
+  data_size,
 }: {
   country_code: string;
   region_name: string;
   filterby?: string;
+  data_size?: number;
 }): Promise<GetPlansResponse> => {
   try {
     const params = new URLSearchParams({ country_code, region_name, filterby });
+    if (data_size) {
+      params.set("data_size", data_size.toString()); // ✅ add data size to query
+    }
     const response = await enhancedFetcher<{ data: PlansProps }>(
       `/plan/package-list?${params.toString()}`
     );

@@ -2,6 +2,7 @@ export const ROUTES = {
   HOME: (locale: string) => `/${locale}`,
   LOGIN: (locale: string) => `/${locale}/login`,
   REGISTER: (locale: string) => `/${locale}/register`,
+  OTP: (locale: string) => `/${locale}/otp`,
   CONTACT_US: (locale: string) => `/${locale}/contact-us`,
   TOP_UP: (locale: string) => `/${locale}/top-up`,
   PLANS: (locale: string) => `/${locale}/plans`,

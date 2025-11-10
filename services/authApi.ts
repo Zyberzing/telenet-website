@@ -5,7 +5,10 @@ import {
 } from "@/app/[locale]/(main)/profile-setting/ProfileSetting";
 import { LoginFormSchemaType } from "@/components/LoginForm";
 import { RegistrationFormSchemaType } from "@/components/RegisterForm";
-import { enhancedAuthFetcher, enhancedFetcher } from "@/lib/enhancedAuthFetcher";
+import {
+  enhancedAuthFetcher,
+  enhancedFetcher,
+} from "@/lib/enhancedAuthFetcher";
 import { saveSession } from "@/lib/session";
 import { UserSession } from "@/lib/types";
 
@@ -47,11 +50,33 @@ export async function loginUser(formData: LoginFormSchemaType) {
   return res.data;
 }
 
+export const verifyOtp = async (body: { email: string; otp: string }) => {
+  try {
+    const res = await enhancedFetcher<{
+      status: string;
+      message: string;
+    }>("/auth/verify-email", {
+      method: "POST",
+      body,
+    });
+
+    if (res.status !== "success") {
+      throw new Error(res.message || "OTP verification failed");
+    }
+
+    return res;
+  } catch (err: any) {
+    console.error("OTP verification error:", err);
+    throw new Error(err.message || "Failed to verify OTP");
+  }
+};
+
 export const getProfile = async (): Promise<User | null> => {
   try {
-    const response = await enhancedAuthFetcher<{ status: "success"; data: User }>(
-      "/auth/profile"
-    );
+    const response = await enhancedAuthFetcher<{
+      status: "success";
+      data: User;
+    }>("/auth/profile");
     return response?.data || null;
   } catch (error) {
     console.error("Error fetching profile:", error);
@@ -60,13 +85,13 @@ export const getProfile = async (): Promise<User | null> => {
 };
 
 export const changePassword = async (body: ChangePassword): Promise<any> => {
-  const response = await enhancedAuthFetcher<{ status: "success"; message: string }>(
-    "/auth/change-password",
-    {
-      method: "POST",
-      body,
-    }
-  );
+  const response = await enhancedAuthFetcher<{
+    status: "success";
+    message: string;
+  }>("/auth/change-password", {
+    method: "POST",
+    body,
+  });
 
   if (response?.status !== "success") {
     throw new Error(response?.message || "Failed to change password");

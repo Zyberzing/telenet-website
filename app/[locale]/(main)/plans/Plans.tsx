@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LoadingButton } from "@/components/ui/loading-button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Slider } from "@/components/ui/slider";
 import { createOrder } from "@/services/order";
 import {
@@ -20,7 +21,7 @@ import {
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { User } from "../profile-setting/ProfileSetting";
 
@@ -55,8 +56,6 @@ export type PlansProps = {
   adminMarkup: AdminMarkup | null;
   selectedCountry: string;
   selectedRegion: string;
-  // setSelectedCountry: (val: string) => void;
-  // setSelectedRegion: (val: string) => void;
   userProfile: User | null;
 };
 
@@ -83,34 +82,40 @@ export default function Plans({
   const t = useTranslations("Plans");
   const router = useRouter();
   const searchParams = useSearchParams();
-
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  const [dataSize, setDataSize] = useState([50]);
+  const [orderLoading, setOrderLoading] = useState(false);
+  const [filterType, setFilterType] = useState<"country" | "region">(
+    searchParams.get("region") ? "region" : "country"
+  );
   const [internalSelectedCountry, setInternalSelectedCountry] =
     useState(selectedCountry);
   const [internalSelectedRegion, setInternalSelectedRegion] =
     useState(selectedRegion);
-  const [orderLoading, setOrderLoading] = useState(false);
+  const [dataSize, setDataSize] = useState([
+    Number(searchParams.get("data_size")) || 50,
+  ]);
+  const [isPending, startTransition] = useTransition();
 
-  // Update URL when internal selections change
-  useEffect(() => {
-    if (!internalSelectedCountry || !internalSelectedRegion) return;
+  const selectedDataSize = dataSize?.[0] ?? 0;
 
+  // ✅ Trigger full SSR refresh (shows skeleton)
+  const updateUrlAndReload = (newDataSize?: number) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("country", internalSelectedCountry);
-    params.set("region", internalSelectedRegion);
+    const currentSize = newDataSize ?? selectedDataSize;
 
-    // Update URL without triggering a page reload
-    router.replace(`?${params.toString()}`, { scroll: false });
-  }, [internalSelectedCountry, internalSelectedRegion, router, searchParams]);
+    if (filterType === "country") {
+      params.set("country", internalSelectedCountry);
+      params.delete("region");
+    } else {
+      params.set("region", internalSelectedRegion);
+      params.delete("country");
+    }
+    params.set("data_size", currentSize.toString());
 
-  // Handlers for dropdown changes
-  const handleCountryChange = (country: string) => {
-    setInternalSelectedCountry(country);
-  };
-
-  const handleRegionChange = (region: string) => {
-    setInternalSelectedRegion(region);
+    startTransition(() => {
+      router.replace(`?${params.toString()}`);
+      router.refresh(); // triggers SSR reload
+    });
   };
 
   const total = (() => {
@@ -200,29 +205,67 @@ export default function Plans({
         />
       </div>
 
-      {/* Browse Plans Section */}
+      {/* Main Section */}
       <div className="max-w-7xl mx-auto py-12 px-4 md:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
-          {/* Sidebar Filter */}
+          {/* Sidebar */}
           <aside className="border border-gray-200 rounded-2xl p-5 shadow-sm">
             <h2 className="font-[400] text-lg mb-4 flex items-center gap-2">
               <SlidersHorizontal className="w-5 h-5 text-purple-600" />
               {t("filterTitle")}
             </h2>
 
-            {/* Country & Region Filters */}
-            <Dropdown
-              label={t("country")}
-              value={internalSelectedCountry}
-              setValue={handleCountryChange}
-              items={countries.map((c) => ({ label: c.name, value: c.name }))}
-            />
-            <Dropdown
-              label={t("region")}
-              value={internalSelectedRegion}
-              setValue={handleRegionChange}
-              items={regions.map((r) => ({ label: r.name, value: r.name }))}
-            />
+            {/* Radio buttons */}
+            <div className="flex items-center gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="filterType"
+                  value="country"
+                  checked={filterType === "country"}
+                  onChange={() => setFilterType("country")}
+                  className="accent-purple-600"
+                />
+                <span>{t("country")}</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="filterType"
+                  value="region"
+                  checked={filterType === "region"}
+                  onChange={() => setFilterType("region")}
+                  className="accent-purple-600"
+                />
+                <span>{t("region")}</span>
+              </label>
+            </div>
+
+            {/* Dropdowns */}
+            {filterType === "country" && (
+              <Dropdown
+                label={t("country")}
+                value={internalSelectedCountry}
+                setValue={(v) => {
+                  setInternalSelectedCountry(v);
+                  updateUrlAndReload();
+                }}
+                items={countries.map((c) => ({ label: c.name, value: c.name }))}
+              />
+            )}
+
+            {filterType === "region" && (
+              <Dropdown
+                label={t("region")}
+                value={internalSelectedRegion}
+                setValue={(v) => {
+                  setInternalSelectedRegion(v);
+                  updateUrlAndReload();
+                }}
+                items={regions.map((r) => ({ label: r.name, value: r.name }))}
+              />
+            )}
 
             {/* Data Size */}
             <div className="mt-5">
@@ -230,28 +273,56 @@ export default function Plans({
               <Slider
                 defaultValue={[50]}
                 value={dataSize}
-                onValueChange={setDataSize}
+                onValueChange={(v) => {
+                  setDataSize(v);
+                  updateUrlAndReload(v[0]); // <-- directly use the current slider value
+                }}
                 max={100}
                 step={1}
                 className="mt-2"
               />
               <div className="flex justify-between text-xs mt-1">
                 <span>0GB</span>
-                <span>{dataSize}GB</span>
+                <span>{selectedDataSize}GB</span>
                 <span>100GB</span>
               </div>
             </div>
           </aside>
-
-          {/* Main Content */}
+          {/* Plans */}
           <main className="lg:col-span-4">
             <h1 className="text-start text-2xl md:text-3xl font-[400px] mb-6">
               {t("popularPlans")}
             </h1>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {plans.length > 0 ? (
-                plans.map((plan) => (
+            {isPending ? (
+              <div className="lg:col-span-4 space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="space-y-3">
+                      <div className="border rounded-2xl p-5 space-y-4">
+                        <div className="flex justify-between">
+                          <Skeleton className="h-8 w-16" />
+                          <Skeleton className="h-6 w-6" />
+                        </div>
+                        <div className="flex gap-3">
+                          <div className="space-y-2">
+                            <Skeleton className="h-4 w-12" />
+                            <Skeleton className="h-5 w-16" />
+                          </div>
+                          <div className="space-y-2">
+                            <Skeleton className="h-4 w-8" />
+                            <Skeleton className="h-5 w-12" />
+                          </div>
+                        </div>
+                        <Skeleton className="h-10 w-full rounded-full" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : plans.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {plans.map((plan) => (
                   <div key={plan.package_id}>
                     <div className="flex justify-between items-center mb-1">
                       <span className="text-[14px] font-medium text-white rounded-[7px] px-2 bg-[#A22BE6]">
@@ -286,11 +357,11 @@ export default function Plans({
                       </Button>
                     </div>
                   </div>
-                ))
-              ) : (
-                <p className="text-[20px]">No plans available yet.</p>
-              )}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-[20px]">No plans available yet.</p>
+            )}
           </main>
         </div>
       </div>
@@ -470,16 +541,24 @@ function Dropdown({
             <ChevronDown className="w-4 h-4" />
           </button>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent className="w-full">
-          {items.map((item) => (
-            <DropdownMenuItem
-              key={item.value}
-              onClick={() => setValue(item.value)}
-              className="cursor-pointer text-sm"
-            >
-              {item.label}
-            </DropdownMenuItem>
-          ))}
+          {items.map((item) => {
+            const isSelected = item.value === value;
+            return (
+              <DropdownMenuItem
+                key={item.value}
+                onClick={() => setValue(item.value)}
+                className={`cursor-pointer text-sm ${
+                  isSelected
+                    ? "bg-primary text-white hover:bg-primary"
+                    : "hover:bg-gray-100"
+                }`}
+              >
+                {item.label}
+              </DropdownMenuItem>
+            );
+          })}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

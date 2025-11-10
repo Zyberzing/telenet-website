@@ -1,7 +1,7 @@
 import { getProfile } from "@/services/authApi";
 import { getCountries, getPlans, getRegions } from "@/services/plansApi";
-import Plans, { AdminMarkup, Plan } from "./Plans";
 import { Metadata } from "next";
+import Plans, { AdminMarkup, Plan } from "./Plans";
 
 export type countryItems = {
   _id: string;
@@ -17,6 +17,7 @@ interface PageProps {
   searchParams: Promise<{
     country?: string;
     region?: string;
+    data_size?: number;
   }>;
 }
 
@@ -52,42 +53,37 @@ export async function generateMetadata({
 export default async function Page({ searchParams }: PageProps) {
   const params = await searchParams;
 
-  // Fetch all data server-side in parallel
   const [countriesData, regionsData, userProfile] = await Promise.allSettled([
     getCountries(),
     getRegions(),
     getProfile(),
   ]);
 
-  // Extract data from settled promises
   const countries =
     countriesData.status === "fulfilled" ? countriesData.value : [];
   const regions = regionsData.status === "fulfilled" ? regionsData.value : [];
   const profile = userProfile.status === "fulfilled" ? userProfile.value : null;
 
-  // Determine selected country and region from query params or defaults
-  const selectedCountry =
-    params.country || (countries.length > 0 ? countries[0]?.name || "" : "");
-  const selectedRegion =
-    params.region || (regions.length > 0 ? regions[0]?.name || "" : "");
+  const selectedCountry = params.country || (countries[0]?.name ?? "");
+  const selectedRegion = params.region || (regions[0]?.name ?? "");
+  const selectedDataSize = Number(params.data_size) || 50;
 
-  // Get initial plans for the selected country and region
   let initialPlans: Plan[] = [];
   let initialAdminMarkup: AdminMarkup | null = null;
 
-  if (selectedCountry && selectedRegion) {
+  if (selectedCountry || selectedRegion) {
     try {
       const plansData = await getPlans({
         country_code: selectedCountry,
         region_name: selectedRegion,
+        data_size: selectedDataSize,
       });
-      initialPlans = plansData.plans || [];
-      initialAdminMarkup = plansData.adminMarkup || null;
-    } catch (error) {
-      console.error("Error fetching initial plans:", error);
+      initialPlans = plansData?.plans || [];
+      initialAdminMarkup = plansData?.adminMarkup || null;
+    } catch (err) {
+      console.error("Failed to load plans:", err);
     }
   }
-  console.log("initialPlans", initialPlans);
 
   return (
     <Plans

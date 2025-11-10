@@ -66,7 +66,7 @@ export default function Dashboard({
             {/* Greeting */}
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-[400] text-gray-900 mb-2">
               {t("greeting")}{" "}
-              <span className="text-primary">{userData.name}</span>
+              <span className="text-primary">{userData?.name}</span>
               <span className="ml-2">👋</span>
             </h1>
 
@@ -83,7 +83,7 @@ export default function Dashboard({
                 <div>
                   <p className="text-sm">{t("activePlans")}</p>
                   <p className="text-2xl sm:text-3xl font-[400] text-primary mt-3">
-                    {userData.activePlans}
+                    {userData?.activePlans || 0}
                   </p>
                 </div>
               </Card>
@@ -93,7 +93,7 @@ export default function Dashboard({
                 <div>
                   <p className="text-sm">{t("walletBalance")}</p>
                   <p className="text-2xl sm:text-3xl font-[400] text-primary mt-3">
-                    ${userData.walletBalance}
+                    ${userData?.walletBalance || 0}
                   </p>
                 </div>
               </Card>
@@ -102,20 +102,20 @@ export default function Dashboard({
               <Card className="p-4 bg-white shadow-sm border border-gray-100 rounded-xl">
                 <div>
                   <p className="text-2xl sm:text-3xl font-[400] text-primary">
-                    ${userData.lastTransaction.amount}
+                    ${userData?.lastTransaction?.amount || 0}
                   </p>
                   <div className="flex justify-between text-[12px]">
                     <div>
                       <p className="text-[#545454]">Date</p>
-                      <p>{userData.lastTransaction.date}</p>
+                      <p>{userData?.lastTransaction?.date || "-"}</p>
                     </div>
                     <div>
                       <p className="text-[#545454]">{t("validity")}</p>
-                      <p>{userData.lastTransaction.validity}</p>
+                      <p>{userData?.lastTransaction?.validity || "-"}</p>
                     </div>
                     <div>
                       <p className="text-[#545454]">{t("data")}</p>
-                      <p>{userData.lastTransaction.data}</p>
+                      <p>{userData?.lastTransaction?.data || "-"}</p>
                     </div>
                   </div>
                 </div>

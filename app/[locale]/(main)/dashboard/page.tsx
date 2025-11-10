@@ -1,3 +1,5 @@
+import { getProfile } from "@/services/authApi";
+import { User } from "../profile-setting/ProfileSetting";
 import Dashboard from "./Dashboard";
 
 export default async function Page() {
@@ -7,15 +9,28 @@ export default async function Page() {
     { price: 18, validity: "30 days", data: "8 GB" },
   ];
 
+  let user: User | null = null;
+
+  try {
+    user = await getProfile();
+  } catch (err) {
+    console.error("Failed to fetch profile:", err);
+  }
+
   const userData = {
-    name: "Alex",
-    activePlans: 2,
-    walletBalance: 50,
+    name: user?.name ?? "",
+    email: user?.email ?? "",
+    id: user?.id ?? "",
+    phone: user?.phone ?? "",
+    country: user?.countryCode ?? "",
+    location: user?.location ?? "",
+    activePlans: 0,
+    walletBalance: 0,
     lastTransaction: {
-      amount: 15,
-      date: "22 Oct 2025",
-      validity: "30-day plan",
-      data: "USA 5GB",
+      amount: 0,
+      date: "N/A",
+      validity: "N/A",
+      data: "N/A",
     },
   };
 
