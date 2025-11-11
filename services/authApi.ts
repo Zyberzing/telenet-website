@@ -5,10 +5,12 @@ import {
 } from "@/app/[locale]/(main)/profile-setting/ProfileSetting";
 import { LoginFormSchemaType } from "@/components/LoginForm";
 import { RegistrationFormSchemaType } from "@/components/RegisterForm";
+import { authFetcher } from "@/lib/authFetcher";
 import {
   enhancedAuthFetcher,
   enhancedFetcher,
 } from "@/lib/enhancedAuthFetcher";
+import { fetcher } from "@/lib/fetcher";
 import { saveSession } from "@/lib/session";
 import { UserSession } from "@/lib/types";
 
@@ -23,7 +25,7 @@ export const createUser = async (
 };
 
 export async function loginUser(formData: LoginFormSchemaType) {
-  const res = await enhancedFetcher<{
+  const res = await fetcher<{
     status: string;
     message: string;
     data: UserSession;
@@ -37,7 +39,6 @@ export async function loginUser(formData: LoginFormSchemaType) {
   }
 
   const { accessToken: access, refreshToken: refresh, user } = res.data;
-
   await saveSession({
     token: access,
     refreshToken: refresh,
@@ -73,7 +74,7 @@ export const verifyOtp = async (body: { email: string; otp: string }) => {
 
 export const getProfile = async (): Promise<User | null> => {
   try {
-    const response = await enhancedAuthFetcher<{
+    const response = await authFetcher<{
       status: "success";
       data: User;
     }>("/auth/profile");

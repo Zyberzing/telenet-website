@@ -50,7 +50,11 @@ export type AdminMarkup = {
 };
 
 export type PlansProps = {
-  countries: { code: string; name: string }[];
+  countries: {
+    iso2: string;
+    code: string;
+    name: string;
+  }[];
   regions: { name: string }[];
   plans: Plan[];
   adminMarkup: AdminMarkup | null;
@@ -99,22 +103,36 @@ export default function Plans({
   const selectedDataSize = dataSize?.[0] ?? 0;
 
   // ✅ Trigger full SSR refresh (shows skeleton)
-  const updateUrlAndReload = (newDataSize?: number) => {
+  const updateUrlAndReload = ({
+    newDataSize,
+    newCountry,
+    newRegion,
+    newFilterType,
+  }: {
+    newDataSize?: number;
+    newCountry?: string;
+    newRegion?: string;
+    newFilterType?: "country" | "region";
+  }) => {
     const params = new URLSearchParams(searchParams.toString());
     const currentSize = newDataSize ?? selectedDataSize;
+    const filter = newFilterType ?? filterType;
+    const country = newCountry ?? internalSelectedCountry;
+    const region = newRegion ?? internalSelectedRegion;
 
-    if (filterType === "country") {
-      params.set("country", internalSelectedCountry);
+    if (filter === "country") {
+      params.set("country", country);
       params.delete("region");
     } else {
-      params.set("region", internalSelectedRegion);
+      params.set("region", region);
       params.delete("country");
     }
+
     params.set("data_size", currentSize.toString());
 
     startTransition(() => {
       router.replace(`?${params.toString()}`);
-      router.refresh(); // triggers SSR reload
+      router.refresh();
     });
   };
 
@@ -136,7 +154,6 @@ export default function Plans({
     ...selectedPlan!, // use ! because selectedPlan is guaranteed to exist here
     finalPrice: Number(total.toFixed(2)), // override only finalPrice
   };
-  console.log("profile", selectedPlan, userProfile, orderLoading);
 
   // inside Plans component
   const handleBuy = async (): Promise<void> => {
@@ -249,9 +266,12 @@ export default function Plans({
                 value={internalSelectedCountry}
                 setValue={(v) => {
                   setInternalSelectedCountry(v);
-                  updateUrlAndReload();
+                  updateUrlAndReload({
+                    newCountry: v,
+                    newFilterType: "country",
+                  });
                 }}
-                items={countries.map((c) => ({ label: c.name, value: c.name }))}
+                items={countries.map((c) => ({ label: c.name, value: c.iso2 }))}
               />
             )}
 
@@ -261,7 +281,7 @@ export default function Plans({
                 value={internalSelectedRegion}
                 setValue={(v) => {
                   setInternalSelectedRegion(v);
-                  updateUrlAndReload();
+                  updateUrlAndReload({ newRegion: v, newFilterType: "region" });
                 }}
                 items={regions.map((r) => ({ label: r.name, value: r.name }))}
               />
@@ -275,7 +295,7 @@ export default function Plans({
                 value={dataSize}
                 onValueChange={(v) => {
                   setDataSize(v);
-                  updateUrlAndReload(v[0]); // <-- directly use the current slider value
+                  updateUrlAndReload({ newDataSize: v[0] });
                 }}
                 max={100}
                 step={1}

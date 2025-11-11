@@ -6,6 +6,7 @@ import Plans, { AdminMarkup, Plan } from "./Plans";
 export type countryItems = {
   _id: string;
   name: string;
+  iso2: string;
 };
 
 export type regionItems = {
@@ -73,9 +74,11 @@ export default async function Page({ searchParams }: PageProps) {
 
   if (selectedCountry || selectedRegion) {
     try {
+      const isRegionFilter = !!params.region;
       const plansData = await getPlans({
-        country_code: selectedCountry,
-        region_name: selectedRegion,
+        filterby: isRegionFilter ? "Region" : "Country",
+        country_code: !isRegionFilter ? selectedCountry : undefined,
+        region_name: isRegionFilter ? selectedRegion : undefined,
         data_size: selectedDataSize,
       });
       initialPlans = plansData?.plans || [];
@@ -87,7 +90,11 @@ export default async function Page({ searchParams }: PageProps) {
 
   return (
     <Plans
-      countries={countries.map((c) => ({ code: c._id, name: c.name }))}
+      countries={countries.map((c) => ({
+        iso2: c.iso2,
+        code: c._id,
+        name: c.name,
+      }))}
       regions={regions.map((r) => ({ name: r.name }))}
       plans={initialPlans}
       adminMarkup={initialAdminMarkup}

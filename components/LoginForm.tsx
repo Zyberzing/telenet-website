@@ -32,7 +32,7 @@ export const formSchema = z.object({
 
 export type LoginFormSchemaType = z.infer<typeof formSchema>;
 
-export default function   LoginForm() {
+export default function LoginForm() {
   const t = useTranslations("LoginForm");
   const router = useRouter();
   const locale = useLocale();
@@ -50,8 +50,7 @@ export default function   LoginForm() {
       setLoading(true);
 
       const res = await loginUser(values);
-      console.log("token", res)
-      toast.success("Signed in successfully.")
+      toast.success("Signed in successfully.");
       const accessTokenRaw = res.access; // directly from response
       const refreshTokenRaw = res.refresh;
 
@@ -79,10 +78,9 @@ export default function   LoginForm() {
         refreshToken,
         accessToken: accessToken,
         access: accessToken,
-        refresh: refreshToken
+        refresh: refreshToken,
       });
 
-      // Store in Redux
       dispatch(
         setCredentials({
           token: accessToken,
@@ -92,8 +90,25 @@ export default function   LoginForm() {
       );
 
       router.push(`/${locale}/dashboard`);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Login failed:", err);
+
+      const errorMessage = err instanceof Error ? err.message : "Login failed";
+
+      if (errorMessage.includes("User is not verified")) {
+        toast.info(
+          "Please verify your account with the OTP sent to your email."
+        );
+
+        sessionStorage.setItem(
+          "registrationState",
+          JSON.stringify({ email: form.getValues("email") })
+        );
+
+        router.push(`/${locale}/otp`);
+        return;
+      }
+
       form.setError("email", { message: "Invalid credentials" });
     } finally {
       setLoading(false);
@@ -159,16 +174,15 @@ export default function   LoginForm() {
           )}
         />
 
-        {/* Submit Button */}
+        {/* Submit */}
         <Button
           type="submit"
           disabled={loading}
           className="w-full bg-gradient-to-r from-primary to-indigo-600 text-white"
         >
-          {loading ? <FaSpinner color="text-primary" /> : t("loginButton")}
+          {loading ? <FaSpinner className="animate-spin" /> : t("loginButton")}
         </Button>
 
-        {/* Forgot Password */}
         <div>
           <p className="text-sm text-primary hover:underline cursor-pointer">
             {t("forgotPassword")}
@@ -182,7 +196,7 @@ export default function   LoginForm() {
           <span className="h-px w-16 bg-gray-200"></span>
         </div>
 
-        {/* Social Login */}
+        {/* Social */}
         <div className="flex gap-3 justify-center">
           <Button
             variant="outline"
@@ -207,7 +221,6 @@ export default function   LoginForm() {
           </Button>
         </div>
 
-        {/* Register */}
         <div className="text-center text-sm flex gap-2 justify-center">
           {t("notRegistered")}{" "}
           <p
