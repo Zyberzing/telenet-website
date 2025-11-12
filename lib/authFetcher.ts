@@ -1,6 +1,6 @@
 "use server";
 
-import { hasSession } from "./session";
+import { hasSession, clearSession } from "./session";
 
 type FetchOptions = {
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
@@ -27,6 +27,8 @@ export async function authFetcher<T = unknown>(
     const refreshToken = session?.refreshToken;
 
     if (!accessToken || !refreshToken) {
+      console.warn("⚠️ No valid tokens found — clearing session.");
+      await clearSession();
       throw new Error("Token missing");
     }
 
@@ -45,6 +47,19 @@ export async function authFetcher<T = unknown>(
       cache,
       next: revalidate ? { revalidate } : undefined,
     });
+
+    // If token expired (common pattern: 401 Unauthorized)
+    if (res.status === 401) {
+      console.warn("🔒 Token expired — clearing session.");
+      await clearSession();
+
+      // If client-side (not SSR), redirect to login
+      if (typeof window !== "undefined") {
+        window.location.href = "/en";
+      }
+
+      throw new Error("Token expired");
+    }
 
     const data = await res.json().catch(() => null);
 

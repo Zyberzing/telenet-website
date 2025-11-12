@@ -11,7 +11,7 @@ import {
   enhancedFetcher,
 } from "@/lib/enhancedAuthFetcher";
 import { fetcher } from "@/lib/fetcher";
-import { saveSession } from "@/lib/session";
+import { clearSession, hasSession, saveSession } from "@/lib/session";
 import { UserSession } from "@/lib/types";
 
 export const createUser = async (
@@ -74,13 +74,27 @@ export const verifyOtp = async (body: { email: string; otp: string }) => {
 
 export const getProfile = async (): Promise<User | null> => {
   try {
+    const session = await hasSession();
+
+    if (!session?.accessToken || !session?.refreshToken) {
+      console.warn("Skipping profile fetch — no token found.");
+      return null;
+    }
+
     const response = await authFetcher<{
       status: "success";
       data: User;
     }>("/auth/profile");
+
     return response?.data || null;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching profile:", error);
+
+    if (error?.status === 401 || error?.message?.includes("expired")) {
+      console.log("Auto-logout due to expired token.");
+      await clearSession();
+    }
+
     return null;
   }
 };

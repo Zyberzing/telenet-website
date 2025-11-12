@@ -12,6 +12,7 @@ import { LoadingButton } from "@/components/ui/loading-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Slider } from "@/components/ui/slider";
 import { createOrder } from "@/services/order";
+import { DialogTitle } from "@radix-ui/react-dialog";
 import {
   ChevronDown,
   ChevronRightIcon,
@@ -47,21 +48,19 @@ export type AdminMarkup = {
   user: string;
   percentage: number;
   updatedAt: string;
+  providerName: string;
 };
 
-export type PlansProps = {
-  countries: {
-    iso2: string;
-    code: string;
-    name: string;
-  }[];
+export interface PlansProps {
+  countries: { iso2: string; code: string; name: string }[];
   regions: { name: string }[];
   plans: Plan[];
   adminMarkup: AdminMarkup | null;
   selectedCountry: string;
   selectedRegion: string;
+  filterby: "Country" | "Region";
   userProfile: User | null;
-};
+}
 
 export type orderDetails = {
   packageData: Plan;
@@ -81,6 +80,7 @@ export default function Plans({
   adminMarkup,
   selectedCountry,
   selectedRegion,
+  filterby,
   userProfile,
 }: PlansProps) {
   const t = useTranslations("Plans");
@@ -89,7 +89,7 @@ export default function Plans({
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [orderLoading, setOrderLoading] = useState(false);
   const [filterType, setFilterType] = useState<"country" | "region">(
-    searchParams.get("region") ? "region" : "country"
+    filterby === "Region" ? "region" : "country"
   );
   const [internalSelectedCountry, setInternalSelectedCountry] =
     useState(selectedCountry);
@@ -102,7 +102,6 @@ export default function Plans({
 
   const selectedDataSize = dataSize?.[0] ?? 0;
 
-  // ✅ Trigger full SSR refresh (shows skeleton)
   const updateUrlAndReload = ({
     newDataSize,
     newCountry,
@@ -120,12 +119,14 @@ export default function Plans({
     const country = newCountry ?? internalSelectedCountry;
     const region = newRegion ?? internalSelectedRegion;
 
+    params.set("filterby", filter === "country" ? "Country" : "Region");
+
     if (filter === "country") {
-      params.set("country", country);
-      params.delete("region");
+      params.set("country_code", country);
+      params.delete("region_name");
     } else {
-      params.set("region", region);
-      params.delete("country");
+      params.set("region_name", region);
+      params.delete("country_code");
     }
 
     params.set("data_size", currentSize.toString());
@@ -345,7 +346,12 @@ export default function Plans({
                 {plans.map((plan) => (
                   <div key={plan.package_id}>
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-[14px] font-medium text-white rounded-[7px] px-2 bg-[#A22BE6]">
+                      {adminMarkup?.providerName && (
+                        <span className="text-[14px] capitalize font-medium text-white rounded-[7px] px-2 bg-[#A22BE6]">
+                          {adminMarkup.providerName}
+                        </span>
+                      )}
+                      <span className="text-[14px] font-extrabold text-[#A70123] rounded-[7px] px-2 ">
                         {plan.coverage}
                       </span>
                     </div>
@@ -396,9 +402,9 @@ export default function Plans({
             {/* Header */}
             <div className="p-4 border-b border-gray-200 flex justify-between sticky top-0 bg-white z-10">
               <div>
-                <h2 className="text-lg font-[400]">
+                <DialogTitle className="text-lg font-[400]">
                   {selectedPlan.package_name}
-                </h2>
+                </DialogTitle>
                 <p className="text-sm text-gray-500">
                   Network: {selectedPlan.coverage}
                 </p>
@@ -410,7 +416,6 @@ export default function Plans({
                 &times;
               </button>
             </div>
-
             {/* Scrollable Content */}
             <div className="p-4 overflow-y-auto flex-1 space-y-4">
               {/* Plan Details */}
@@ -514,7 +519,6 @@ export default function Plans({
                 </div>
               </div>
             </div>
-
             {/* Footer */}
             <DialogFooter className="p-4 bg-gray-50 rounded-b-2xl flex justify-between items-center sticky bottom-0 z-10">
               <Heart className="w-5 h-5 text-gray-400 cursor-pointer hover:text-red-500" />

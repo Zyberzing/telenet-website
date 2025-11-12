@@ -26,11 +26,11 @@ const authSlice = createSlice({
       state.refreshToken = refreshToken;
       state.user = user;
 
-      if (typeof window !== "undefined") {
-        localStorage.setItem("token", token);
-        localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem("user", JSON.stringify(user));
-      }
+      // if (typeof window !== "undefined") {
+      //   localStorage.setItem("token", token);
+      //   localStorage.setItem("refreshToken", refreshToken);
+      //   localStorage.setItem("user", JSON.stringify(user));
+      // }
     },
     logout: (state) => {
       state.token = null;

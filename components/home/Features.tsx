@@ -188,7 +188,7 @@ export default function Features() {
                 height={100}
                 className="rounded mb-3"
               />
-              <h3 className="font-[400px] text-[19.75px] md:text-base">
+              <h3 className="font-[400px] text-black text-[19.75px] md:text-base">
                 {c.name}
               </h3>
               <p className="text-[17.34px] text-[#8606D0] mt-2">

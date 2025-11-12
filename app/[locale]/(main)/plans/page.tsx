@@ -16,8 +16,9 @@ export type regionItems = {
 
 interface PageProps {
   searchParams: Promise<{
-    country?: string;
-    region?: string;
+    filterby?: "Country" | "Region";
+    country_code?: string;
+    region_name?: string;
     data_size?: number;
   }>;
 }
@@ -26,18 +27,19 @@ export async function generateMetadata({
   searchParams,
 }: PageProps): Promise<Metadata> {
   const params = await searchParams;
-  const country = params.country;
-  const region = params.region;
+  const filterby = params.filterby || "Country";
+  const country = params.country_code;
+  const region = params.region_name;
 
   let title = "eSIM Plans - Telenet";
   let description = "Browse and purchase eSIM plans for global connectivity.";
 
-  if (country && region) {
-    title = `eSIM Plans for ${country} - ${region} | Telenet`;
-    description = `Find the best eSIM plans for ${country} in the ${region} region. Instant activation, global coverage, and competitive prices.`;
-  } else if (country) {
+  if (filterby === "Region" && region) {
+    title = `eSIM Plans for ${region} Region | Telenet`;
+    description = `Find the best eSIM plans available in the ${region} region.`;
+  } else if (filterby === "Country" && country) {
     title = `eSIM Plans for ${country} | Telenet`;
-    description = `Discover eSIM plans for ${country}. Stay connected with our reliable data plans and instant activation.`;
+    description = `Discover eSIM plans for ${country}. Stay connected globally with instant activation.`;
   }
 
   return {
@@ -65,27 +67,25 @@ export default async function Page({ searchParams }: PageProps) {
   const regions = regionsData.status === "fulfilled" ? regionsData.value : [];
   const profile = userProfile.status === "fulfilled" ? userProfile.value : null;
 
-  const selectedCountry = params.country || (countries[0]?.name ?? "");
-  const selectedRegion = params.region || (regions[0]?.name ?? "");
+  const filterby = params.filterby || "Country"; // Default always Country
+  const selectedCountryCode = params.country_code || countries[0]?.iso2 || "";
+  const selectedRegion = params.region_name || regions[0]?.name || "";
   const selectedDataSize = Number(params.data_size) || 50;
 
   let initialPlans: Plan[] = [];
   let initialAdminMarkup: AdminMarkup | null = null;
 
-  if (selectedCountry || selectedRegion) {
-    try {
-      const isRegionFilter = !!params.region;
-      const plansData = await getPlans({
-        filterby: isRegionFilter ? "Region" : "Country",
-        country_code: !isRegionFilter ? selectedCountry : undefined,
-        region_name: isRegionFilter ? selectedRegion : undefined,
-        data_size: selectedDataSize,
-      });
-      initialPlans = plansData?.plans || [];
-      initialAdminMarkup = plansData?.adminMarkup || null;
-    } catch (err) {
-      console.error("Failed to load plans:", err);
-    }
+  try {
+    const plansData = await getPlans({
+      filterby,
+      country_code: filterby === "Country" ? selectedCountryCode : undefined,
+      region_name: filterby === "Region" ? selectedRegion : undefined,
+      data_size: selectedDataSize,
+    });
+    initialPlans = plansData?.plans || [];
+    initialAdminMarkup = plansData?.adminMarkup || null;
+  } catch (err) {
+    console.error("Failed to load plans:", err);
   }
 
   return (
@@ -98,8 +98,9 @@ export default async function Page({ searchParams }: PageProps) {
       regions={regions.map((r) => ({ name: r.name }))}
       plans={initialPlans}
       adminMarkup={initialAdminMarkup}
-      selectedCountry={selectedCountry}
+      selectedCountry={selectedCountryCode}
       selectedRegion={selectedRegion}
+      filterby={filterby} // ✅ add this
       userProfile={profile}
     />
   );

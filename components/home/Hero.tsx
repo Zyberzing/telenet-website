@@ -9,6 +9,12 @@ import { FaSpinner, FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { FaLocationDot, FaMagnifyingGlass } from "react-icons/fa6";
 import { IoIosArrowForward } from "react-icons/io";
 import { Button } from "../ui/Button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 export default function Hero() {
   const t = useTranslations("Hero");
@@ -16,9 +22,16 @@ export default function Hero() {
   const locale = useLocale();
 
   const [travelType, setTravelType] = useState<"country" | "region">("country");
-  const [options, setOptions] = useState<{ _id: string; name: string }[]>([]);
-  const [selectedOption, setSelectedOption] = useState("");
+  const [options, setOptions] = useState<
+    { _id: string; name: string; iso2?: string }[]
+  >([]);
+  const [selectedOption, setSelectedOption] = useState<{
+    _id: string;
+    name: string;
+    iso2?: string;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     async function fetchOptions() {
@@ -35,14 +48,22 @@ export default function Hero() {
       }
     }
     fetchOptions();
+    setSelectedOption(null);
   }, [travelType]);
 
   const handleBrowse = () => {
     if (!selectedOption) return;
-    const paramKey = travelType === "country" ? "country" : "region";
-    router.push(
-      `/${locale}/plans?${paramKey}=${encodeURIComponent(selectedOption)}`
-    );
+
+    const filterBy = travelType === "country" ? "Country" : "Region";
+    let url = `/${locale}/plans?filterby=${filterBy}`;
+
+    if (travelType === "country" && selectedOption.iso2) {
+      url += `&country_code=${encodeURIComponent(selectedOption.iso2)}`;
+    } else if (travelType === "region") {
+      url += `&region_name=${encodeURIComponent(selectedOption.name)}`;
+    }
+
+    router.push(url);
   };
 
   return (
@@ -61,9 +82,14 @@ export default function Hero() {
         </div>
 
         {/* Title */}
-        <h1 className="text-2xl sm:text-4xl md:text-5xl font-[400] mb-3 text-gray-900 leading-snug">
+        <h1
+          className="text-2xl sm:text-4xl md:text-5xl font-[400] mb-3 
+             text-gray-900 dark:text-white leading-snug"
+        >
           {t("title")}{" "}
-          <span className="text-primary">{t("titleHighlight")}</span>{" "}
+          <span className="text-primary dark:text-primary">
+            {t("titleHighlight")}
+          </span>{" "}
           {t("titleCountries")}
         </h1>
         <p className="text-sm sm:text-base md:text-lg text-black mb-6 max-w-2xl mx-auto">
@@ -85,13 +111,12 @@ export default function Hero() {
 
         {/* Travel Section */}
         <div className="relative max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-10 px-5 sm:px-8 rounded-4xl">
-          {/* SVG for same curve */}
-          <div className="absolute w-full h-20 left-0 -bottom-6 bg-gradient-two blur-[150px]" />
-          <div className="absolute inset-0 bg-[url(/dots.svg)] bg-center bg-cover bg-no-repeat z-30  rounded-4xl" />
-          <svg className="absolute w-full h-full rounded-4xl">
+          {/* Decorative Backgrounds (non-interactive) */}
+          <div className="absolute w-full h-20 left-0 -bottom-6 bg-gradient-two blur-[150px] pointer-events-none" />
+          <div className="absolute inset-0 bg-[url(/dots.svg)] bg-center bg-cover bg-no-repeat rounded-4xl pointer-events-none" />
+          <svg className="absolute w-full h-full rounded-4xl pointer-events-none">
             <defs>
               <clipPath id="hero-clip" clipPathUnits="objectBoundingBox">
-                {/* Converted from your original path */}
                 <path
                   d="
                     M0.06,0
@@ -107,9 +132,8 @@ export default function Hero() {
               </clipPath>
             </defs>
           </svg>
-
           <div
-            className="absolute inset-0 bg-gradient z-0 rounded-4xl"
+            className="absolute inset-0 bg-gradient z-0 rounded-4xl pointer-events-none"
             style={{ clipPath: "url(#hero-clip)" }}
           />
 
@@ -161,30 +185,48 @@ export default function Hero() {
               ))}
             </div>
 
-            {/* Search Select */}
+            {/* Shadcn Dropdown */}
             <div className="flex gap-3 sm:gap-4 mb-5 bg-[#B882DB] p-2 sm:p-3 rounded-[40px] w-full">
               <div className="flex items-center w-full p-2 px-3 sm:px-4 bg-white rounded-3xl shadow-sm">
                 <FaLocationDot className="text-primary mr-2 sm:mr-3" />
+
                 {loading ? (
                   <span className="text-gray-500 text-sm flex gap-2 items-center">
-                    <FaSpinner />
+                    <FaSpinner className="animate-spin" />
                     Loading...
                   </span>
                 ) : (
-                  <select
-                    className="w-full bg-transparent border-none focus:outline-none text-black text-xs sm:text-sm md:text-base"
-                    value={selectedOption}
-                    onChange={(e) => setSelectedOption(e.target.value)}
+                  <DropdownMenu
+                    open={dropdownOpen}
+                    onOpenChange={setDropdownOpen}
                   >
-                    <option value="">{t("searchPlaceholder")}</option>
-                    {options.map((opt) => (
-                      <option key={opt._id} value={opt.name}>
-                        {opt.name}
-                      </option>
-                    ))}
-                  </select>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className="w-full text-left text-black text-xs sm:text-sm md:text-base focus:outline-none"
+                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                      >
+                        {selectedOption
+                          ? selectedOption.name
+                          : t("searchPlaceholder")}
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="max-h-60 overflow-y-auto bg-white shadow-lg rounded-md">
+                      {options.map((opt) => (
+                        <DropdownMenuItem
+                          key={opt._id}
+                          onClick={() => {
+                            setSelectedOption(opt);
+                            setDropdownOpen(false);
+                          }}
+                        >
+                          {opt.name}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 )}
               </div>
+
               <span
                 onClick={selectedOption ? handleBrowse : undefined}
                 className={`flex items-center justify-center rounded-full p-3 sm:p-4 transition ${
@@ -229,7 +271,7 @@ export default function Hero() {
                 height={400}
                 className="object-cover max-h-[300px] sm:max-h-[350px] md:max-h-[400px] w-auto"
               />
-              {/* United States */}
+              {/* Country Flag Cards */}
               <div className="absolute top-[11rem] right-[0rem] rounded-b-md bg-white shadow-md flex flex-col items-center w-[70px]">
                 <Image
                   src="/flags/usa.svg"

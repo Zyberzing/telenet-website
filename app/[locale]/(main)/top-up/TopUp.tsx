@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { DialogTitle } from "@radix-ui/react-dialog";
 import { CardSimIcon, ChevronRightIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
@@ -209,7 +210,9 @@ export default function TopUp() {
           {/* Header */}
           <div className="p-4 border-b border-gray-200 flex justify-between items-start sticky top-0 bg-white z-10">
             <div>
-              <h2 className="text-lg font-[400px]">{selectedPack?.planName}</h2>
+              <DialogTitle className="text-lg font-[400px]">
+                {selectedPack?.planName}
+              </DialogTitle>
               <p className="text-sm text-gray-500">
                 {t("provider")}: {selectedPack?.provider} | Network:{" "}
                 {selectedPack?.network}
@@ -484,7 +487,8 @@ export default function TopUp() {
         <DialogContent className="text-center p-8 rounded-3xl shadow-xl h-100 w-96 items-center">
           <div className="flex flex-col items-center justify-center">
             <div className="p-3 rounded-full bg-[#21BE7933] mb-5">
-              <div className="w-16 h-16 rounded-full bg-[#21BE79] flex items-center justify-center">
+              <DialogTitle></DialogTitle>
+              <div className="w-16 h-16 rounded-full cursor-pointer bg-[#21BE79] flex items-center justify-center">
                 <span className="text-white text-4xl">&#10003;</span>
               </div>
             </div>

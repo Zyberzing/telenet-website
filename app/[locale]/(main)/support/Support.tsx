@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { DialogTitle } from "@radix-ui/react-dialog";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
@@ -231,9 +232,9 @@ export default function Support({ tickets }: SupportClientProps) {
             {selectedTicket && (
               <>
                 <div className="flex justify-between sticky top-0 z-10">
-                  <p className="text-[#141414] text-[28px] font-[400]">
+                  <DialogTitle className="text-[#141414] text-[28px] font-[400]">
                     {selectedTicket.id}
-                  </p>
+                  </DialogTitle>
                   <button
                     onClick={() => setSelectedTicket(null)}
                     className="text-gray-500 hover:text-red-500 text-3xl font-[400px] cursor-pointer self-start"
@@ -310,9 +311,9 @@ export default function Support({ tickets }: SupportClientProps) {
             className="max-w-md max-h-[85vh] flex flex-col overflow-hidden shadow-lg border-0"
           >
             <div className="flex justify-between sticky top-0 z-10">
-              <p className="text-[#141414] text-[24px] font-[400]">
+              <DialogTitle className="text-[#141414] text-[24px] font-[400]">
                 {t("raiseTicket")}
-              </p>
+              </DialogTitle>
               <button
                 onClick={() => setIsNewTicketOpen(false)}
                 className="text-gray-500 hover:text-red-500 text-3xl font-[400px] cursor-pointer self-start"
