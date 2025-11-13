@@ -15,6 +15,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { ROUTES } from "@/routes";
 
 export default function Hero() {
   const t = useTranslations("Hero");
@@ -100,7 +101,7 @@ export default function Hero() {
         <Button
           variant="default"
           size="lg"
-          onClick={() => router.push(`/${locale}/plans`)}
+          onClick={() => router.push(ROUTES.PLANS(locale))}
           className="mb-10 px-5 py-2 bg-gradient hover:bg-primary rounded-3xl text-xs sm:text-sm md:text-base"
         >
           {t("getStarted")}

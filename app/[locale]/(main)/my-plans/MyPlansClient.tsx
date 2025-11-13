@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import { ROUTES } from "@/routes";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -78,7 +79,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
           </div>
 
           <Button
-            onClick={() => router.push(`/${locale}/plans`)}
+            onClick={() => router.push(ROUTES.PLANS(locale))}
             className="ml-4 bg-primary text-white hover:bg-primary text-sm"
           >
             <IoIosAddCircleOutline color="white" fontWeight={400} />{" "}
@@ -145,13 +146,13 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
 
                   <div className="flex flex-col sm:flex-row gap-3 mt-3">
                     <Button
-                      onClick={() => router.push(`/${locale}/plans`)}
+                      onClick={() => router.push(ROUTES.PLANS(locale))}
                       className="bg-primary hover:bg-primary px-10 rounded-full"
                     >
                       {t("renew")}
                     </Button>
                     <Button
-                      onClick={() => router.push(`/${locale}/top-up`)}
+                      onClick={() => router.push(ROUTES.TOP_UP(locale))}
                       className="bg-black hover:bg-gray-800 px-10 rounded-full"
                     >
                       {t("topUp")}
@@ -161,7 +162,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                     </Button>
                     <p
                       onClick={() =>
-                        router.push(`/${locale}/installation-guide`)
+                        router.push(ROUTES.INSTALLATION_GUIDE(locale))
                       }
                       className="border-b border-primary text-primary h-fit place-self-center cursor-pointer"
                     >

@@ -20,6 +20,7 @@ import {
   phoneNumberSchema,
 } from "@/lib/formSchemaFunctions";
 import { cn } from "@/lib/utils";
+import { ROUTES } from "@/routes";
 import { createUser } from "@/services/authApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getCountries, getCountryCallingCode } from "libphonenumber-js";
@@ -92,7 +93,7 @@ export default function RegisterForm() {
         JSON.stringify({ email: data.email })
       );
       toast.success(res.message);
-      router.push(`/${locale}/otp`);
+      router.push(ROUTES.OTP(locale));
     } catch (err: unknown) {
       console.error("Registration failed:", err);
 
@@ -275,7 +276,7 @@ export default function RegisterForm() {
         <div className="text-center text-sm flex gap-2 justify-center">
           Already log-in?{" "}
           <p
-            onClick={() => router.push(`/${locale}/login`)}
+            onClick={() => router.push(ROUTES.LOGIN(locale))}
             className="text-primary hover:underline cursor-pointer"
           >
             LogIn

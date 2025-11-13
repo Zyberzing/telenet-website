@@ -1,6 +1,7 @@
 "use client";
 
 import { saveSession } from "@/lib/session";
+import { ROUTES } from "@/routes";
 import { loginUser } from "@/services/authApi";
 import { setCredentials } from "@/store/slices/authSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -89,7 +90,7 @@ export default function LoginForm() {
         })
       );
 
-      router.push(`/${locale}/dashboard`);
+      router.push(ROUTES.DASHBOARD(locale));
     } catch (err: unknown) {
       console.error("Login failed:", err);
 
@@ -105,7 +106,7 @@ export default function LoginForm() {
           JSON.stringify({ email: form.getValues("email") })
         );
 
-        router.push(`/${locale}/otp`);
+        router.push(ROUTES.OTP(locale));
         return;
       }
 
@@ -184,7 +185,10 @@ export default function LoginForm() {
         </Button>
 
         <div>
-          <p className="text-sm text-primary hover:underline cursor-pointer">
+          <p
+            className="text-sm text-primary hover:underline cursor-pointer"
+            onClick={() => router.push(ROUTES.FORGOT_PASSWORD(locale))}
+          >
             {t("forgotPassword")}
           </p>
         </div>
@@ -224,7 +228,7 @@ export default function LoginForm() {
         <div className="text-center text-sm flex gap-2 justify-center">
           {t("notRegistered")}{" "}
           <p
-            onClick={() => router.push(`/${locale}/register`)}
+            onClick={() => router.push(ROUTES.REGISTER(locale))}
             className="text-primary hover:underline cursor-pointer"
           >
             {t("createAccount")}

@@ -72,6 +72,52 @@ export const verifyOtp = async (body: { email: string; otp: string }) => {
   }
 };
 
+export const forgotPassword = async (body: { email: string }) => {
+  try {
+    const res = await enhancedFetcher<{
+      status: string;
+      message: string;
+    }>("/auth/forgot-password", {
+      method: "POST",
+      body,
+    });
+
+    if (res.status !== "success") {
+      throw new Error(res.message || "Email verification failed");
+    }
+
+    return res;
+  } catch (err: any) {
+    console.error("Forgot password error:", err);
+    throw new Error(err.message || "Failed to forgot password");
+  }
+};
+
+export const resetPassword = async (body: {
+  email: string;
+  newPassword: string;
+  otp: string;
+}) => {
+  try {
+    const res = await enhancedFetcher<{
+      status: string;
+      message: string;
+    }>("/auth/reset-password", {
+      method: "POST",
+      body,
+    });
+
+    if (res.status !== "success") {
+      throw new Error(res.message || "Reset password failed");
+    }
+
+    return res;
+  } catch (err: any) {
+    console.error("Reset password error:", err);
+    throw new Error(err.message || "Failed to reset password");
+  }
+};
+
 export const getProfile = async (): Promise<User | null> => {
   try {
     const session = await hasSession();

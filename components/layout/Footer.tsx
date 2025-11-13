@@ -1,5 +1,6 @@
 "use client";
 
+import { ROUTES } from "@/routes";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
@@ -85,10 +86,10 @@ export default function Footer({ locale }: { locale: string }) {
           </h3>
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
             <li>
-              <Link href={`/${locale}/about-us`}>{t("aboutUs")}</Link>
+              <Link href={ROUTES.ABOUT_US(locale)}>{t("aboutUs")}</Link>
             </li>
             <li>
-              <Link href={`/${locale}/contact-us`}>{t("contactUs")}</Link>
+              <Link href={ROUTES.CONTACT_US(locale)}>{t("contactUs")}</Link>
             </li>
             <li>
               <Link href="#">{t("partner")}</Link>

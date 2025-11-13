@@ -11,49 +11,47 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/Input";
 import { ROUTES } from "@/routes";
-import { verifyOtp } from "@/services/authApi";
+import { resetPassword } from "@/services/authApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale } from "next-intl";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
-const otpSchema = z.object({
+// ✅ Validation schema
+const resetSchema = z.object({
   email: z.string().email("Invalid email"),
-  otp: z
+  otp: z.string().min(6, "OTP must be 6 digits").max(6, "OTP must be 6 digits"),
+  newPassword: z
     .string()
-    .length(6, "OTP must be 6 digits")
-    .regex(/^\d+$/, "OTP must be numeric"),
+    .min(6, "Password must be at least 6 characters")
+    .max(32, "Password too long"),
 });
 
-export type OTPVerificationProps = {
-  prefilledEmail?: string;
-};
-
-export default function OTPVerification({
-  prefilledEmail,
-}: OTPVerificationProps) {
+export default function ResetPassword() {
   const router = useRouter();
   const locale = useLocale();
-  const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
 
-  const form = useForm<z.infer<typeof otpSchema>>({
-    resolver: zodResolver(otpSchema),
+  const [loading, setLoading] = useState(false);
+  const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const form = useForm<z.infer<typeof resetSchema>>({
+    resolver: zodResolver(resetSchema),
     defaultValues: {
       email: "",
       otp: "",
+      newPassword: "",
     },
   });
 
-  // 6 input refs for OTP
-  const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  // Autofill email from prop or local/session storage
+  // ✅ Autofill email (from URL or storage)
   useEffect(() => {
-    if (prefilledEmail) {
-      form.setValue("email", prefilledEmail);
+    const emailFromUrl = searchParams.get("email");
+    if (emailFromUrl) {
+      form.setValue("email", emailFromUrl);
       return;
     }
     try {
@@ -67,17 +65,16 @@ export default function OTPVerification({
     } catch {
       /* ignore */
     }
-  }, [prefilledEmail, form]);
+  }, [searchParams, form]);
 
-  // Handle OTP input changes
+  // ✅ Handle OTP change (6 individual inputs)
   const handleOtpChange = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return; // only numbers
+    if (!/^\d*$/.test(value)) return; // Only digits
     const currentOtp = form.getValues("otp").split("");
     currentOtp[index] = value;
     const newOtp = currentOtp.join("");
     form.setValue("otp", newOtp);
 
-    // Auto-focus next input
     if (value && index < 5) otpRefs.current[index + 1]?.focus();
   };
 
@@ -90,23 +87,21 @@ export default function OTPVerification({
     }
   };
 
-  async function onSubmit(values: z.infer<typeof otpSchema>) {
+  // ✅ Submit handler
+  async function onSubmit(values: z.infer<typeof resetSchema>) {
     setLoading(true);
     try {
-      const res = await verifyOtp(values);
-      toast.success(res.message || "OTP verified successfully!");
+      const res = await resetPassword(values); // <-- call your API here
+      toast.success(res.message || "Password reset successful!");
 
-      // Clear local/session storage
+      // Clear saved email info
       sessionStorage.removeItem("registrationState");
       localStorage.removeItem("registrationState");
-      localStorage.removeItem("authToken");
-      sessionStorage.removeItem("authToken");
 
-      // Redirect to login
       router.push(ROUTES.LOGIN(locale));
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "OTP verification failed!";
+        err instanceof Error ? err.message : "Failed to reset password!";
       toast.error(message);
     } finally {
       setLoading(false);
@@ -118,7 +113,7 @@ export default function OTPVerification({
       <main className="flex flex-1 items-center justify-center bg-white p-8">
         <div className="max-w-md w-full shadow-lg rounded-2xl overflow-hidden p-8">
           <h2 className="text-2xl font-normal mb-6 text-center">
-            Verify your email
+            Reset Your Password
           </h2>
 
           <Form {...form}>
@@ -147,7 +142,7 @@ export default function OTPVerification({
                 )}
               />
 
-              {/* OTP 6 Boxes */}
+              {/* OTP Field */}
               <FormField
                 control={form.control}
                 name="otp"
@@ -166,9 +161,48 @@ export default function OTPVerification({
                             className="w-12 h-12 text-center text-lg font-semibold border rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
                             onChange={(e) => handleOtpChange(i, e.target.value)}
                             onKeyDown={(e) => handleKeyDown(i, e)}
+                            onPaste={(e) => {
+                              e.preventDefault();
+                              const pastedData = e.clipboardData
+                                .getData("Text")
+                                .trim();
+                              if (!/^\d+$/.test(pastedData)) return;
+                              const otpArray = pastedData.slice(0, 6).split("");
+
+                              otpArray.forEach((digit, index) => {
+                                if (otpRefs.current[index]) {
+                                  otpRefs.current[index]!.value = digit;
+                                }
+                              });
+
+                              form.setValue("otp", otpArray.join(""));
+
+                              const nextIndex =
+                                otpArray.length < 6 ? otpArray.length : 5;
+                              otpRefs.current[nextIndex]?.focus();
+                            }}
                           />
                         ))}
                       </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* New Password Field */}
+              <FormField
+                control={form.control}
+                name="newPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder="Enter your new password"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -180,7 +214,7 @@ export default function OTPVerification({
                 disabled={loading}
                 className="w-full bg-primary text-white font-medium"
               >
-                {loading ? "Verifying..." : "Verify & Go to Login"}
+                {loading ? "Resetting..." : "Reset Password"}
               </Button>
             </form>
           </Form>
