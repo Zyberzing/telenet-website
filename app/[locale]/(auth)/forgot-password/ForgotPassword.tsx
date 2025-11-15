@@ -21,7 +21,7 @@ import * as z from "zod";
 
 // ✅ Validation schema
 const forgotSchema = z.object({
-  email: z.string().email("Invalid email"),
+  email: z.email("Invalid email"),
 });
 
 export type ForgotPasswordProps = {
@@ -36,7 +36,7 @@ export default function ForgotPassword({
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof forgotSchema>>({
-    resolver: zodResolver(forgotSchema),
+    resolver: zodResolver(forgotSchema as any),
     defaultValues: {
       email: "",
     },

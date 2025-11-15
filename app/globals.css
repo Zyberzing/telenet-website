@@ -131,12 +131,14 @@
 }
 
 @utility custom-gradient {
-  background: linear-gradient(180deg,
-      #ffffff 0%,
-      #d8ecfd 59.02%,
-      #d8ecfd 65.99%,
-      rgba(182, 220, 251, 0.6) 75.34%,
-      rgba(182, 220, 251, 0) 100%);
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #d8ecfd 59.02%,
+    #d8ecfd 65.99%,
+    rgba(182, 220, 251, 0.6) 75.34%,
+    rgba(182, 220, 251, 0) 100%
+  );
 }
 
 @utility bg-gradient {
@@ -144,12 +146,37 @@
 }
 
 @utility bg-gradient-two {
-  background: linear-gradient(264.06deg,
-      #306cd9 4.71%,
-      #0678d0 50.53%,
-      #474ae1 98.15%);
+  background: linear-gradient(
+    264.06deg,
+    #306cd9 4.71%,
+    #0678d0 50.53%,
+    #474ae1 98.15%
+  );
 }
 
 @utility bg-gradient-three {
   background: linear-gradient(180deg, #ffffff 0%, #f8f6fe 108.01%);
+}
+
+/* Custom Scrollbar Styles */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
