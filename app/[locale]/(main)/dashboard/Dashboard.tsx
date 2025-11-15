@@ -35,7 +35,7 @@ export default function Dashboard({
   const t = useTranslations("Dashboard");
 
   return (
-    <div className="min-h-screen bg-white w-full">
+    <div className="min-h-screen bg-background text-foreground w-full transition-colors duration-300">
       {/* --- Top Section --- */}
       <div className="relative overflow-hidden">
         {/* Left Curve */}
@@ -64,7 +64,7 @@ export default function Dashboard({
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <div>
             {/* Greeting */}
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-[400] text-gray-900 mb-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-[400] text-foreground mb-2">
               {t("greeting")}{" "}
               <span className="text-primary">{userData?.name}</span>
               <span className="ml-2">👋</span>
@@ -79,9 +79,11 @@ export default function Dashboard({
             {/* Stats Cards */}
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Active Plans */}
-              <Card className="p-4 bg-white shadow-sm border border-gray-100 rounded-xl">
+              <Card className="p-4 bg-card shadow-sm border border-border rounded-xl">
                 <div>
-                  <p className="text-sm">{t("activePlans")}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("activePlans")}
+                  </p>
                   <p className="text-2xl sm:text-3xl font-[400] text-primary mt-3">
                     {userData?.activePlans || 0}
                   </p>
@@ -89,9 +91,11 @@ export default function Dashboard({
               </Card>
 
               {/* Wallet Balance */}
-              <Card className="p-4 bg-white shadow-sm border border-gray-100 rounded-xl">
+              <Card className="p-4 bg-card shadow-sm border border-border rounded-xl">
                 <div>
-                  <p className="text-sm">{t("walletBalance")}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("walletBalance")}
+                  </p>
                   <p className="text-2xl sm:text-3xl font-[400] text-primary mt-3">
                     ${userData?.walletBalance || 0}
                   </p>
@@ -99,7 +103,7 @@ export default function Dashboard({
               </Card>
 
               {/* Last Transaction */}
-              <Card className="p-4 bg-white shadow-sm border border-gray-100 rounded-xl">
+              <Card className="p-4 bg-card shadow-sm border border-border rounded-xl">
                 <div>
                   <p className="text-2xl sm:text-3xl font-[400] text-primary">
                     ${userData?.lastTransaction?.amount || 0}
@@ -126,10 +130,10 @@ export default function Dashboard({
       </div>
 
       {/* --- Suggested Plans Section --- */}
-      <div className="bg-white">
+      <div>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-            <h2 className="text-2xl sm:text-3xl font-[400] text-gray-900">
+            <h2 className="text-2xl sm:text-3xl font-[400] text-foreground">
               {t("suggestedPlans")}
             </h2>
           </div>
@@ -139,7 +143,7 @@ export default function Dashboard({
             {suggestedPlans.map((plan, index) => (
               <Card
                 key={index}
-                className="p-6 bg-white shadow-lg border border-gray-100 rounded-2xl hover:shadow-xl transition-shadow"
+                className="p-6 bg-card shadow-lg border border-border rounded-2xl hover:shadow-xl transition-shadow"
               >
                 <div className="mb-4">
                   <p className="text-3xl font-[400] text-primary">
@@ -153,16 +157,16 @@ export default function Dashboard({
                     <span>{t("data")}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-foreground">
                       {plan.validity}
                     </span>
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-foreground">
                       {plan.data}
                     </span>
                   </div>
                 </div>
 
-                <Button className="w-full rounded-full text-white">
+                <Button className="w-full rounded-full">
                   {t("buyNow")}
                 </Button>
               </Card>

@@ -14,9 +14,13 @@ import { Slider } from "@/components/ui/slider";
 import { createOrder } from "@/services/order";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import {
+  ArrowDownUp,
+  Calendar,
   ChevronDown,
   ChevronRightIcon,
   Heart,
+  MessageCircleMore,
+  Phone,
   SlidersHorizontal,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -33,32 +37,28 @@ export type Plan = {
   validity: number;
   coverage: string;
   price: number;
-  tax: number;
+  tax?: number;
+  call: number;
+  sms: number;
   finalPrice: number;
   network: string;
   fup_policy: string | null;
-  countries: { countryname: string; countryiso2: string }[];
-};
-
-export type AdminMarkup = {
-  _id: string;
-  markupType: "percentage" | "fixed";
-  fixed: number;
-  markupCategory: string;
-  user: string;
-  percentage: number;
-  updatedAt: string;
   providerName: string;
+  countries: { countryname: string; countryiso2: string }[];
+  actionType: "increase" | "decrease";
+  markupType: "percentage" | "fixed";
+  markupValue: number;
+  percentage: number;
 };
 
 export interface PlansProps {
   countries: { iso2: string; code: string; name: string }[];
   regions: { name: string }[];
   plans: Plan[];
-  adminMarkup: AdminMarkup | null;
   selectedCountry: string;
   selectedRegion: string;
   filterby: "Country" | "Region";
+  planType: number;
   userProfile: User | null;
 }
 
@@ -77,7 +77,6 @@ export default function Plans({
   countries,
   regions,
   plans = [],
-  adminMarkup,
   selectedCountry,
   selectedRegion,
   filterby,
@@ -99,6 +98,10 @@ export default function Plans({
     Number(searchParams.get("data_size")) || 50,
   ]);
   const [isPending, startTransition] = useTransition();
+  const [planType, setPlanType] = useState(
+    Number(searchParams.get("plan_name")) || 1
+  );
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const selectedDataSize = dataSize?.[0] ?? 0;
 
@@ -107,11 +110,13 @@ export default function Plans({
     newCountry,
     newRegion,
     newFilterType,
+    newPlanType,
   }: {
     newDataSize?: number;
     newCountry?: string;
     newRegion?: string;
     newFilterType?: "country" | "region";
+    newPlanType?: number;
   }) => {
     const params = new URLSearchParams(searchParams.toString());
     const currentSize = newDataSize ?? selectedDataSize;
@@ -120,7 +125,7 @@ export default function Plans({
     const region = newRegion ?? internalSelectedRegion;
 
     params.set("filterby", filter === "country" ? "Country" : "Region");
-
+    params.set("plan_name", (newPlanType ?? planType).toString());
     if (filter === "country") {
       params.set("country_code", country);
       params.delete("region_name");
@@ -140,23 +145,22 @@ export default function Plans({
   const total = (() => {
     if (!selectedPlan) return 0;
 
-    const basePrice = selectedPlan.price || 0;
+    const price = selectedPlan.price;
     const markup =
-      adminMarkup?.markupType === "percentage"
-        ? (basePrice * (adminMarkup?.percentage || 0)) / 100
-        : adminMarkup?.fixed || 0;
+      selectedPlan.markupType === "percentage"
+        ? (price * selectedPlan.markupValue) / 100
+        : selectedPlan.markupValue;
 
-    const tax = selectedPlan.tax || 0;
+    const tax = selectedPlan.tax ?? 0;
 
-    return basePrice + markup + tax;
+    return price + markup + tax;
   })();
 
   const cleanPlan: Plan = {
-    ...selectedPlan!, // use ! because selectedPlan is guaranteed to exist here
-    finalPrice: Number(total.toFixed(2)), // override only finalPrice
+    ...selectedPlan!,
+    finalPrice: Number(total.toFixed(2)),
   };
 
-  // inside Plans component
   const handleBuy = async (): Promise<void> => {
     if (!userProfile) {
       toast.error("Please login first to buy.");
@@ -227,88 +231,180 @@ export default function Plans({
       <div className="max-w-7xl mx-auto py-12 px-4 md:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
           {/* Sidebar */}
-          <aside className="border border-gray-200 rounded-2xl p-5 shadow-sm">
-            <h2 className="font-[400] text-lg mb-4 flex items-center gap-2">
+          <aside className="rounded-xl border border-gray-200 shadow-sm bg-white overflow-hidden h-max">
+            <div className="bg-[#E9F3FF] px-4 py-3 flex items-center gap-2 border-b border-gray-200">
               <SlidersHorizontal className="w-5 h-5 text-purple-600" />
-              {t("filterTitle")}
-            </h2>
-
-            {/* Radio buttons */}
-            <div className="flex items-center gap-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="filterType"
-                  value="country"
-                  checked={filterType === "country"}
-                  onChange={() => setFilterType("country")}
-                  className="accent-purple-600"
-                />
-                <span>{t("country")}</span>
-              </label>
-
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="filterType"
-                  value="region"
-                  checked={filterType === "region"}
-                  onChange={() => setFilterType("region")}
-                  className="accent-purple-600"
-                />
-                <span>{t("region")}</span>
-              </label>
+              <h2 className="font-medium text-[15px] text-[#4A4A4A]">
+                {t("filterTitle")}
+              </h2>
             </div>
 
-            {/* Dropdowns */}
-            {filterType === "country" && (
-              <Dropdown
-                label={t("country")}
-                value={internalSelectedCountry}
-                setValue={(v) => {
-                  setInternalSelectedCountry(v);
-                  updateUrlAndReload({
-                    newCountry: v,
-                    newFilterType: "country",
-                  });
-                }}
-                items={countries.map((c) => ({ label: c.name, value: c.iso2 }))}
-              />
-            )}
+            <div className="p-4 space-y-4">
+              {/* Radio buttons */}
+              <div className="flex items-center gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="filterType"
+                    value="country"
+                    checked={filterType === "country"}
+                    onChange={() => setFilterType("country")}
+                    className="accent-purple-600"
+                  />
+                  <span>{t("country")}</span>
+                </label>
 
-            {filterType === "region" && (
-              <Dropdown
-                label={t("region")}
-                value={internalSelectedRegion}
-                setValue={(v) => {
-                  setInternalSelectedRegion(v);
-                  updateUrlAndReload({ newRegion: v, newFilterType: "region" });
-                }}
-                items={regions.map((r) => ({ label: r.name, value: r.name }))}
-              />
-            )}
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="filterType"
+                    value="region"
+                    checked={filterType === "region"}
+                    onChange={() => setFilterType("region")}
+                    className="accent-purple-600"
+                  />
+                  <span>{t("region")}</span>
+                </label>
+              </div>
 
-            {/* Data Size */}
-            <div className="mt-5">
-              <label className="text-sm font-medium">{t("dataSize")}</label>
-              <Slider
-                defaultValue={[50]}
-                value={dataSize}
-                onValueChange={(v) => {
-                  setDataSize(v);
-                  updateUrlAndReload({ newDataSize: v[0] });
-                }}
-                max={100}
-                step={1}
-                className="mt-2"
-              />
-              <div className="flex justify-between text-xs mt-1">
-                <span>0GB</span>
-                <span>{selectedDataSize}GB</span>
-                <span>100GB</span>
+              {/* COUNTRY DROPDOWN */}
+              {filterType === "country" && (
+                <div>
+                  <div className="mt-2">
+                    <Dropdown
+                      label={t("country")}
+                      value={internalSelectedCountry}
+                      setValue={(v) => {
+                        setInternalSelectedCountry(v);
+                        updateUrlAndReload({
+                          newCountry: v,
+                          newFilterType: "country",
+                        });
+                      }}
+                      items={countries.map((c) => ({
+                        label: c.name,
+                        value: c.iso2,
+                      }))}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* REGION DROPDOWN */}
+              {filterType === "region" && (
+                <div>
+                  <div className="mt-2">
+                    <Dropdown
+                      label={t("region")}
+                      value={internalSelectedRegion}
+                      setValue={(v) => {
+                        setInternalSelectedRegion(v);
+                        updateUrlAndReload({
+                          newRegion: v,
+                          newFilterType: "region",
+                        });
+                      }}
+                      items={regions.map((r) => ({
+                        label: r.name,
+                        value: r.name,
+                      }))}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <hr className="border-gray-200" />
+
+              {/* DATA SIZE */}
+              <div>
+                <p className="text-[14px] font-medium text-gray-700">
+                  Data Size
+                </p>
+
+                <div className="mt-2 relative">
+                  <Slider
+                    defaultValue={[50]}
+                    value={dataSize}
+                    onValueChange={(v) => {
+                      setDataSize(v);
+                      setShowTooltip(true);
+                    }}
+                    onValueCommit={(v) => {
+                      updateUrlAndReload({ newDataSize: v[0] });
+                      setShowTooltip(false);
+                    }}
+                    max={100}
+                    step={1}
+                    className="cursor-pointer"
+                  />
+
+                  {/* Tooltip above thumb */}
+                  {showTooltip && (
+                    <div
+                      className="absolute left-0 -top-8 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded"
+                      style={{
+                        left: `${((dataSize?.[0] ?? 0) / 100) * 100}%`,
+                        transform: "translateX(-50%)",
+                      }}
+                    >
+                      {dataSize?.[0] ?? 0}GB
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>0</span>
+                  <span>{dataSize[0]}GB</span>
+                  <span>100GB</span>
+                </div>
+              </div>
+
+              <hr className="border-gray-200" />
+
+              {/* Plan Type Filter */}
+
+              <div className="mt-2">
+                <label className="text-sm font-medium">Plan Type</label>
+
+                <div className="flex items-center gap-4 mt-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="planType"
+                      value="1"
+                      checked={planType === 1}
+                      className="accent-purple-600"
+                      onChange={() => {
+                        setPlanType(1);
+
+                        updateUrlAndReload({ newPlanType: 1 });
+                      }}
+                    />
+
+                    <span>Data</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="planType"
+                      value="2"
+                      checked={planType === 2}
+                      className="accent-purple-600"
+                      onChange={() => {
+                        setPlanType(2);
+
+                        updateUrlAndReload({ newPlanType: 2 });
+                      }}
+                    />
+
+                    <span>Voice</span>
+                  </label>
+                </div>
               </div>
             </div>
           </aside>
+
           {/* Plans */}
           <main className="lg:col-span-4">
             <h1 className="text-start text-2xl md:text-3xl font-[400px] mb-6">
@@ -346,9 +442,9 @@ export default function Plans({
                 {plans.map((plan) => (
                   <div key={plan.package_id}>
                     <div className="flex justify-between items-center mb-1">
-                      {adminMarkup?.providerName && (
+                      {plan?.providerName && (
                         <span className="text-[14px] capitalize font-medium text-white rounded-[7px] px-2 bg-[#A22BE6]">
-                          {adminMarkup.providerName}
+                          {plan?.providerName}
                         </span>
                       )}
                       <span className="text-[14px] font-extrabold text-[#A70123] rounded-[7px] px-2 ">
@@ -367,14 +463,23 @@ export default function Plans({
                         <ChevronRightIcon className="cursor-pointer text-primary" />
                       </div>
 
-                      <div className="flex gap-3">
+                      <div className="flex justify-between">
                         <div className="gap-4">
-                          <p className="text-[#5d544d]">{t("validity")}</p>
-                          <p>{plan.validity} days</p>
+                          <p className="flex gap-2 items-center">
+                            <ArrowDownUp size={15} /> {plan.data}
+                          </p>
+                          <p className="flex gap-2 items-center">
+                            <Phone size={15} /> {plan.call}
+                          </p>
                         </div>
                         <div className="gap-4">
-                          <p className="text-[#5d544d]">{t("data")}</p>
-                          <p>{plan.data}</p>
+                          <p className="flex gap-2 items-center">
+                            <Calendar size={15} />
+                            {plan.validity} Days
+                          </p>
+                          <p className="flex gap-2 items-center">
+                            <MessageCircleMore size={15} /> {plan.sms}
+                          </p>
                         </div>
                       </div>
 
@@ -459,24 +564,22 @@ export default function Plans({
                   </span>
                 </div>
 
-                {adminMarkup && (
-                  <div className="flex justify-between text-sm gap-1 mb-1">
-                    <span className="text-[#565656] bg-[#F1F8FE] w-full p-2">
-                      Markup
-                    </span>
-                    <span className="text-start bg-[#F1F8FE] w-full p-2">
-                      $
-                      {(adminMarkup?.markupType === "percentage"
-                        ? ((selectedPlan?.price || 0) *
-                            (adminMarkup?.percentage || 0)) /
-                          100
-                        : adminMarkup?.fixed || 0
-                      ).toFixed(2)}{" "}
-                      ({adminMarkup?.percentage}
-                      {adminMarkup?.markupType === "percentage" ? "%" : ""})
-                    </span>
-                  </div>
-                )}
+                {/* {adminMarkup && ( */}
+                <div className="flex justify-between text-sm gap-1 mb-1">
+                  <span className="text-[#565656] bg-[#F1F8FE] w-full p-2">
+                    Markup
+                  </span>
+                  <span className="text-start bg-[#F1F8FE] w-full p-2">
+                    $
+                    {(selectedPlan.markupType === "percentage"
+                      ? (selectedPlan.price * selectedPlan.markupValue) / 100
+                      : selectedPlan.markupValue
+                    ).toFixed(2)}
+                    ({selectedPlan?.percentage}
+                    {selectedPlan?.markupType === "percentage" ? "%" : ""})
+                  </span>
+                </div>
+                {/* )} */}
 
                 <div className="flex justify-between text-sm gap-1">
                   <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-bl-xl">

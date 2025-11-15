@@ -65,7 +65,7 @@ export default function Header() {
   const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGE[0]);
 
   const { user } = useSelector((state: RootState) => state.auth);
-
+  console.log("user", user);
   // Detect language from URL
   useEffect(() => {
     const parts = pathname.split("/").filter(Boolean);

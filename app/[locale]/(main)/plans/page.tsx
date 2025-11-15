@@ -1,7 +1,7 @@
 import { getProfile } from "@/services/authApi";
 import { getCountries, getPlans, getRegions } from "@/services/plansApi";
 import { Metadata } from "next";
-import Plans, { AdminMarkup, Plan } from "./Plans";
+import Plans, { Plan } from "./Plans";
 
 export type countryItems = {
   _id: string;
@@ -20,6 +20,7 @@ interface PageProps {
     country_code?: string;
     region_name?: string;
     data_size?: number;
+    plan_name?: number;
   }>;
 }
 
@@ -71,9 +72,9 @@ export default async function Page({ searchParams }: PageProps) {
   const selectedCountryCode = params.country_code || countries[0]?.iso2 || "";
   const selectedRegion = params.region_name || regions[0]?.name || "";
   const selectedDataSize = Number(params.data_size) || 50;
+  const selectedPlanType = Number(params.plan_name) || 1;
 
   let initialPlans: Plan[] = [];
-  let initialAdminMarkup: AdminMarkup | null = null;
 
   try {
     const plansData = await getPlans({
@@ -81,9 +82,9 @@ export default async function Page({ searchParams }: PageProps) {
       country_code: filterby === "Country" ? selectedCountryCode : undefined,
       region_name: filterby === "Region" ? selectedRegion : undefined,
       data_size: selectedDataSize,
+      plan_name: selectedPlanType,
     });
     initialPlans = plansData?.plans || [];
-    initialAdminMarkup = plansData?.adminMarkup || null;
   } catch (err) {
     console.error("Failed to load plans:", err);
   }
@@ -97,10 +98,10 @@ export default async function Page({ searchParams }: PageProps) {
       }))}
       regions={regions.map((r) => ({ name: r.name }))}
       plans={initialPlans}
-      adminMarkup={initialAdminMarkup}
       selectedCountry={selectedCountryCode}
       selectedRegion={selectedRegion}
-      filterby={filterby} // ✅ add this
+      filterby={filterby}
+      planType={selectedPlanType}
       userProfile={profile}
     />
   );

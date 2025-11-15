@@ -1,7 +1,7 @@
 "use server";
 import { countryItems, regionItems } from "@/app/[locale]/(main)/plans/page";
 import {
-  AdminMarkup,
+  // AdminMarkup,
   Plan,
   PlansProps,
 } from "@/app/[locale]/(main)/plans/Plans";
@@ -31,7 +31,7 @@ export const getRegions = async (): Promise<regionItems[]> => {
 
 export type GetPlansResponse = {
   plans: Plan[];
-  adminMarkup: AdminMarkup | null;
+  // adminMarkup: AdminMarkup | null;
 };
 
 export const getPlans = async ({
@@ -39,11 +39,13 @@ export const getPlans = async ({
   region_name,
   filterby,
   data_size,
+  plan_name,
 }: {
   country_code?: string;
   region_name?: string;
   filterby?: "Country" | "Region";
   data_size?: number;
+  plan_name?: number;
 }): Promise<GetPlansResponse> => {
   try {
     const params = new URLSearchParams();
@@ -59,6 +61,8 @@ export const getPlans = async ({
     if (data_size) {
       params.set("data_size", data_size.toString());
     }
+    if (plan_name) params.set("plan_name", plan_name.toString()); // 👈 NEW
+
     const apiUrl = `/plan/package-list?${params.toString()}`;
 
     const response = await fetcher<{ data: PlansProps }>(apiUrl);
@@ -66,10 +70,10 @@ export const getPlans = async ({
 
     return {
       plans: data.plans || [],
-      adminMarkup: data.adminMarkup || null,
+      // adminMarkup: data.adminMarkup || null,
     };
   } catch (error) {
     console.error("❌ Error fetching plans:", error);
-    return { plans: [], adminMarkup: null };
+    return { plans: [] };
   }
 };

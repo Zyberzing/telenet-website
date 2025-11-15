@@ -40,24 +40,25 @@ export default function AboutUs({ exploreCards, values, stats }: AboutUsProps) {
   };
 
   return (
-    <div className="min-h-screen overflow-hidden">
-      {/* Banner */}
+    <div className="min-h-screen overflow-hidden bg-background text-foreground transition-colors duration-300">
+      {/* ================= BANNER ================= */}
       <div className="relative">
         <Image
           src="/banner-about-us.svg"
           alt="banner"
           width={1500}
           height={1000}
+          className="w-full h-auto"
         />
       </div>
 
-      {/* Explore Section */}
-      <section className="bg-[#F4FAFE] py-16 px-6 md:px-12 lg:px-20 text-center">
-        <h2 className="text-2xl md:text-3xl font-[400] text-gray-900">
+      {/* ================= EXPLORE SECTION ================= */}
+      <section className="bg-card py-16 px-6 md:px-12 lg:px-20 text-center transition-colors duration-300">
+        <h2 className="text-2xl md:text-3xl font-[400] text-foreground">
           {t("explore.title")}{" "}
           <span className="text-primary">{t("explore.highlight")}</span>
         </h2>
-        <p className="text-gray-600 mt-2 max-w-lg mx-auto">
+        <p className="text-muted-foreground mt-2 max-w-lg mx-auto">
           {t("explore.subtitle")}
         </p>
 
@@ -65,7 +66,7 @@ export default function AboutUs({ exploreCards, values, stats }: AboutUsProps) {
           {exploreCards.map((item, index) => (
             <Card
               key={index}
-              className="border-none shadow-sm hover:shadow-md transition"
+              className="border border-border bg-card shadow-sm hover:shadow-md transition-colors duration-300"
             >
               <CardContent className="p-8 flex flex-col items-start text-start">
                 <div
@@ -73,10 +74,10 @@ export default function AboutUs({ exploreCards, values, stats }: AboutUsProps) {
                 >
                   {getIcon(item.icon)}
                 </div>
-                <h3 className="font-[400] text-[18px] text-gray-900 mb-2">
+                <h3 className="font-[400] text-[18px] text-foreground mb-2">
                   {item.title}
                 </h3>
-                <p className="text-gray-600 text-[15px] leading-relaxed">
+                <p className="text-muted-foreground text-[15px] leading-relaxed">
                   {item.desc}
                 </p>
               </CardContent>
@@ -86,12 +87,12 @@ export default function AboutUs({ exploreCards, values, stats }: AboutUsProps) {
       </section>
 
       {/* ================= OUR VALUES ================= */}
-      <section className="bg-[#F4FAFE] py-16 px-6 md:px-12 lg:px-20 text-center">
-        <h2 className="text-2xl md:text-3xl font-[400] text-gray-900">
+      <section className="bg-muted py-16 px-6 md:px-12 lg:px-20 text-center transition-colors duration-300">
+        <h2 className="text-2xl md:text-3xl font-[400] text-foreground">
           {t("values.title")}{" "}
           <span className="text-primary">{t("values.highlight")}</span>
         </h2>
-        <p className="text-gray-600 mt-2 max-w-lg mx-auto">
+        <p className="text-muted-foreground mt-2 max-w-lg mx-auto">
           {t("values.subtitle")}
         </p>
 
@@ -99,21 +100,21 @@ export default function AboutUs({ exploreCards, values, stats }: AboutUsProps) {
           {values.map((val, i) => (
             <Card
               key={i}
-              className="border-none bg-gray-50 mb-14 rounded-2xl shadow-sm hover:shadow-md transition text-center p-6 sm:p-8"
+              className="border-none bg-card mb-14 rounded-2xl shadow-sm hover:shadow-md transition-colors duration-300 text-center p-6 sm:p-8"
             >
               <CardContent className="flex flex-col items-center space-y-4">
                 {/* Number Circle */}
-                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-primary text-white font-[400] text-lg shadow-md -mt-14">
+                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-primary text-primary-foreground font-[400] text-lg shadow-md -mt-14">
                   {i + 1}
                 </div>
 
                 {/* Title */}
-                <h3 className="font-[400] text-xl sm:text-2xl text-gray-900">
+                <h3 className="font-[400] text-xl sm:text-2xl text-foreground">
                   {val.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-gray-600 text-[15px] leading-relaxed max-w-md">
+                <p className="text-muted-foreground text-[15px] leading-relaxed max-w-md">
                   {val.desc}
                 </p>
               </CardContent>
@@ -123,15 +124,15 @@ export default function AboutUs({ exploreCards, values, stats }: AboutUsProps) {
       </section>
 
       {/* ================= IMPACT SECTION ================= */}
-      <section className="bg-[#F9FAFB] pt-16 px-6 md:px-12 lg:px-20 flex flex-col md:flex-row items-center gap-0">
+      <section className="bg-card pt-16 px-6 md:px-12 lg:px-20 flex flex-col md:flex-row items-center gap-0 transition-colors duration-300">
         {/* Text */}
         <div className="flex-1 text-center md:text-left order-1 md:order-1">
-          <h2 className="text-2xl md:text-3xl font-[400] text-gray-900">
+          <h2 className="text-2xl md:text-3xl font-[400] text-foreground">
             {t("impact.title")}
             <br />
             <span className="text-primary">{t("impact.highlight")}</span>
           </h2>
-          <p className="mt-3 max-w-md mx-auto md:mx-0">
+          <p className="mt-3 text-muted-foreground max-w-md mx-auto md:mx-0">
             {t("impact.subtitle")}
           </p>
 
@@ -141,12 +142,14 @@ export default function AboutUs({ exploreCards, values, stats }: AboutUsProps) {
                 <h3 className="text-2xl font-[400] text-primary">
                   {stat.value}
                 </h3>
-                <p className="text-[15px]">{stat.label}</p>
+                <p className="text-[15px] text-muted-foreground">
+                  {stat.label}
+                </p>
               </div>
             ))}
           </div>
 
-          <p className="my-8 max-w-md mx-auto md:mx-0 text-md">
+          <p className="my-8 max-w-md mx-auto md:mx-0 text-md text-muted-foreground">
             {t("impact.content")}
           </p>
         </div>
