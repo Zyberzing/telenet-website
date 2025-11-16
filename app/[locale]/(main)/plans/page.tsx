@@ -4,13 +4,13 @@ import { Metadata } from "next";
 import Plans, { Plan } from "./Plans";
 
 export type countryItems = {
-  _id: string;
+  id: string;
   name: string;
   iso2: string;
 };
 
 export type regionItems = {
-  _id: string;
+  id: string;
   name: string;
 };
 
@@ -93,7 +93,7 @@ export default async function Page({ searchParams }: PageProps) {
     <Plans
       countries={countries.map((c) => ({
         iso2: c.iso2,
-        code: c._id,
+        code: c.id,
         name: c.name,
       }))}
       regions={regions.map((r) => ({ name: r.name }))}

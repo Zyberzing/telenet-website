@@ -49,6 +49,7 @@ export default function Hero() {
       try {
         const response =
           travelType === "country" ? await getCountries() : await getRegions();
+          console.log("response", response);
         setOptions(response || []);
       } catch (err) {
         console.error("Error fetching options:", err);
