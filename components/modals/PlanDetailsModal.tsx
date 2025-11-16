@@ -38,8 +38,10 @@ export default function PlanDetailsModal({
     price: selectedPlan.price,
     finalPrice: selectedPlan.finalPrice,
     coverage: selectedPlan.coverage,
+    network: selectedPlan.network,
     providerName: selectedPlan.providerName,
   };
+  console.log("cleanPlan", selectedPlan);
 
   const basePrice = selectedPlan.price || 0;
   const markup = adminMarkup?.markup || 0;
@@ -59,7 +61,7 @@ export default function PlanDetailsModal({
               {selectedPlan.package_name}
             </DialogTitle>
             <p className="text-sm text-gray-500">
-              Network: {selectedPlan.coverage}
+              Network: {selectedPlan.network}
             </p>
           </div>
           <button
@@ -74,7 +76,7 @@ export default function PlanDetailsModal({
         <div className="p-4 overflow-y-auto flex-1 space-y-4">
           {/* Plan Details */}
           <div>
-            <p className="text-[15px] mb-3 font-[400]">Plan Details</p>
+            <p className="text-[15px] mb-3 font-normal">Plan Details</p>
             <div className="flex justify-between text-sm gap-1 mb-1">
               <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-tl-xl">
                 Data
@@ -91,6 +93,14 @@ export default function PlanDetailsModal({
                 {selectedPlan.validity}
               </span>
             </div>
+            <div className="flex justify-between text-sm gap-1 mb-1">
+              <span className="text-[#565656] bg-[#F1F8FE] w-full p-2">
+                Network
+              </span>
+              <span className="text-start bg-[#F1F8FE] w-full p-2">
+                {selectedPlan.network}
+              </span>
+            </div>
             <div className="flex justify-between text-sm gap-1">
               <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-bl-xl">
                 Coverage
@@ -103,7 +113,7 @@ export default function PlanDetailsModal({
 
           {/* Price Breakdown */}
           <div>
-            <p className="text-[15px] mb-3 font-[400]">Price Breakdown</p>
+            <p className="text-[15px] mb-3 font-normal">Price Breakdown</p>
             <div className="flex justify-between text-sm gap-1 mb-1">
               <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-tl-xl">
                 Base Price
@@ -178,9 +188,9 @@ export default function PlanDetailsModal({
               onClick={onBuy}
               loading={orderLoading}
               label={orderLoading ? "Processing..." : "Buy"}
-              className="bg-purple-600 flex-1 text-white rounded-full px-4 py-2 text-sm"
+              className="bg-gradient cursor-pointer flex-1 text-white rounded-full px-4 py-2 text-sm"
             />
-            <Button className="bg-black flex-1 text-white rounded-full px-4 py-2 text-sm">
+            <Button className="bg-black flex-1 text-white hover:bg-gradient rounded-full px-4 py-2 text-sm">
               Add to Wallet
             </Button>
           </div>

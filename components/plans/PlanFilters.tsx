@@ -1,14 +1,23 @@
 "use client";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Slider } from "@/components/ui/slider";
-import { ChevronDown, SlidersHorizontal } from "lucide-react";
+import { Check, ChevronsUpDown, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/Button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface FilterDropdownProps {
   label: string;
@@ -23,39 +32,59 @@ function FilterDropdown({
   setValue,
   items,
 }: FilterDropdownProps) {
+  const [open, setOpen] = useState(false);
   const selectedLabel =
     items.find((i) => i.value === value)?.label || "Select...";
 
   return (
     <div className="mt-5">
       <label className="text-sm font-medium">{label}</label>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button className="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm flex justify-between items-center hover:border-gray-400 transition">
-            <span>{selectedLabel}</span>
-            <ChevronDown className="w-4 h-4" />
-          </button>
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent className="w-full">
-          {items.map((item) => {
-            const isSelected = item.value === value;
-            return (
-              <DropdownMenuItem
-                key={item.value}
-                onClick={() => setValue(item.value)}
-                className={`cursor-pointer text-sm ${
-                  isSelected
-                    ? "bg-primary text-white hover:bg-primary"
-                    : "hover:bg-gray-100"
-                }`}
-              >
-                {item.label}
-              </DropdownMenuItem>
-            );
-          })}
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-full mt-1 justify-between text-sm font-normal"
+          >
+            {selectedLabel}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
+          <Command>
+            <CommandInput placeholder={`Search...`} className="h-9" />
+            <CommandList>
+              <CommandEmpty>No {label.toLowerCase()} found.</CommandEmpty>
+              <CommandGroup>
+                {items.map((item) => (
+                  <CommandItem
+                    key={item.value}
+                    value={item.label}
+                    onSelect={() => {
+                      setValue(item.value);
+                      setOpen(false);
+                    }}
+                    className={cn(
+                      value === item.value && "bg-gradient text-white"
+                    )}
+                  >
+                    {item.label}
+                    <Check
+                      className={cn(
+                        "ml-auto h-4 w-4",
+                        value === item.value
+                          ? "opacity-100 text-white"
+                          : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }

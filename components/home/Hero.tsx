@@ -10,11 +10,20 @@ import { FaLocationDot, FaMagnifyingGlass } from "react-icons/fa6";
 import { IoIosArrowForward } from "react-icons/io";
 import { Button } from "../ui/Button";
 import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { ROUTES } from "@/routes";
 
 export default function Hero() {
@@ -24,10 +33,10 @@ export default function Hero() {
 
   const [travelType, setTravelType] = useState<"country" | "region">("country");
   const [options, setOptions] = useState<
-    { _id: string; name: string; iso2?: string }[]
+    { id: string; name: string; iso2?: string }[]
   >([]);
   const [selectedOption, setSelectedOption] = useState<{
-    _id: string;
+    id: string;
     name: string;
     iso2?: string;
   } | null>(null);
@@ -197,11 +206,8 @@ export default function Hero() {
                     Loading...
                   </span>
                 ) : (
-                  <DropdownMenu
-                    open={dropdownOpen}
-                    onOpenChange={setDropdownOpen}
-                  >
-                    <DropdownMenuTrigger asChild>
+                  <Popover open={dropdownOpen} onOpenChange={setDropdownOpen}>
+                    <PopoverTrigger asChild>
                       <button
                         className="w-full text-left text-black text-xs sm:text-sm md:text-base focus:outline-none"
                         onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -210,21 +216,50 @@ export default function Hero() {
                           ? selectedOption.name
                           : t("searchPlaceholder")}
                       </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="max-h-60 overflow-y-auto bg-white shadow-lg rounded-md">
-                      {options.map((opt) => (
-                        <DropdownMenuItem
-                          key={opt._id}
-                          onClick={() => {
-                            setSelectedOption(opt);
-                            setDropdownOpen(false);
-                          }}
-                        >
-                          {opt.name}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
+                      <Command>
+                        <CommandInput placeholder="Search..." className="h-9" />
+                        <CommandList>
+                          <CommandEmpty>No results found.</CommandEmpty>
+                          <CommandGroup>
+                            {options.map((opt) => {
+                              const isSelected = selectedOption?.id === opt.id;
+                              console.log(
+                                "isSelected",
+                                selectedOption,
+                                opt,
+                                isSelected
+                              );
+                              return (
+                                <CommandItem
+                                  key={opt.id}
+                                  value={opt.name}
+                                  onSelect={() => {
+                                    setSelectedOption(opt);
+                                    setDropdownOpen(false);
+                                  }}
+                                  className={cn(
+                                    isSelected && "bg-gradient text-white!"
+                                  )}
+                                >
+                                  {opt.name}
+                                  <Check
+                                    className={cn(
+                                      "ml-auto h-4 w-4",
+                                      isSelected
+                                        ? "opacity-100 text-white"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                </CommandItem>
+                              );
+                            })}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 )}
               </div>
 

@@ -285,11 +285,11 @@ export default function Plans({
                   {plans.map((plan) => (
                     <div key={plan.package_id}>
                       <div className="flex justify-between items-center mb-1">
-                        {plan?.providerName && (
+                        {/* {plan?.providerName && (
                           <span className="text-[14px] capitalize font-medium text-white rounded-[7px] px-2 bg-[#A22BE6]">
                             {plan?.providerName}
                           </span>
-                        )}
+                        )} */}
                         <span className="text-[14px] font-extrabold text-[#A70123] rounded-[7px] px-2 ">
                           {plan.coverage}
                         </span>
