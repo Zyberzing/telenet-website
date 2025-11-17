@@ -1,15 +1,15 @@
 "use client";
 
+import { Plan } from "@/app/[locale]/(main)/plans/Plans";
+import { Button } from "@/components/ui/Button";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/Button";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Heart } from "lucide-react";
-import { Plan } from "@/app/[locale]/(main)/plans/Plans";
 
 interface PlanDetailsModalProps {
   selectedPlan: Plan | null;
@@ -28,25 +28,12 @@ export default function PlanDetailsModal({
 }: PlanDetailsModalProps) {
   if (!selectedPlan) return null;
 
-  const cleanPlan = {
-    package_id: selectedPlan.package_id,
-    package_name: selectedPlan.package_name,
-    data: selectedPlan.data,
-    call: selectedPlan.call,
-    sms: selectedPlan.sms,
-    validity: selectedPlan.validity,
-    price: selectedPlan.price,
-    finalPrice: selectedPlan.finalPrice,
-    coverage: selectedPlan.coverage,
-    network: selectedPlan.network,
-    providerName: selectedPlan.providerName,
-  };
-  console.log("cleanPlan", selectedPlan);
+  // console.log("cleanPlan", selectedPlan);
 
   const basePrice = selectedPlan.price || 0;
   const markup = adminMarkup?.markup || 0;
   const tax = adminMarkup?.tax || 0;
-  const total = basePrice + markup + tax;
+  // const total = basePrice + markup + tax;
 
   return (
     <Dialog open={!!selectedPlan} onOpenChange={onClose}>
@@ -61,7 +48,7 @@ export default function PlanDetailsModal({
               {selectedPlan.package_name}
             </DialogTitle>
             <p className="text-sm text-gray-500">
-              Network: {selectedPlan.network}
+              Network: {selectedPlan.network || "-"}
             </p>
           </div>
           <button
@@ -90,15 +77,24 @@ export default function PlanDetailsModal({
                 Validity
               </span>
               <span className="text-start bg-[#F1F8FE] w-full p-2">
-                {selectedPlan.validity}
+                {selectedPlan.validity} Days
+              </span>
+            </div>
+
+            <div className="flex justify-between text-sm gap-1 mb-1">
+              <span className="text-[#565656] bg-[#F1F8FE] w-full p-2">
+                SMS
+              </span>
+              <span className="text-start bg-[#F1F8FE] w-full p-2">
+                {selectedPlan.sms}
               </span>
             </div>
             <div className="flex justify-between text-sm gap-1 mb-1">
               <span className="text-[#565656] bg-[#F1F8FE] w-full p-2">
-                Network
+                Voice
               </span>
               <span className="text-start bg-[#F1F8FE] w-full p-2">
-                {selectedPlan.network}
+                {selectedPlan.call} Min
               </span>
             </div>
             <div className="flex justify-between text-sm gap-1">
@@ -119,39 +115,82 @@ export default function PlanDetailsModal({
                 Base Price
               </span>
               <span className="text-start bg-[#F1F8FE] w-full p-2 rounded-tr-xl">
-                ${selectedPlan.price.toFixed(2)}
+                ${basePrice.toFixed(2)}
               </span>
             </div>
 
-            <div className="flex justify-between text-sm gap-1 mb-1">
-              <span className="text-[#565656] bg-[#F1F8FE] w-full p-2">
-                Markup
-              </span>
-              <span className="text-start bg-[#F1F8FE] w-full p-2">
-                $
-                {(selectedPlan.markupType === "percentage"
-                  ? (selectedPlan.price * selectedPlan.markupValue) / 100
-                  : selectedPlan.markupValue
-                ).toFixed(2)}
-                ({selectedPlan?.percentage}
-                {selectedPlan?.markupType === "percentage" ? "%" : ""})
-              </span>
-            </div>
+            {/* Markup Calculation */}
+
+            {(() => {
+              let markupAmount = 0;
+
+              if (selectedPlan.markupType === "percentage") {
+                markupAmount = (basePrice * selectedPlan.markupValue) / 100;
+              } else {
+                markupAmount = selectedPlan.markupValue;
+              }
+
+              const appliedMarkup =
+                selectedPlan.actionType === "increase"
+                  ? markupAmount
+                  : -markupAmount;
+
+              return (
+                <div className="flex justify-between text-sm gap-1 mb-1">
+                  <span className="text-[#565656] bg-[#F1F8FE] w-full p-2">
+                    Markup
+                  </span>
+
+                  <span className="text-start bg-[#F1F8FE] w-full p-2">
+                    ${appliedMarkup.toFixed(2)} ({selectedPlan.markupValue}
+                    {selectedPlan.markupType === "percentage" ? "%" : ""},{" "}
+                    {selectedPlan.actionType})
+                  </span>
+                </div>
+              );
+            })()}
+
+            {/* Tax */}
 
             <div className="flex justify-between text-sm gap-1">
               <span className="text-[#565656] bg-[#F1F8FE] w-full p-2 rounded-bl-xl">
                 Tax
               </span>
+
               <span className="text-start bg-[#F1F8FE] w-full p-2 rounded-br-xl">
-                ${selectedPlan?.tax?.toFixed(2) || 0}
+                ${selectedPlan.tax?.toFixed(2) || "0.00"}
               </span>
             </div>
-            <div className="flex justify-between font-[400] text-sm border border-primary rounded-xl px-3 text-center py-2 gap-1 mt-2">
-              <span className="w-full text-start px-2">Total</span>
-              <span className="text-start w-full px-2">
-                ${total.toFixed(2)}
-              </span>
-            </div>
+
+            {/* FINAL TOTAL */}
+
+            {(() => {
+              const base = basePrice;
+
+              const markupAmount =
+                selectedPlan.markupType === "percentage"
+                  ? (base * selectedPlan.markupValue) / 100
+                  : selectedPlan.markupValue;
+
+              const applied =
+                selectedPlan.actionType === "increase"
+                  ? markupAmount
+                  : -markupAmount;
+
+              const taxAmount = selectedPlan.tax ?? 0;
+
+              const finalTotal = base + applied + taxAmount;
+
+              return (
+                <div className="flex justify-between font-[400] text-sm border border-primary rounded-xl px-3 text-center py-2 gap-1 mt-2">
+                  <span className="w-full text-start px-2">Final Price</span>
+
+                  <span className="text-start w-full px-2">
+                    ${finalTotal.toFixed(2)}
+                  </span>
+                </div>
+              );
+            })()}
           </div>
 
           {/* FUP / Notes */}

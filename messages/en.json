@@ -190,6 +190,26 @@
       "submit": "SEND MESSAGE"
     }
   },
+  "PartnerWithUs": {
+    "partnerTitle": "Partner With Us",
+    "introText": "Lorem Ipsum n cdsjn wdjdjnd wjjdn wuwjjwjf rwjrdjr.",
+    "title1": "Touchpoints Integration",
+    "description1": "Enhance connectivity by integrating data packs to offer tailored eSIM solutions to your customers.",
+    "title2": "Your Customers Buy",
+    "description2": "Customers buy eSIMs together with your core products & services.",
+    "title3": "You Earn the Profit",
+    "description3": "Increase ancillary revenue by selling eSIM.",
+    "form": {
+      "nameLabel": "Name",
+      "emailLabel": "Email",
+      "phoneLabel": "Your Phone",
+      "phonePlaceholder": "+91 1234567890",
+      "messageLabel": "Your Message",
+      "namePlaceholder": "Rashed Kabir",
+      "emailPlaceholder": "rshdkabir@gmail.com",
+      "submit": "SEND MESSAGE"
+    }
+  },
   "Plans": {
     "bannerAlt": "Plans banner",
     "filterTitle": "Filter",

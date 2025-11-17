@@ -19,4 +19,5 @@ export const ROUTES = {
   SUPPORT: (locale: string) => `/${locale}/support`,
   SUCCESS: (locale: string) => `/${locale}/success`,
   CANCLE: (locale: string) => `/${locale}/cancle`,
+  PARTNER_WITH_US: (locale: string) => `/${locale}/partner-with-us`,
 };

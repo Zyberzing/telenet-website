@@ -190,6 +190,26 @@
       "submit": "ENVIAR MENSAJE"
     }
   },
+  "PartnerWithUs": {
+    "partnerTitle": "Asóciate con Nosotros",
+    "introText": "Lorem Ipsum n cdsjn wdjdjnd wjjdn wuwjjwjf rwjrdjr.",
+    "title1": "Integración de Puntos de Contacto",
+    "description1": "Mejora la conectividad integrando paquetes de datos para ofrecer soluciones eSIM personalizadas a tus clientes.",
+    "title2": "Tus Clientes Compran",
+    "description2": "Los clientes compran eSIMs junto con tus productos y servicios principales.",
+    "title3": "Tú Ganas el Beneficio",
+    "description3": "Aumenta los ingresos adicionales vendiendo eSIM.",
+    "form": {
+      "nameLabel": "Nombre",
+      "emailLabel": "Correo Electrónico",
+      "phoneLabel": "Tu Teléfono",
+      "phonePlaceholder": "+34 123456789",
+      "messageLabel": "Tu Mensaje",
+      "namePlaceholder": "Rashed Kabir",
+      "emailPlaceholder": "rshdkabir@gmail.com",
+      "submit": "ENVIAR MENSAJE"
+    }
+  },
   "Plans": {
     "bannerAlt": "Banner de planes",
     "filterTitle": "Filtrar",

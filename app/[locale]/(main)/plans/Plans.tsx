@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
 import { PlanDetailsModal } from "@/components/modals";
 import { PlanFilters } from "@/components/plans";
 import { PlanCardSkeleton } from "@/components/skeletons";
+import { Button } from "@/components/ui/Button";
 import { createOrder } from "@/services/order";
 import {
   ArrowDownUp,
@@ -113,22 +113,22 @@ export default function Plans({
     newPlanType?: number;
   }) => {
     const params = new URLSearchParams(searchParams.toString());
-    const currentSize = newDataSize ?? selectedDataSize;
     const filter = newFilterType ?? filterType;
+    const size = newDataSize ?? selectedDataSize;
     const country = newCountry ?? internalSelectedCountry;
     const region = newRegion ?? internalSelectedRegion;
 
     params.set("filterby", filter === "country" ? "Country" : "Region");
     params.set("plan_name", (newPlanType ?? planType).toString());
+    params.set("data_size", size.toString());
+    params.delete("country_code");
+    params.delete("region_name");
+
     if (filter === "country") {
       params.set("country_code", country);
-      params.delete("region_name");
     } else {
       params.set("region_name", region);
-      params.delete("country_code");
     }
-
-    params.set("data_size", currentSize.toString());
 
     startTransition(() => {
       router.replace(`?${params.toString()}`);
@@ -239,17 +239,19 @@ export default function Plans({
             selectedCountry={internalSelectedCountry}
             selectedRegion={internalSelectedRegion}
             onCountryChange={(v) => {
+              setFilterType("country");
               setInternalSelectedCountry(v);
               updateUrlAndReload({
-                newCountry: v,
                 newFilterType: "country",
+                newCountry: v,
               });
             }}
             onRegionChange={(v) => {
+              setFilterType("region");
               setInternalSelectedRegion(v);
               updateUrlAndReload({
-                newRegion: v,
                 newFilterType: "region",
+                newRegion: v,
               });
             }}
             dataSize={dataSize}
@@ -285,11 +287,11 @@ export default function Plans({
                   {plans.map((plan) => (
                     <div key={plan.package_id}>
                       <div className="flex justify-between items-center mb-1">
-                        {/* {plan?.providerName && (
+                        {plan?.providerName && (
                           <span className="text-[14px] capitalize font-medium text-white rounded-[7px] px-2 bg-[#A22BE6]">
                             {plan?.providerName}
                           </span>
-                        )} */}
+                        )}
                         <span className="text-[14px] font-extrabold text-[#A70123] rounded-[7px] px-2 ">
                           {plan.coverage}
                         </span>

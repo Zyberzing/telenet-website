@@ -146,7 +146,13 @@ export function PlanFilters({
               name="filterType"
               value="country"
               checked={filterType === "country"}
-              onChange={() => setFilterType("country")}
+              onChange={() => {
+                setFilterType("country");
+                const firstCountry = countries[0]?.value || "";
+                if (firstCountry) {
+                  onCountryChange(firstCountry);
+                }
+              }}
               className="accent-purple-600"
             />
             <span>Country</span>
@@ -158,7 +164,13 @@ export function PlanFilters({
               name="filterType"
               value="region"
               checked={filterType === "region"}
-              onChange={() => setFilterType("region")}
+              onChange={() => {
+                setFilterType("region");
+                const firstRegion = regions[0]?.value || "";
+                if (firstRegion) {
+                  onRegionChange(firstRegion);
+                }
+              }}
               className="accent-purple-600"
             />
             <span>Region</span>

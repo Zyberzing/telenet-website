@@ -68,25 +68,31 @@ export default async function Page({ searchParams }: PageProps) {
   const regions = regionsData.status === "fulfilled" ? regionsData.value : [];
   const profile = userProfile.status === "fulfilled" ? userProfile.value : null;
 
-  const filterby = params.filterby || "Country"; // Default always Country
-  const selectedCountryCode = params.country_code || countries[0]?.iso2 || "";
-  const selectedRegion = params.region_name || regions[0]?.name || "";
-  const selectedDataSize = Number(params.data_size) || 50;
-  const selectedPlanType = Number(params.plan_name) || 1;
+  const filterby = params.filterby ?? "Country";
+  const selectedCountryCode = params.country_code ?? "";
+  const selectedRegion = params.region_name ?? "";
+  const selectedDataSize = params.data_size ? Number(params.data_size) : 50;
+  const selectedPlanType = params.plan_name ? Number(params.plan_name) : 1;
 
   let initialPlans: Plan[] = [];
 
-  try {
-    const plansData = await getPlans({
-      filterby,
-      country_code: filterby === "Country" ? selectedCountryCode : undefined,
-      region_name: filterby === "Region" ? selectedRegion : undefined,
-      data_size: selectedDataSize,
-      plan_name: selectedPlanType,
-    });
-    initialPlans = plansData?.plans || [];
-  } catch (err) {
-    console.error("Failed to load plans:", err);
+  if (
+    (filterby === "Country" && selectedCountryCode) ||
+    (filterby === "Region" && selectedRegion)
+  ) {
+    try {
+      const plansData = await getPlans({
+        filterby,
+        country_code: filterby === "Country" ? selectedCountryCode : undefined,
+        region_name: filterby === "Region" ? selectedRegion : undefined,
+        data_size: selectedDataSize,
+        plan_name: selectedPlanType,
+      });
+
+      initialPlans = plansData?.plans || [];
+    } catch (err) {
+      console.error("Failed to load plans:", err);
+    }
   }
 
   return (

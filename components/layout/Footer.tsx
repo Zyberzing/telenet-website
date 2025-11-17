@@ -92,7 +92,7 @@ export default function Footer({ locale }: { locale: string }) {
               <Link href={ROUTES.CONTACT_US(locale)}>{t("contactUs")}</Link>
             </li>
             <li>
-              <Link href="#">{t("partner")}</Link>
+              <Link href={ROUTES.PARTNER_WITH_US(locale)}>{t("partner")}</Link>
             </li>
           </ul>
         </div>

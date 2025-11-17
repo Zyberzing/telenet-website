@@ -190,6 +190,26 @@
       "submit": "ENVOYER LE MESSAGE"
     }
   },
+  "PartnerWithUs": {
+    "partnerTitle": "Devenez Partenaire",
+    "introText": "Lorem Ipsum n cdsjn wdjdjnd wjjdn wuwjjwjf rwjrdjr.",
+    "title1": "Intégration des Points de Contact",
+    "description1": "Améliorez la connectivité en intégrant des forfaits de données pour offrir des solutions eSIM personnalisées à vos clients.",
+    "title2": "Vos Clients Achètent",
+    "description2": "Les clients achètent des eSIMs avec vos produits et services principaux.",
+    "title3": "Vous Gagnez le Profit",
+    "description3": "Augmentez les revenus additionnels en vendant des eSIM.",
+    "form": {
+      "nameLabel": "Nom",
+      "emailLabel": "E-mail",
+      "phoneLabel": "Votre Téléphone",
+      "phonePlaceholder": "+33 123456789",
+      "messageLabel": "Votre Message",
+      "namePlaceholder": "Rashed Kabir",
+      "emailPlaceholder": "rshdkabir@gmail.com",
+      "submit": "ENVOYER LE MESSAGE"
+    }
+  },
   "Plans": {
     "bannerAlt": "Bannière des forfaits",
     "filterTitle": "Filtrer",
