@@ -20,4 +20,6 @@ export const ROUTES = {
   SUCCESS: (locale: string) => `/${locale}/success`,
   CANCLE: (locale: string) => `/${locale}/cancle`,
   PARTNER_WITH_US: (locale: string) => `/${locale}/partner-with-us`,
+  DESTINATION: (locale: string) => `/${locale}/destination`,
+  REGION: (locale: string) => `/${locale}/region`,
 };

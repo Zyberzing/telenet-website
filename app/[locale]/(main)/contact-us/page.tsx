@@ -84,7 +84,7 @@ const ContactUs = () => {
 
             <div className="space-y-5">
               {/* Email */}
-              <div className="flex items-center gap-4 border p-4 rounded-b-2xl rounded-tl-2xl hover:shadow">
+              <div className="flex items-center gap-4 border border-[#E1F2FE] p-4 rounded-b-3xl rounded-tl-3xl hover:shadow">
                 <Image src="/mail.svg" alt="Mail" width={40} height={40} />
                 <div>
                   <p>{t("emailTitle")}</p>
@@ -98,7 +98,7 @@ const ContactUs = () => {
               </div>
 
               {/* Phone */}
-              <div className="flex items-center gap-4 border p-4 rounded-b-2xl rounded-tl-2xl hover:shadow">
+              <div className="flex items-center gap-4 border border-[#E1F2FE] p-4 rounded-b-3xl rounded-tl-3xl hover:shadow">
                 <Image src="/phone.png" alt="Phone" width={40} height={40} />
                 <div>
                   <p>{t("phoneTitle")}</p>
@@ -107,7 +107,7 @@ const ContactUs = () => {
               </div>
 
               {/* Chat */}
-              <div className="flex items-center gap-4 border p-4 rounded-b-2xl rounded-tl-2xl hover:shadow">
+              <div className="flex items-center gap-4 border border-[#E1F2FE] p-4 rounded-b-3xl rounded-tl-3xl hover:shadow">
                 <Image
                   src="/live-chat.svg"
                   alt="Live Chat"

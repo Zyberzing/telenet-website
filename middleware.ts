@@ -14,7 +14,9 @@ const publicRoutes = [
   "/plans",
   "/installation-guide",
   "/virtual-number",
-  "/partner-with-us"
+  "/partner-with-us",
+  "/destination",
+  "/region"
 ];
 
 const locales = ["en", "fr", "es"]; // supported languages

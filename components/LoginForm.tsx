@@ -42,7 +42,7 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
 
   const form = useForm<LoginFormSchemaType>({
-    resolver: zodResolver(formSchema as any),
+    resolver: zodResolver(formSchema),
     defaultValues: { email: "", password: "" },
   });
 

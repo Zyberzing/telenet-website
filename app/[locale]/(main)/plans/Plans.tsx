@@ -93,12 +93,6 @@ export default function Plans({
 
   const selectedDataSize = dataSize?.[0] ?? 0;
 
-  // Create adminMarkup object for modal
-  const adminMarkup = {
-    markup: 0,
-    tax: 0,
-  };
-
   const updateUrlAndReload = ({
     newDataSize,
     newCountry,
@@ -349,7 +343,6 @@ export default function Plans({
         onClose={() => setSelectedPlan(null)}
         onBuy={handleBuy}
         orderLoading={orderLoading}
-        adminMarkup={adminMarkup}
       />
     </section>
   );

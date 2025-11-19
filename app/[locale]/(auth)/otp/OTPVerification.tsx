@@ -40,7 +40,7 @@ export default function OTPVerification({
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof otpSchema>>({
-    resolver: zodResolver(otpSchema as any),
+    resolver: zodResolver(otpSchema),
     defaultValues: {
       email: "",
       otp: "",

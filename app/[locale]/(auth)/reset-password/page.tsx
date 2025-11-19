@@ -39,7 +39,7 @@ export default function ResetPassword() {
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const form = useForm<z.infer<typeof resetSchema>>({
-    resolver: zodResolver(resetSchema as any),
+    resolver: zodResolver(resetSchema),
     defaultValues: {
       email: "",
       otp: "",

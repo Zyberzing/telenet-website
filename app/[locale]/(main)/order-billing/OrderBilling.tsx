@@ -189,13 +189,13 @@ export default function OrderBilling({ orders }: { orders: Order[] }) {
             <tbody>
               {orders?.map((order) => (
                 <tr
-                  key={order._id}
+                  key={order?._id}
                   className="border-b last:border-0 hover:bg-gray-50 transition"
                 >
-                  <td className="py-3 px-4">{order._id}</td>
-                  <td className="py-3 px-4">{order.plan.package_name}</td>
+                  <td className="py-3 px-4">{order?._id}</td>
+                  <td className="py-3 px-4">{order.plan?.package_name}</td>
                   <td className="py-3 px-4">{order?.provider || "-"}</td>
-                  <td className="py-3 px-4">{order.payment || "-"}</td>
+                  <td className="py-3 px-4">{order?.payment || "-"}</td>
                   <td className="py-3 px-4">
                     <span
                       className={`px-3 py-1 rounded text-xs font-medium

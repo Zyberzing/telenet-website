@@ -13,6 +13,8 @@ import {
 import { fetcher } from "@/lib/fetcher";
 import { clearSession, hasSession, saveSession } from "@/lib/session";
 import { UserSession } from "@/lib/types";
+import { setCredentials } from "@/store/slices/authSlice";
+import { store } from "@/store/Store";
 
 export const createUser = async (
   body: RegistrationFormSchemaType
@@ -47,6 +49,17 @@ export async function loginUser(formData: LoginFormSchemaType) {
     access: access,
     refresh: refresh,
   });
+
+  store.dispatch(
+    setCredentials({
+      token: access,
+      refreshToken: refresh,
+      user,
+      accessToken: access,
+      access: access,
+      refresh: refresh,
+    })
+  );
 
   return res.data;
 }

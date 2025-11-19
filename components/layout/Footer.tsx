@@ -52,7 +52,19 @@ export default function Footer({ locale }: { locale: string }) {
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
             {["destinations", "regions", "topUp", "downloadApp"].map((key) => (
               <li key={key}>
-                <Link href="#">{t(key)}</Link>
+                <Link
+                  href={
+                    key === "destinations"
+                      ? ROUTES.DESTINATION(locale)
+                      : key === "regions"
+                      ? ROUTES.REGION(locale)
+                      : key === "topUp"
+                      ? "#"
+                      : "#"
+                  }
+                >
+                  {t(key)}
+                </Link>
               </li>
             ))}
           </ul>

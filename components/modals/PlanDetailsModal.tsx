@@ -16,7 +16,6 @@ interface PlanDetailsModalProps {
   onClose: () => void;
   onBuy: () => void;
   orderLoading: boolean;
-  adminMarkup: any | null;
 }
 
 export default function PlanDetailsModal({
@@ -24,15 +23,12 @@ export default function PlanDetailsModal({
   onClose,
   onBuy,
   orderLoading,
-  adminMarkup,
 }: PlanDetailsModalProps) {
   if (!selectedPlan) return null;
 
   // console.log("cleanPlan", selectedPlan);
 
   const basePrice = selectedPlan.price || 0;
-  const markup = adminMarkup?.markup || 0;
-  const tax = adminMarkup?.tax || 0;
   // const total = basePrice + markup + tax;
 
   return (

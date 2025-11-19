@@ -87,8 +87,8 @@ const PartnerWithUs = () => {
 
             <div className="space-y-5">
               {/* Email */}
-              <div className="flex gap-4 border p-4 rounded-b-2xl rounded-tl-2xl hover:shadow">
-                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-primary text-primary-foreground font-[400] text-lg shadow-md">
+              <div className="flex gap-4 border border-[#E1F2FE] p-4 rounded-b-3xl rounded-tl-3xl hover:shadow">
+                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-gradient text-primary-foreground font-[400] text-lg shadow-md">
                   1
                 </div>
 
@@ -99,8 +99,8 @@ const PartnerWithUs = () => {
               </div>
 
               {/* Phone */}
-              <div className="flex gap-4 border p-4 rounded-b-2xl rounded-tl-2xl hover:shadow">
-                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-primary text-primary-foreground font-[400] text-lg shadow-md">
+              <div className="flex gap-4 border border-[#E1F2FE] p-4 rounded-b-3xl rounded-tl-3xl hover:shadow">
+                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-gradient text-primary-foreground font-[400] text-lg shadow-md">
                   2
                 </div>
 
@@ -111,8 +111,8 @@ const PartnerWithUs = () => {
               </div>
 
               {/* Chat */}
-              <div className="flex gap-4 border p-4 rounded-b-2xl rounded-tl-2xl hover:shadow">
-                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-primary text-primary-foreground font-[400] text-lg shadow-md">
+              <div className="flex gap-4 border border-[#E1F2FE] p-4 rounded-b-3xl rounded-tl-3xl hover:shadow">
+                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-gradient text-primary-foreground font-[400] text-lg shadow-md">
                   3
                 </div>
 
@@ -188,7 +188,7 @@ const PartnerWithUs = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary text-white font-medium py-3 rounded-md mt-2 hover:opacity-90 transition-all duration-200"
+                className="w-full bg-gradient text-white font-medium py-3 rounded-md mt-2 hover:opacity-90 transition-all duration-200"
               >
                 {loading ? (
                   <FaSpinner color="text-primary" />
