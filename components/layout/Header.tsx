@@ -29,6 +29,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 const LANGUAGE = [
   { code: "en", name: "English" },
@@ -65,7 +66,6 @@ export default function Header() {
   const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGE[0]);
 
   const { user } = useSelector((state: RootState) => state.auth);
-  console.log("user", user);
   // Detect language from URL
   useEffect(() => {
     const parts = pathname.split("/").filter(Boolean);
@@ -107,16 +107,24 @@ export default function Header() {
           {/* Language Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition">
+              <button className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition cursor-pointer">
                 <span>{selectedLanguage?.code.toUpperCase()}</span>
                 <ChevronDown className="h-4 w-4" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-[6rem] text-sm">
+            <DropdownMenuContent
+              align="end"
+              className="min-w-[6rem] text-sm cursor-pointer"
+            >
               {LANGUAGE.map((lang) => (
                 <DropdownMenuItem
                   key={lang.code}
                   onClick={() => handleLanguageChange(lang)}
+                  className={cn(
+                    "cursor-pointer",
+                    selectedLanguage?.code === lang.code &&
+                      "bg-gradient text-white"
+                  )}
                 >
                   {lang.name}
                 </DropdownMenuItem>
@@ -175,7 +183,7 @@ export default function Header() {
           ) : (
             <button
               onClick={() => router.push(`/${selectedLanguage?.code}/login`)}
-              className="cursor-pointer whitespace-nowrap px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
+              className="cursor-pointer whitespace-nowrap px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer"
             >
               {t("signIn")}
             </button>
@@ -183,14 +191,14 @@ export default function Header() {
 
           {/* Theme Toggle */}
           <button onClick={toggleTheme}>
-            <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+            <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300 cursor-pointer" />
           </button>
         </nav>
 
         {/* Mobile Menu Button */}
         <button
           onClick={() => setOpen(!open)}
-          className="lg:hidden p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-800"
+          className="lg:hidden p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-800 cursor-pointer"
         >
           <Menu className="h-6 w-6" />
         </button>
@@ -217,18 +225,23 @@ export default function Header() {
               <div className="flex gap-4">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition">
+                    <button className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition cursor-pointer">
                       <span>{selectedLanguage?.code.toUpperCase()}</span>
                       <ChevronDown className="h-4 w-4" />
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="start"
-                    className="min-w-[6rem] text-sm"
+                    className="min-w-[6rem] text-sm cursor-pointer"
                   >
                     {LANGUAGE.map((lang) => (
                       <DropdownMenuItem
                         key={lang.code}
+                        className={cn(
+                          "cursor-pointer",
+                          selectedLanguage?.code === lang.code &&
+                            "bg-gradient text-white"
+                        )}
                         onClick={() => {
                           handleLanguageChange(lang);
                           setOpen(false);
@@ -298,14 +311,14 @@ export default function Header() {
                       router.push(`/${selectedLanguage?.code}/login`);
                       setOpen(false);
                     }}
-                    className="px-4 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+                    className="px-4 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
                   >
                     {t("signIn")}
                   </button>
                 )}
               </div>
               <button onClick={toggleTheme}>
-                <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300 cursor-pointer" />
               </button>
             </div>
           </nav>

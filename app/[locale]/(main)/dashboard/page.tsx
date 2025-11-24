@@ -1,4 +1,4 @@
-import { getProfile } from "@/services/authApi";
+import { getProfile } from "@/services/auth";
 import { User } from "../profile-setting/ProfileSetting";
 import Dashboard from "./Dashboard";
 

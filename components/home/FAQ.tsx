@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { getFaq } from "@/services/cms-content/faqApi";
+import { getFaq } from "@/services/faq";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 

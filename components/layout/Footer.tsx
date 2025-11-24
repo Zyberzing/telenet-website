@@ -53,6 +53,7 @@ export default function Footer({ locale }: { locale: string }) {
             {["destinations", "regions", "topUp", "downloadApp"].map((key) => (
               <li key={key}>
                 <Link
+                  className="hover:text-primary"
                   href={
                     key === "destinations"
                       ? ROUTES.DESTINATION(locale)

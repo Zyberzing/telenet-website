@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/Input";
 import { ROUTES } from "@/routes";
-import { resetPassword } from "@/services/authApi";
+import { resetPassword } from "@/services/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";

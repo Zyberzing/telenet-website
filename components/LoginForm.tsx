@@ -2,7 +2,7 @@
 
 import { saveSession } from "@/lib/session";
 import { ROUTES } from "@/routes";
-import { loginUser } from "@/services/authApi";
+import { loginUser } from "@/services/auth";
 import { setCredentials } from "@/store/slices/authSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { jwtDecode } from "jwt-decode";
@@ -109,6 +109,8 @@ export default function LoginForm() {
         router.push(ROUTES.OTP(locale));
         return;
       }
+
+      toast.error(errorMessage || "Invalid credentials");
 
       form.setError("email", { message: "Invalid credentials" });
     } finally {

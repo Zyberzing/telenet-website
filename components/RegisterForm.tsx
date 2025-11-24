@@ -21,7 +21,7 @@ import {
 } from "@/lib/formSchemaFunctions";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/routes";
-import { createUser } from "@/services/authApi";
+import { createUser } from "@/services/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getCountries, getCountryCallingCode } from "libphonenumber-js";
 import { Check, ChevronsUpDown, Eye, EyeOff } from "lucide-react";

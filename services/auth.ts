@@ -158,6 +158,22 @@ export const getProfile = async (): Promise<User | null> => {
   }
 };
 
+export const updateProfile = async (body: User): Promise<any> => {
+  const response = await enhancedAuthFetcher<{
+    status: "success";
+    message: string;
+  }>("/auth/update-profile", {
+    method: "PUT",
+    body,
+  });
+
+  if (response?.status !== "success") {
+    throw new Error(response?.message || "Failed to update profile");
+  }
+
+  return response;
+};
+
 export const changePassword = async (body: ChangePassword): Promise<any> => {
   const response = await enhancedAuthFetcher<{
     status: "success";
@@ -169,6 +185,21 @@ export const changePassword = async (body: ChangePassword): Promise<any> => {
 
   if (response?.status !== "success") {
     throw new Error(response?.message || "Failed to change password");
+  }
+
+  return response;
+};
+
+export const deleteAccount = async (): Promise<any> => {
+  const response = await enhancedAuthFetcher<{
+    status: "success";
+    message: string;
+  }>("/auth/delete-account", {
+    method: "DELETE",
+  });
+
+  if (response?.status !== "success") {
+    throw new Error(response?.message || "Failed to delete account");
   }
 
   return response;

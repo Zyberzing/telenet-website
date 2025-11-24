@@ -27,6 +27,8 @@ export interface Plan {
   lastPlan?: string;
   price: string;
   status: "active" | "expired";
+  package_sms: number;
+  package_call: number;
 }
 
 interface MyPlansClientProps {
@@ -41,6 +43,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
   const locale = useLocale();
   const activePlans = plans;
   const expiredPlans = plans.filter((p) => p.status === "expired");
+  console.log("selected Plan", selectedPlan);
 
   return (
     <div className="min-h-screen bg-white">
@@ -237,22 +240,22 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
             {/* Close Button */}
             <button
               onClick={() => setSelectedPlan(null)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-red-500 text-2xl"
+              className="absolute top-4 right-4 text-gray-500 hover:text-red-500 text-2xl cursor-pointer"
             >
               &times;
             </button>
 
             {/* Header */}
-            <h2 className="text-lg font-medium mb-4">
-              {selectedPlan.package_name}
+            <h2 className="text-lg font-medium mb-1">
+              {selectedPlan.package_name || "-"}
             </h2>
-            <p className="text-sm text-gray-500 mb-4">
-              Order Id {selectedPlan.orderId}
+            <p className="text-sm text-gray-500 mb-6">
+              Order Id {selectedPlan.orderId || 0}
             </p>
 
             {/* Plan Details */}
             <div className="space-y-2 text-sm text-gray-700">
-              <p>Country: {selectedPlan.country}</p>
+              <p>Country: {selectedPlan.country || "-"}</p>
               <p>
                 Data:{" "}
                 {selectedPlan.package_data >= 1024
@@ -261,12 +264,18 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                     )} GB`
                   : `${selectedPlan.package_data} MB`}
               </p>
+              <p>SMS: {selectedPlan?.package_sms || 0}</p>
+              <p>Call: {selectedPlan?.package_call || 0}</p>
               <p>
-                Unit price gross amount: {selectedPlan.unit_price_gross_amount}
+                Unit price gross amount:{" "}
+                {selectedPlan?.unit_price_gross_amount || 0}
               </p>
-              <p>Unit price net amount: {selectedPlan.unit_price_net_amount}</p>
+              <p>
+                Unit price net amount:{" "}
+                {selectedPlan?.unit_price_net_amount || 0}
+              </p>
 
-              <p>Validity: {selectedPlan.perioddays} days</p>
+              <p>Validity: {selectedPlan?.perioddays || "-"} days</p>
             </div>
 
             {/* Footer */}

@@ -1,4 +1,4 @@
-import { getProfile } from "@/services/authApi";
+import { getProfile } from "@/services/auth";
 import { getCountries, getPlans, getRegions } from "@/services/plansApi";
 import { Metadata } from "next";
 import Plans, { Plan } from "./Plans";

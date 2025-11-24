@@ -1,4 +1,4 @@
-import { getProfile } from "@/services/authApi";
+import { getProfile } from "@/services/auth";
 import ProfileSetting, { User } from "./ProfileSetting"; // adjust path
 
 export default async function Page() {
