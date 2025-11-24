@@ -49,7 +49,6 @@ export default function Hero() {
       try {
         const response =
           travelType === "country" ? await getCountries() : await getRegions();
-          console.log("response", response);
         setOptions(response || []);
       } catch (err) {
         console.error("Error fetching options:", err);
@@ -226,12 +225,6 @@ export default function Hero() {
                           <CommandGroup>
                             {options.map((opt) => {
                               const isSelected = selectedOption?.id === opt.id;
-                              console.log(
-                                "isSelected",
-                                selectedOption,
-                                opt,
-                                isSelected
-                              );
                               return (
                                 <CommandItem
                                   key={opt.id}

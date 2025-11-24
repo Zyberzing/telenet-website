@@ -6,13 +6,13 @@ interface GetMyPlansResponse {
   // status: string;
   // message: string;
   // data: {
-    result: Plan[];
-    pagination: {
-      page: number;
-      limit: number;
-      total: number;
-      totalPages: number;
-    };
+  result: Plan[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
   // };
   // statusCode: number;
 }
@@ -31,7 +31,6 @@ const Page = async ({
   })) as GetMyPlansResponse | null;
 
   const myPlans: Plan[] = response?.result || [];
-console.log("ress", response)
   return <MyPlans plans={myPlans} />;
 };
 

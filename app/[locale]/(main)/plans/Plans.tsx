@@ -4,7 +4,7 @@ import { PlanDetailsModal } from "@/components/modals";
 import { PlanFilters } from "@/components/plans";
 import { PlanCardSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/Button";
-import { createOrder } from "@/services/order";
+import { crateCheckout } from "@/services/payment";
 import {
   ArrowDownUp,
   Calendar,
@@ -52,14 +52,8 @@ export interface PlansProps {
 }
 
 export type orderDetails = {
-  packageData: Plan;
+  packageId: string;
   country: string;
-  firstName: string;
-  lastName: string;
-  address?: string;
-  email: string;
-  total: number;
-  device: "webapp";
 };
 
 export default function Plans({
@@ -165,19 +159,13 @@ export default function Plans({
     const lastName = rest.join(" ") || firstName;
 
     const orderBody: orderDetails = {
-      packageData: cleanPlan,
+      packageId: selectedPlan.package_id,
       country: selectedCountry,
-      firstName,
-      lastName,
-      email: userProfile.email,
-      total: Number(total.toFixed(2)),
-      device: "webapp",
-      ...(userProfile.address && { address: userProfile.address }),
     };
 
     try {
       setOrderLoading(true);
-      const res = await createOrder(orderBody);
+      const res = await crateCheckout(orderBody);
       toast.success("Order successfully created!");
 
       setSelectedPlan(null);
