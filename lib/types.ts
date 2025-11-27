@@ -23,3 +23,39 @@ export interface ProfileResponse {
   message?: string;
   data: User;
 }
+
+export interface Ticket {
+  _id?: string;
+  id: string;
+  ticketId: string;
+  priority: string;
+  subject: string;
+  createdAt: string;
+  updatedAt: string;
+  status: string;
+  description?: string;
+  name?: string;
+  email?: string;
+  countryCode?: string;
+  phoneNumber?: string;
+  document?: string | null;
+}
+
+export type CreateTicketInput = Omit<
+  Ticket,
+  "id" | "ticketId" | "createdAt" | "updatedAt" | "status"
+>;
+
+export type UpdateTicketInput = Omit<
+  Ticket,
+  | "id"
+  | "priority"
+  | "subject"
+  | "createdAt"
+  | "updatedAt"
+  | "status"
+  | "name"
+  | "email"
+  | "countryCode"
+  | "phoneNumber"
+>;

@@ -152,7 +152,11 @@ export default function EditProfileModal({
             <div className="flex-1">
               <Label>{t("modal.edit.country")}</Label>
 
-              <Popover open={countryOpen} onOpenChange={setCountryOpen}>
+              <Popover
+                modal={true}
+                open={countryOpen}
+                onOpenChange={setCountryOpen}
+              >
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="w-full justify-between">
                     {loading ? (
@@ -186,7 +190,6 @@ export default function EditProfileModal({
                           <CommandGroup>
                             {countries.map((c) => {
                               const isSelected = selectedCountry === c.name;
-
                               return (
                                 <CommandItem
                                   key={c.id}

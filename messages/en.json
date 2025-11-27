@@ -543,7 +543,7 @@
     "title": "Support",
     "open": "Open",
     "pending": "Pending",
-    "resolved": "Resolved",
+    "closed": "Closed",
     "raiseTicket": "Raise New Ticket",
     "search": "Search Ticket ID...",
     "filterDate": "Date",
@@ -581,7 +581,13 @@
     "billing": "Billing",
     "low": "Low",
     "medium": "Medium",
-    "urgent": "Urgent",
-    "submitTicket": "Submit Ticket"
+    "high": "High",
+    "submitTicket": "Submit Ticket",
+    "submittingTicket": "Submitting...",
+    "countryCodePlaceholder": "Select country code",
+    "countryCodeLabel": "Country Code",
+    "noCountryFound": "No country found",
+    "searchCountry": "Search country...",
+    "loading": "Loading"
   }
 }

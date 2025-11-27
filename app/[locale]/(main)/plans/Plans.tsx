@@ -32,7 +32,7 @@ export type Plan = {
   finalPrice: number;
   network: string;
   fup_policy: string | null;
-  providerName: string;
+  // providerName: string;
   countries: { countryname: string; countryiso2: string }[];
   actionType: "increase" | "decrease";
   markupType: "percentage" | "fixed";
@@ -124,25 +124,6 @@ export default function Plans({
     });
   };
 
-  const total = (() => {
-    if (!selectedPlan) return 0;
-
-    const price = selectedPlan.price;
-    const markup =
-      selectedPlan.markupType === "percentage"
-        ? (price * selectedPlan.markupValue) / 100
-        : selectedPlan.markupValue;
-
-    const tax = selectedPlan.tax ?? 0;
-
-    return price + markup + tax;
-  })();
-
-  const cleanPlan: Plan = {
-    ...selectedPlan!,
-    finalPrice: Number(total.toFixed(2)),
-  };
-
   const handleBuy = async (): Promise<void> => {
     if (!userProfile) {
       toast.error("Please login first to buy.");
@@ -153,11 +134,6 @@ export default function Plans({
       return Promise.resolve();
     }
 
-    const fullName = userProfile.name || "Unknown";
-    const [firstNameRaw, ...rest] = fullName.split(" ");
-    const firstName = firstNameRaw || "Unknown";
-    const lastName = rest.join(" ") || firstName;
-
     const orderBody: orderDetails = {
       packageId: selectedPlan.package_id,
       country: selectedCountry,
@@ -166,7 +142,7 @@ export default function Plans({
     try {
       setOrderLoading(true);
       const res = await crateCheckout(orderBody);
-      toast.success("Order successfully created!");
+      toast.success(res.message || "Order successfully created!");
 
       setSelectedPlan(null);
 
@@ -269,9 +245,9 @@ export default function Plans({
                   {plans.map((plan) => (
                     <div key={plan.package_id}>
                       <div className="flex justify-between items-center mb-1">
-                        {plan?.providerName && (
+                        {plan?.network && (
                           <span className="text-[14px] capitalize font-medium text-white rounded-[7px] px-2 bg-[#A22BE6]">
-                            {plan?.providerName}
+                            {plan?.network}
                           </span>
                         )}
                         <span className="text-[14px] font-extrabold text-[#A70123] rounded-[7px] px-2 ">

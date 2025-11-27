@@ -93,96 +93,100 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
         {/* Active Plans */}
         {tab === "active" && (
           <div className="space-y-4">
-            {activePlans.map((plan) => (
-              <div
-                key={plan.id}
-                className="bg-[#F1F8FE] flex rounded-2xl p-4 space-y-4 shadow-sm"
-              >
-                <div className="flex-1">
-                  <div className="flex flex-col gap-2 w-1/2">
-                    <div className="flex gap-4">
-                      <Image
-                        src={plan?.flag || "/flags/usa.svg"}
-                        alt="flag"
-                        width={30}
-                        height={50}
-                        className="rounded"
-                      />
-                      <p className="font-medium text-lg">
-                        {plan.package_name} – {plan.provider}
-                      </p>
-                    </div>
-                    <div className="text-sm flex justify-between text-gray-500">
-                      <p>
-                        {plan.package_data >= 1024
-                          ? `${parseFloat(
-                              (plan.package_data / 1024).toFixed(2)
-                            )} GB`
-                          : `${plan.package_data} MB`}{" "}
-                        {t("dataLeft")}
-                      </p>
-                      <p>
-                        {plan.package_data >= 1024
-                          ? `${parseFloat(
-                              (plan.package_data / 1024).toFixed(2)
-                            )} GB`
-                          : `${plan.package_data} MB`}
+            {activePlans.length === 0 ? (
+              <p className="text-center">No Active plan available</p>
+            ) : (
+              activePlans.map((plan) => (
+                <div
+                  key={plan.id}
+                  className="bg-[#F1F8FE] flex rounded-2xl p-4 space-y-4 shadow-sm"
+                >
+                  <div className="flex-1">
+                    <div className="flex flex-col gap-2 w-1/2">
+                      <div className="flex gap-4">
+                        <Image
+                          src={plan?.flag || "/flags/usa.svg"}
+                          alt="flag"
+                          width={30}
+                          height={50}
+                          className="rounded"
+                        />
+                        <p className="font-medium text-lg">
+                          {plan.package_name} – {plan.provider}
+                        </p>
+                      </div>
+                      <div className="text-sm flex justify-between text-gray-500">
+                        <p>
+                          {plan.package_data >= 1024
+                            ? `${parseFloat(
+                                (plan.package_data / 1024).toFixed(2)
+                              )} GB`
+                            : `${plan.package_data} MB`}{" "}
+                          {t("dataLeft")}
+                        </p>
+                        <p>
+                          {plan.package_data >= 1024
+                            ? `${parseFloat(
+                                (plan.package_data / 1024).toFixed(2)
+                              )} GB`
+                            : `${plan.package_data} MB`}
+                        </p>
+                      </div>
+
+                      <div className="bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                        <div
+                          className="bg-[#FF7623] h-1.5"
+                          style={{
+                            width: `${
+                              (parseFloat(plan.dataLeft || "0") /
+                                parseFloat(plan.totalData)) *
+                              100
+                            }%`,
+                          }}
+                        />
+                      </div>
+                      <p className="text-sm text-gray-500">
+                        {t("validUntil")} {plan.perioddays} days
                       </p>
                     </div>
 
-                    <div className="bg-gray-200 h-1.5 rounded-full overflow-hidden">
-                      <div
-                        className="bg-[#FF7623] h-1.5"
-                        style={{
-                          width: `${
-                            (parseFloat(plan.dataLeft || "0") /
-                              parseFloat(plan.totalData)) *
-                            100
-                          }%`,
-                        }}
-                      />
+                    <div className="flex flex-col sm:flex-row gap-3 mt-3">
+                      <Button
+                        onClick={() => router.push(ROUTES.PLANS(locale))}
+                        className="bg-primary hover:bg-primary px-10 rounded-full"
+                      >
+                        {t("renew")}
+                      </Button>
+                      <Button
+                        onClick={() => router.push(ROUTES.TOP_UP(locale))}
+                        className="bg-black hover:bg-gray-800 px-10 rounded-full"
+                      >
+                        {t("topUp")}
+                      </Button>
+                      <Button className="px-10 bg-black hover:bg-gray-800 rounded-full">
+                        {t("viewQR")}
+                      </Button>
+                      <p
+                        onClick={() =>
+                          router.push(ROUTES.INSTALLATION_GUIDE(locale))
+                        }
+                        className="border-b border-primary text-primary h-fit place-self-center cursor-pointer"
+                      >
+                        How to install
+                      </p>
                     </div>
-                    <p className="text-sm text-gray-500">
-                      {t("validUntil")} {plan.perioddays} days
-                    </p>
                   </div>
-
-                  <div className="flex flex-col sm:flex-row gap-3 mt-3">
-                    <Button
-                      onClick={() => router.push(ROUTES.PLANS(locale))}
-                      className="bg-primary hover:bg-primary px-10 rounded-full"
-                    >
-                      {t("renew")}
-                    </Button>
-                    <Button
-                      onClick={() => router.push(ROUTES.TOP_UP(locale))}
-                      className="bg-black hover:bg-gray-800 px-10 rounded-full"
-                    >
-                      {t("topUp")}
-                    </Button>
-                    <Button className="px-10 bg-black hover:bg-gray-800 rounded-full">
-                      {t("viewQR")}
-                    </Button>
+                  <div>
                     <p
-                      onClick={() =>
-                        router.push(ROUTES.INSTALLATION_GUIDE(locale))
-                      }
+                      onClick={() => setSelectedPlan(plan)}
                       className="border-b border-primary text-primary h-fit place-self-center cursor-pointer"
                     >
-                      How to install
+                      View Billing
                     </p>
                   </div>
                 </div>
-                <div>
-                  <p
-                    onClick={() => setSelectedPlan(plan)}
-                    className="border-b border-primary text-primary h-fit place-self-center cursor-pointer"
-                  >
-                    View Billing
-                  </p>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         )}
 
