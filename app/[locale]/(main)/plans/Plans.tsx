@@ -167,7 +167,7 @@ export default function Plans({
   };
 
   return (
-    <section className="w-full min-h-screen bg-white text-gray-900">
+    <section className="w-full min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
       {/* Banner */}
       <div className="relative w-full h-[22.6vh]">
         <Image
@@ -230,7 +230,7 @@ export default function Plans({
           {/* Plans - Scrollable */}
           <main className="lg:col-span-4 lg:overflow-y-auto lg:h-full lg:pr-2 scrollbar-thin">
             <div className="pb-6">
-              <h1 className="text-start text-2xl md:text-3xl font-[400px] mb-6 sticky top-0 bg-white z-10 pb-2">
+              <h1 className="text-start text-2xl md:text-3xl font-[400px] mb-6 sticky top-0 bg-white z-10 pb-2 dark:bg-gray-900">
                 {t("popularPlans")}
               </h1>
 
@@ -256,7 +256,7 @@ export default function Plans({
                       </div>
 
                       <div
-                        className="rounded-2xl p-5 shadow-sm border border-gray-100 bg-[#F1F8FE] hover:bg-[#FFF2E0] hover:shadow-md transition-all duration-300 flex flex-col justify-between cursor-pointer group"
+                        className="rounded-2xl p-5 shadow-sm border border-gray-100 bg-[#F1F8FE] hover:bg-[#FFF2E0] transition-all duration-300 flex flex-col justify-between cursor-pointer group dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
                         onClick={() => setSelectedPlan(plan)}
                       >
                         <div className="flex justify-between">

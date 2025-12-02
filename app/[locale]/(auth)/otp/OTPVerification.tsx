@@ -115,9 +115,9 @@ export default function OTPVerification({
 
   return (
     <div className="min-h-screen w-full flex flex-col p-3">
-      <main className="flex flex-1 items-center justify-center bg-white p-8">
-        <div className="max-w-md w-full shadow-lg rounded-2xl overflow-hidden p-8">
-          <h2 className="text-2xl font-normal mb-6 text-center">
+      <main className="flex flex-1 items-center justify-center bg-white dark:bg-gray-900 p-8">
+        <div className="max-w-md w-full shadow-lg rounded-2xl overflow-hidden p-8 bg-white dark:bg-gray-800">
+          <h2 className="text-2xl font-normal mb-6 text-center text-gray-900 dark:text-white">
             Verify your email
           </h2>
 
@@ -133,13 +133,13 @@ export default function OTPVerification({
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">Email</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="email"
                         disabled
-                        className="bg-gray-100 cursor-not-allowed"
+                        className="bg-gray-100 dark:bg-gray-700 dark:text-gray-300 cursor-not-allowed"
                       />
                     </FormControl>
                     <FormMessage />
@@ -153,7 +153,7 @@ export default function OTPVerification({
                 name="otp"
                 render={() => (
                   <FormItem>
-                    <FormLabel>Enter OTP</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">Enter OTP</FormLabel>
                     <FormControl>
                       <div className="flex justify-between gap-2">
                         {Array.from({ length: 6 }).map((_, i) => (
@@ -163,7 +163,7 @@ export default function OTPVerification({
                               otpRefs.current[i] = el;
                             }}
                             maxLength={1}
-                            className="w-12 h-12 text-center text-lg font-semibold border rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
+                            className="w-12 h-12 text-center text-lg font-semibold border rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                             onChange={(e) => handleOtpChange(i, e.target.value)}
                             onKeyDown={(e) => handleKeyDown(i, e)}
                           />
@@ -178,7 +178,7 @@ export default function OTPVerification({
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary text-white font-medium"
+                className="w-full bg-gradient from-primary to-indigo-600 text-white"
               >
                 {loading ? "Verifying..." : "Verify & Go to Login"}
               </Button>

@@ -21,7 +21,7 @@ import * as z from "zod";
 
 // ✅ Validation schema
 const forgotSchema = z.object({
-  email: z.email("Invalid email"),
+  email: z.string().email("Invalid email"),
 });
 
 export type ForgotPasswordProps = {
@@ -90,9 +90,9 @@ export default function ForgotPassword({
 
   return (
     <div className="min-h-screen w-full flex flex-col p-3">
-      <main className="flex flex-1 items-center justify-center bg-white p-8">
-        <div className="max-w-md w-full shadow-lg rounded-2xl overflow-hidden p-8">
-          <h2 className="text-2xl font-normal mb-6 text-center">
+      <main className="flex flex-1 items-center justify-center bg-white dark:bg-gray-950 p-8">
+        <div className="max-w-md w-full shadow-lg dark:shadow-none dark:border dark:border-gray-700 rounded-2xl overflow-hidden p-8">
+          <h2 className="text-2xl font-normal mb-6 text-center dark:text-white">
             Forgot Password
           </h2>
 
@@ -108,13 +108,13 @@ export default function ForgotPassword({
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="dark:text-gray-300">Email</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="email"
                         placeholder="Enter your registered email"
-                        className="bg-gray-50"
+                        className="bg-gray-50 dark:bg-gray-800 dark:text-white dark:border-gray-700"
                       />
                     </FormControl>
                     <FormMessage />
@@ -125,7 +125,7 @@ export default function ForgotPassword({
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary text-white font-medium"
+                className="w-full bg-gradient from-primary to-indigo-600 text-white"
               >
                 {loading ? "Sending..." : "Send OTP"}
               </Button>

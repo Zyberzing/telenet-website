@@ -70,7 +70,7 @@ export default function Support({ initialTickets }: SupportProps) {
   }, [fetchTickets]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <div className="relative">
         <Image
           src="/banner-support.svg"
@@ -93,7 +93,7 @@ export default function Support({ initialTickets }: SupportProps) {
                   "capitalize",
                   tab === status
                     ? "bg-primary text-white hover:bg-primary border border-primary"
-                    : "border-primary border"
+                    : "border-primary border bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
                 )}
               >
                 {t(status.toLowerCase())}
@@ -117,7 +117,7 @@ export default function Support({ initialTickets }: SupportProps) {
 
             <Input
               placeholder={t("search")}
-              className="max-w-52"
+              className="max-w-52 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -131,11 +131,11 @@ export default function Support({ initialTickets }: SupportProps) {
             {/* Date Calendar */}
             <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="border-primary">
+                <Button variant="outline" className="border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
                   {format(date, "dd MMM yyyy")}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="p-2 bg-white w-auto">
+              <PopoverContent className="p-2 bg-white dark:bg-gray-800 w-auto">
                 <Calendar
                   mode="single"
                   selected={date}
@@ -143,6 +143,7 @@ export default function Support({ initialTickets }: SupportProps) {
                     setDate(d ?? new Date());
                     setIsDateOpen(false);
                   }}
+                  className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                 />
               </PopoverContent>
             </Popover>
@@ -152,17 +153,17 @@ export default function Support({ initialTickets }: SupportProps) {
               value={priority}
               onValueChange={(v) => setPriority(v as "low" | "medium" | "high")}
             >
-              <SelectTrigger className="border-primary">
+              <SelectTrigger className="border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
                 <SelectValue placeholder={t("priority")} />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem className="capitalize" value="low">
+              <SelectContent className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+                <SelectItem className="capitalize focus:bg-gray-100 dark:focus:bg-gray-700" value="low">
                   {t("low")}
                 </SelectItem>
-                <SelectItem className="capitalize" value="medium">
+                <SelectItem className="capitalize focus:bg-gray-100 dark:focus:bg-gray-700" value="medium">
                   {t("medium")}
                 </SelectItem>
-                <SelectItem className="capitalize" value="high">
+                <SelectItem className="capitalize focus:bg-gray-100 dark:focus:bg-gray-700" value="high">
                   {t("high")}
                 </SelectItem>
               </SelectContent>
@@ -171,7 +172,7 @@ export default function Support({ initialTickets }: SupportProps) {
         </div>
 
         {/* Ticket Table */}
-        <div className="overflow-x-auto rounded-md border border-[#CDE9FE]">
+        <div className="overflow-x-auto rounded-md border border-[#CDE9FE] dark:border-gray-700">
           <table className="w-full text-sm text-left border-collapse">
             <thead className="bg-primary text-white">
               <tr>
@@ -188,7 +189,7 @@ export default function Support({ initialTickets }: SupportProps) {
               {/* Loading State */}
               {loading && (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-primary">
+                  <td colSpan={6} className="p-6 text-center text-primary bg-white dark:bg-gray-800">
                     <div className="flex items-center justify-center gap-2">
                       <FaSpinner className="animate-spin" />
                       {t("loading")}...
@@ -200,7 +201,7 @@ export default function Support({ initialTickets }: SupportProps) {
               {/* No Tickets State */}
               {!loading && tickets.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-gray-500">
+                  <td colSpan={6} className="p-6 text-center text-gray-500 bg-white dark:bg-gray-800">
                     No tickets found
                   </td>
                 </tr>
@@ -213,7 +214,7 @@ export default function Support({ initialTickets }: SupportProps) {
                   <tr
                     key={ticket.ticketId}
                     onClick={() => setSelectedTicket(ticket)}
-                    className="border-b hover:bg-purple-50 cursor-pointer"
+                    className="border-b dark:border-gray-700 hover:bg-purple-50 dark:hover:bg-gray-700 cursor-pointer bg-white dark:bg-gray-800"
                   >
                     <td className="p-3">{ticket.ticketId}</td>
                     <td className="p-3 capitalize">{ticket.priority}</td>
@@ -229,11 +230,11 @@ export default function Support({ initialTickets }: SupportProps) {
                         className={cn(
                           "px-3 py-1 rounded text-xs capitalize",
                           ticket.status === "open" &&
-                            "border border-[#00B625] text-[#00B625]",
+                          "border border-[#00B625] text-[#00B625]",
                           ticket.status === "pending" &&
-                            "border border-[#B69B00] text-[#B69B00]",
+                          "border border-[#B69B00] text-[#B69B00]",
                           ticket.status === "closed" &&
-                            "border border-primary text-primary"
+                          "border border-primary text-primary"
                         )}
                       >
                         {t(ticket.status.toLowerCase())}

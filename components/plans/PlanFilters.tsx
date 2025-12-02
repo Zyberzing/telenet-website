@@ -38,7 +38,9 @@ function FilterDropdown({
 
   return (
     <div className="mt-5">
-      <label className="text-sm font-medium">{label}</label>
+      <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
+        {label}
+      </label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -51,7 +53,7 @@ function FilterDropdown({
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
+        <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
           <Command>
             <CommandInput placeholder={`Search...`} className="h-9" />
             <CommandList>
@@ -129,10 +131,10 @@ export function PlanFilters({
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (
-    <aside className="rounded-xl border border-gray-200 shadow-sm bg-white overflow-hidden h-fit lg:sticky lg:top-4">
-      <div className="bg-[#E9F3FF] px-4 py-3 flex items-center gap-2 border-b border-gray-200">
+    <aside className="rounded-xl border border-gray-200 shadow-sm bg-white overflow-hidden h-fit lg:sticky lg:top-4 dark:bg-gray-900 dark:border-gray-700">
+      <div className="bg-[#E9F3FF] px-4 py-3 flex items-center gap-2 border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
         <SlidersHorizontal className="w-5 h-5 text-purple-600" />
-        <h2 className="font-medium text-[15px] text-[#4A4A4A]">
+        <h2 className="font-medium text-[15px] text-[#4A4A4A] dark:text-gray-100">
           {filterTitle}
         </h2>
       </div>
@@ -140,7 +142,7 @@ export function PlanFilters({
       <div className="p-4 space-y-4">
         {/* Radio buttons */}
         <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-2 cursor-pointer text-gray-700 dark:text-gray-200">
             <input
               type="radio"
               name="filterType"
@@ -158,7 +160,7 @@ export function PlanFilters({
             <span>Country</span>
           </label>
 
-          <label className="flex items-center gap-2 cursor-pointer">
+          <label className="flex items-center gap-2 cursor-pointer text-gray-700 dark:text-gray-200">
             <input
               type="radio"
               name="filterType"
@@ -205,11 +207,13 @@ export function PlanFilters({
           </div>
         )}
 
-        <hr className="border-gray-200" />
+        <hr className="border-gray-200 dark:border-gray-700" />
 
         {/* DATA SIZE */}
         <div>
-          <p className="text-[14px] font-medium text-gray-700">Data Size</p>
+          <p className="text-[14px] font-medium text-gray-700 dark:text-gray-200">
+            Data Size
+          </p>
 
           <div className="mt-2 relative">
             <Slider
@@ -242,21 +246,23 @@ export function PlanFilters({
             )}
           </div>
 
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
+          <div className="flex justify-between text-xs text-gray-500 mt-1 dark:text-gray-400">
             <span>0</span>
             <span>{dataSize[0]}GB</span>
             <span>100GB</span>
           </div>
         </div>
 
-        <hr className="border-gray-200" />
+        <hr className="border-gray-200 dark:border-gray-700" />
 
         {/* Plan Type Filter */}
         <div className="mt-2">
-          <label className="text-sm font-medium">Plan Type</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
+            Plan Type
+          </label>
 
           <div className="flex items-center gap-4 mt-2">
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer text-gray-700 dark:text-gray-200">
               <input
                 type="radio"
                 name="planType"
@@ -268,7 +274,7 @@ export function PlanFilters({
               <span>Data</span>
             </label>
 
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer text-gray-700 dark:text-gray-200">
               <input
                 type="radio"
                 name="planType"

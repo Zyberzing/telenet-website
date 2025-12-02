@@ -1,11 +1,13 @@
 "use client";
 
+import { useTheme } from "@/app/providers/ThemeProvider";
 import {
   ChevronDown,
   FileText,
   Headphones,
   LayoutGrid,
   Menu,
+  Moon,
   Receipt,
   Settings,
   ShoppingCart,
@@ -48,6 +50,7 @@ const MENU_ITEMS = [
 
 export default function HeaderAuth() {
   const t = useTranslations("HeaderAuth");
+  const { toggleTheme, theme } = useTheme();
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
     LANGUAGES[0]!
   );
@@ -74,7 +77,7 @@ export default function HeaderAuth() {
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
   return (
-    <header className="w-full bg-white shadow-sm border-b">
+    <header className="w-full bg-white shadow-sm border-b dark:bg-gray-900 dark:border-gray-700">
       <div className="max-w-7xl mx-auto flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link
@@ -115,8 +118,12 @@ export default function HeaderAuth() {
           </DropdownMenu>
 
           {/* Theme Toggle */}
-          <Button variant="ghost" size="icon">
-            <Sun className="h-5 w-5 text-gray-600" />
+          <Button variant="ghost" size="icon" onClick={toggleTheme}>
+            {theme === "dark" ? (
+              <Moon className="h-5 w-5 text-gray-300 cursor-pointer" /> // Show Moon when dark
+            ) : (
+              <Sun className="h-5 w-5 text-gray-600 cursor-pointer" /> // Show Sun when light
+            )}
           </Button>
         </div>
 
@@ -132,7 +139,6 @@ export default function HeaderAuth() {
           )}
         </button>
       </div>
-
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t bg-white dark:bg-gray-900 px-4 py-4 space-y-4">
@@ -151,12 +157,12 @@ export default function HeaderAuth() {
             </button>
 
             {mobileLangOpen && (
-              <div className="absolute left-0 right-0 mt-1 bg-white border rounded-md shadow-lg z-50 overflow-hidden">
+              <div className="absolute left-0 right-0 mt-1 bg-white border rounded-md shadow-lg z-50 overflow-hidden dark:bg-gray-800 dark:border-gray-700">
                 {LANGUAGES.map((lang) => (
                   <button
                     key={lang.code}
                     onClick={() => handleLanguageChange(lang)}
-                    className="w-full px-4 py-2 text-left text-sm hover:bg-purple-50 dark:hover:bg-gray-800 transition"
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-purple-50 dark:hover:bg-gray-700 transition" // Adjust hover for dark mode
                   >
                     {lang.name}
                   </button>
@@ -166,7 +172,7 @@ export default function HeaderAuth() {
           </div>
 
           {/* Mobile User Menu Items */}
-          <div className="space-y-1 pt-2 border-t">
+          <div className="space-y-1 pt-2 border-t dark:border-gray-700">
             {MENU_ITEMS.map((item) => (
               <Link
                 key={item.href}
@@ -195,8 +201,13 @@ export default function HeaderAuth() {
             variant="ghost"
             className="w-full justify-start"
             size="default"
+            onClick={toggleTheme} // Ensure onClick is present for mobile theme toggle
           >
-            <Sun className="h-5 w-5 mr-2 text-gray-600" />
+            {theme === "dark" ? (
+              <Moon className="h-5 w-5 mr-2 text-gray-300" />
+            ) : (
+              <Sun className="h-5 w-5 mr-2 text-gray-600" />
+            )}
             {t("toggleTheme")}
           </Button>
         </div>

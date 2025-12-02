@@ -7,6 +7,7 @@ export type countryItems = {
   id: string;
   name: string;
   iso2: string;
+  image?: string;
 };
 
 export type regionItems = {

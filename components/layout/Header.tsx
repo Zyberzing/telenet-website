@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme } from "@/app/providers/ThemeProvider";
+import { cn } from "@/lib/utils";
 import { RootState } from "@/store/Store";
 import {
   ChevronDown,
@@ -9,6 +10,7 @@ import {
   LayoutGrid,
   LogOut,
   Menu,
+  Moon,
   Receipt,
   Settings,
   Sun,
@@ -29,7 +31,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { cn } from "@/lib/utils";
 
 const LANGUAGE = [
   { code: "en", name: "English" },
@@ -57,14 +58,22 @@ const MENU_ITEMS = [
 type Language = (typeof LANGUAGE)[number];
 
 export default function Header() {
-  const { toggleTheme } = useTheme();
+  const { toggleTheme, theme } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
   const t = useTranslations("Header");
 
   const [open, setOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGE[0]);
+  // const [user, setUser] = useState<any | null>(null);
 
+  // useEffect(() => {
+  //   async function fetchUser() {
+  //     const profile = await getProfile();
+  //     setUser(profile);
+  //   }
+  //   fetchUser();
+  // }, []);
   const { user } = useSelector((state: RootState) => state.auth);
   // Detect language from URL
   useEffect(() => {
@@ -72,6 +81,18 @@ export default function Header() {
     const currentLocale = LANGUAGE.find((l) => l.code === parts[0]);
     if (currentLocale) setSelectedLanguage(currentLocale);
   }, [pathname]);
+
+  // Apply dark theme if system preference is dark on initial load
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      if (prefersDark && theme !== "dark") {
+        toggleTheme();
+      }
+    }
+  }, [toggleTheme, theme]);
 
   const handleLanguageChange = (lang: Language) => {
     setSelectedLanguage(lang);
@@ -137,9 +158,9 @@ export default function Header() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2 cursor-pointer">
-                  {user?.avatar ? (
+                  {user?.profilePicture ? (
                     <Image
-                      src={user.avatar}
+                      src={user.profilePicture}
                       alt="Profile"
                       width={32}
                       height={32}
@@ -191,7 +212,11 @@ export default function Header() {
 
           {/* Theme Toggle */}
           <button onClick={toggleTheme}>
-            <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300 cursor-pointer" />
+            {theme === "dark" ? (
+              <Moon className="h-5 w-5 text-gray-300 cursor-pointer" /> // Show Moon when dark
+            ) : (
+              <Sun className="h-5 w-5 text-gray-600 cursor-pointer" /> // Show Sun when light
+            )}
           </button>
         </nav>
 
@@ -256,9 +281,9 @@ export default function Header() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className="flex items-center gap-2">
-                        {user?.avatar ? (
+                        {user?.profilePicture ? (
                           <Image
-                            src={user.avatar}
+                            src={user.profilePicture}
                             alt="Profile"
                             width={36}
                             height={36}

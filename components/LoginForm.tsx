@@ -125,8 +125,10 @@ export default function LoginForm() {
         className="w-full max-w-md space-y-6 mx-6"
       >
         <div className="text-start">
-          <p className="text-gray-500">{t("welcomeText")}</p>
-          <h2 className="text-2xl font-[400]">{t("loginTitle")}</h2>
+          <p className="text-gray-500 dark:text-gray-300">{t("welcomeText")}</p>
+          <h2 className="text-2xl font-[400] dark:text-white">
+            {t("loginTitle")}
+          </h2>
         </div>
 
         {/* Email */}
@@ -135,12 +137,15 @@ export default function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("emailLabel")}</FormLabel>
+              <FormLabel className="dark:text-white">
+                {t("emailLabel")}
+              </FormLabel>
               <FormControl>
                 <Input
                   type="email"
                   placeholder={t("emailPlaceholder")}
                   {...field}
+                  className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
               </FormControl>
               <FormMessage />
@@ -154,18 +159,21 @@ export default function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("passwordLabel")}</FormLabel>
+              <FormLabel className="dark:text-white">
+                {t("passwordLabel")}
+              </FormLabel>
               <FormControl>
                 <div className="relative w-full">
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder={t("passwordPlaceholder")}
                     {...field}
+                    className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((p) => !p)}
-                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                     tabIndex={-1}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -181,7 +189,7 @@ export default function LoginForm() {
         <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-gradient-to-r from-primary to-indigo-600 text-white"
+          className="w-full bg-gradient from-primary to-indigo-600 text-white"
         >
           {loading ? <FaSpinner className="animate-spin" /> : t("loginButton")}
         </Button>
@@ -196,10 +204,10 @@ export default function LoginForm() {
         </div>
 
         {/* Divider */}
-        <div className="flex items-center justify-center gap-2 text-gray-400 text-sm">
-          <span className="h-px w-16 bg-gray-200"></span>
+        <div className="flex items-center justify-center gap-2 text-gray-400 text-sm dark:text-gray-500">
+          <span className="h-px w-16 bg-gray-200 dark:bg-gray-700"></span>
           {t("or")}
-          <span className="h-px w-16 bg-gray-200"></span>
+          <span className="h-px w-16 bg-gray-200 dark:bg-gray-700"></span>
         </div>
 
         {/* Social */}
@@ -208,6 +216,7 @@ export default function LoginForm() {
             variant="outline"
             size="default"
             aria-label={t("loginWithGoogle")}
+            className="dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700"
           >
             <Chrome className="h-5 w-5" />
           </Button>
@@ -215,6 +224,7 @@ export default function LoginForm() {
             variant="outline"
             size="default"
             aria-label={t("loginWithApple")}
+            className="dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700"
           >
             <Apple className="h-5 w-5" />
           </Button>
@@ -222,12 +232,13 @@ export default function LoginForm() {
             variant="outline"
             size="default"
             aria-label={t("loginWithFacebook")}
+            className="dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700"
           >
             <Facebook className="h-5 w-5" />
           </Button>
         </div>
 
-        <div className="text-center text-sm flex gap-2 justify-center">
+        <div className="text-center text-sm flex gap-2 justify-center dark:text-gray-300">
           {t("notRegistered")}{" "}
           <p
             onClick={() => router.push(ROUTES.REGISTER(locale))}

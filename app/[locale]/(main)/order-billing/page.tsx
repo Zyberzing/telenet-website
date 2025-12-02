@@ -13,7 +13,6 @@ export interface GetOrderListResponse {
 
 export default async function OrderBillingPage() {
   const res = (await getOrderList()) as GetOrderListResponse | null;
-
   const orders: Order[] = res?.result || [];
 
   return <OrderBilling orders={orders} />;

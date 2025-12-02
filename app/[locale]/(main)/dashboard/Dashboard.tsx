@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import { useEffect } from "react";
 
 interface SuggestedPlan {
   price: number;
@@ -33,6 +34,15 @@ export default function Dashboard({
   userData,
 }: DashboardProps) {
   const t = useTranslations("Dashboard");
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const handleChange = () => {};
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground w-full transition-colors duration-300">
@@ -166,7 +176,7 @@ export default function Dashboard({
                   </div>
                 </div>
 
-                <Button className="w-full rounded-full">
+                <Button className="w-full bg-gradient from-primary to-indigo-600 text-white">
                   {t("buyNow")}
                 </Button>
               </Card>

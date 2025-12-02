@@ -27,11 +27,10 @@ export default function InstallationGuide() {
           <button
             key={num}
             onClick={() => setActiveStep(stepNumber)}
-            className={`px-6 sm:px-10 py-2 rounded-t-[20px] text-[16px] sm:text-[18px] font-[400px] min-w-[100px] sm:min-w-[150px] text-center transition-all duration-200 ${
-              isActive
-                ? "bg-[#3F5DDC] text-white shadow-md"
-                : "bg-[#D0CEC6] text-[#7B7765] hover:bg-[#cfcfc7]"
-            }`}
+            className={`px-6 sm:px-10 py-2 rounded-t-[20px] text-[16px] sm:text-[18px] font-[400px] min-w-[100px] sm:min-w-[150px] text-center transition-all duration-200 cursor-pointer ${isActive
+              ? "bg-[#3F5DDC] text-white shadow-md dark:bg-blue-700 dark:text-gray-100"
+              : "bg-[#D0CEC6] text-[#7B7765] hover:bg-[#cfcfc7] dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+              }`}
           >
             Step:{num}
           </button>
@@ -41,7 +40,7 @@ export default function InstallationGuide() {
   );
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* HEADER */}
       <div className="relative w-full h-[6vh] sm:h-[25vh] md:h-[23vh]">
         <Image
@@ -58,16 +57,16 @@ export default function InstallationGuide() {
           <Tabs defaultValue="ios" className="w-full">
             {/* =================== TAB HEADER =================== */}
             <div className="flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
-              <TabsList className="bg-white flex gap-4 sm:gap-6 rounded p-1 flex-wrap justify-center">
+              <TabsList className="bg-white dark:bg-gray-800 flex gap-4 sm:gap-6 rounded p-2 h-[3em] flex-wrap justify-center">
                 <TabsTrigger
                   value="ios"
-                  className="w-[7em] sm:w-[8em] text-[16px] sm:text-[18px] flex items-center justify-center gap-2 px-3 sm:px-4 py-3 sm:py-4 rounded-md border-primary data-[state=active]:bg-primary data-[state=active]:text-white transition"
+                  className="w-[7em] sm:w-[8em] text-[16px] sm:text-[18px] flex items-center justify-center gap-2 px-3 sm:px-4 py-3 sm:py-4 rounded-md border-primary data-[state=active]:bg-primary data-[state=active]:text-white dark:data-[state=active]:text-gray-100 transition text-gray-700 dark:text-gray-300 cursor-pointer"
                 >
                   <FaApple /> iOS
                 </TabsTrigger>
                 <TabsTrigger
                   value="android"
-                  className="w-[7em] sm:w-[8em] text-[16px] sm:text-[18px] flex items-center justify-center gap-2 px-3 sm:px-4 py-3 sm:py-4 rounded-md border-primary data-[state=active]:bg-primary data-[state=active]:text-white transition"
+                  className="w-[7em] sm:w-[8em] text-[16px] sm:text-[18px] flex items-center justify-center gap-2 px-3 sm:px-4 py-3 sm:py-4 rounded-md border-primary data-[state=active]:bg-primary data-[state=active]:text-white dark:data-[state=active]:text-gray-100 transition text-gray-700 dark:text-gray-300 cursor-pointer"
                 >
                   <IoLogoAndroid /> Android
                 </TabsTrigger>
@@ -76,7 +75,7 @@ export default function InstallationGuide() {
               <div className="text-center">
                 <a
                   href="/installation-guide.pdf"
-                  className="inline-flex items-center text-red-500 font-medium gap-2 hover:underline text-[14px] sm:text-[16px]"
+                  className="inline-flex items-center text-red-500 font-medium gap-2 hover:underline text-[14px] sm:text-[16px] dark:text-red-400"
                 >
                   <FaRegFilePdf className="h-4 w-4 sm:h-5 sm:w-5" />
                   {t("downloadPDF")}
@@ -86,7 +85,7 @@ export default function InstallationGuide() {
 
             {/* =================== iOS TAB =================== */}
             <TabsContent value="ios" className="mt-10 space-y-10">
-              <div className="text-black max-w-2xl text-start px-2 sm:px-4 md:px-0">
+              <div className="text-black dark:text-gray-200 max-w-2xl text-start px-2 sm:px-4 md:px-0">
                 <h2 className="font-[400px] text-[22px] sm:text-[26px] md:text-[30px] mb-3">
                   {t("stepsTitle")}
                 </h2>
@@ -103,7 +102,7 @@ export default function InstallationGuide() {
               <div className="mt-8 text-center">
                 {iosStep === 1 && (
                   <>
-                    <p className="my-6 text-base sm:text-lg text-gray-600 px-4 sm:px-10 justify-self-center w-[20em]">
+                    <p className="my-6 text-base sm:text-lg text-gray-600 dark:text-gray-400 px-4 sm:px-10 justify-self-center w-[20em]">
                       {t("step_suggestion")}
                     </p>
                     <Image
@@ -116,12 +115,12 @@ export default function InstallationGuide() {
                   </>
                 )}
                 {iosStep === 2 && (
-                  <p className="text-base sm:text-lg text-gray-600 px-4 sm:px-10 justify-self-center w-[20em]">
+                  <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 px-4 sm:px-10 justify-self-center w-[20em]">
                     {t("step_suggestion")}
                   </p>
                 )}
                 {iosStep === 3 && (
-                  <p className="text-base sm:text-lg text-gray-600 px-4 sm:px-10 justify-self-center w-[20em]">
+                  <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 px-4 sm:px-10 justify-self-center w-[20em]">
                     {t("step_suggestion")}
                   </p>
                 )}
@@ -130,7 +129,7 @@ export default function InstallationGuide() {
 
             {/* =================== ANDROID TAB =================== */}
             <TabsContent value="android" className="mt-10 space-y-10">
-              <div className="text-gray-700 max-w-2xl text-start px-2 sm:px-4 md:px-0">
+              <div className="text-gray-700 dark:text-gray-200 max-w-2xl text-start px-2 sm:px-4 md:px-0">
                 <h3 className="font-[400px] text-[22px] sm:text-[26px] md:text-[30px] mb-3">
                   {t("stepsTitle")}
                 </h3>
@@ -150,7 +149,7 @@ export default function InstallationGuide() {
               <div className="mt-8 text-center">
                 {androidStep === 1 && (
                   <>
-                    <p className="my-6 text-base sm:text-lg text-gray-600 px-4 sm:px-10 justify-self-center w-[20em]">
+                    <p className="my-6 text-base sm:text-lg text-gray-600 dark:text-gray-400 px-4 sm:px-10 justify-self-center w-[20em]">
                       {t("step_suggestion")}
                     </p>
                     <Image
@@ -163,12 +162,12 @@ export default function InstallationGuide() {
                   </>
                 )}
                 {androidStep === 2 && (
-                  <p className="text-base sm:text-lg text-gray-600 px-4 sm:px-10 justify-self-center w-[20em]">
+                  <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 px-4 sm:px-10 justify-self-center w-[20em]">
                     {t("step_suggestion")}
                   </p>
                 )}
                 {androidStep === 3 && (
-                  <p className="text-base sm:text-lg text-gray-600 px-4 sm:px-10 justify-self-center w-[20em]">
+                  <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 px-4 sm:px-10 justify-self-center w-[20em]">
                     {t("step_suggestion")}
                   </p>
                 )}
@@ -188,38 +187,38 @@ export default function InstallationGuide() {
 
             {/* =================== TROUBLESHOOTING =================== */}
             <div className="px-4 sm:px-10 md:px-20 w-full text-start my-8">
-              <h3 className="font-[400px] text-[24px] sm:text-[28px] md:text-[32px] mb-4 text-center">
+              <h3 className="font-[400px] text-[24px] sm:text-[28px] md:text-[32px] mb-4 text-center text-black dark:text-gray-100">
                 {t("troubleshooting.title")}
               </h3>
 
               <div className="space-y-4 text-sm sm:text-base">
-                <div className="p-4 rounded-md px-4 sm:px-6 border-l-4 border-l-primary shadow-sm">
-                  <p className="font-medium mb-2 text-[15px] sm:text-[16px]">
+                <div className="p-4 rounded-md px-4 sm:px-6 border-l-4 border-l-primary shadow-sm dark:shadow-lg dark:bg-gray-800">
+                  <p className="font-medium mb-2 text-[15px] sm:text-[16px] text-black dark:text-gray-100">
                     {t("troubleshooting.qr.title")}
                   </p>
-                  <p className="text-[#6B7280]">
+                  <p className="text-[#6B7280] dark:text-gray-400">
                     {t("troubleshooting.qr.desc")}
                   </p>
                 </div>
 
-                <div className="p-4 rounded-md px-4 sm:px-6 border-l-4 border-l-primary shadow-sm">
-                  <p className="font-medium mb-2 text-[15px] sm:text-[16px]">
+                <div className="p-4 rounded-md px-4 sm:px-6 border-l-4 border-l-primary shadow-sm dark:shadow-lg dark:bg-gray-800">
+                  <p className="font-medium mb-2 text-[15px] sm:text-[16px] text-black dark:text-gray-100">
                     {t("troubleshooting.activation.title")}
                   </p>
-                  <p className="text-[#6B7280]">
+                  <p className="text-[#6B7280] dark:text-gray-400">
                     {t("troubleshooting.activation.desc")}
                   </p>
                 </div>
 
-                <div className="p-4 rounded-md px-4 sm:px-6 border-l-4 border-l-primary shadow-sm">
-                  <p className="font-medium mb-2 text-[15px] sm:text-[16px]">
+                <div className="p-4 rounded-md px-4 sm:px-6 border-l-4 border-l-primary shadow-sm dark:shadow-lg dark:bg-gray-800">
+                  <p className="font-medium mb-2 text-[15px] sm:text-[16px] text-black dark:text-gray-100">
                     {t("troubleshooting.support.title")}
                   </p>
-                  <p className="text-[#6B7280]">
+                  <p className="text-[#6B7280] dark:text-gray-400">
                     {t("troubleshooting.support.desc")}{" "}
                     <a
                       href="mailto:support@example.com"
-                      className="text-primary break-all"
+                      className="text-primary break-all dark:text-blue-400"
                     >
                       support@example.com
                     </a>

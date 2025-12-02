@@ -174,6 +174,18 @@ export const updateProfile = async (body: User): Promise<any> => {
   return response;
 };
 
+export const updateProfilePicture = async (url: string) => {
+  try {
+    return await authFetcher("/auth/upload-profile-picture", {
+      method: "PATCH",
+      body: { profilePicture: url },
+    });
+  } catch (error: any) {
+    console.error("Error updating profile picture:", error);
+    throw new Error(error?.message || "Failed to update profile picture");
+  }
+};
+
 export const changePassword = async (body: ChangePassword): Promise<any> => {
   const response = await enhancedAuthFetcher<{
     status: "success";

@@ -12,6 +12,7 @@ import "../globals.css";
 interface ThemeContextType {
   isDarkMode: boolean;
   toggleTheme: () => void;
+  theme: "dark" | "light";
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -45,8 +46,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const toggleTheme = () => setIsDarkMode((prev) => !prev);
 
+  const theme = isDarkMode ? "dark" : "light";
+
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
+    <ThemeContext.Provider value={{ isDarkMode, toggleTheme, theme }}>
       {children}
     </ThemeContext.Provider>
   );

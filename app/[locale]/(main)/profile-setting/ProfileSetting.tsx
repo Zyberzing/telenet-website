@@ -6,7 +6,12 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { changePassword, updateProfile } from "@/services/auth";
+import {
+  changePassword,
+  updateProfile,
+  updateProfilePicture,
+} from "@/services/auth";
+import { uploadMedia } from "@/services/upload";
 import { Eye, EyeOff, UserRoundX } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
@@ -24,7 +29,7 @@ export type User = {
   currency: string;
   address?: string;
   phone?: string;
-  avatar?: string;
+  profilePicture?: string;
   location?: string;
   emailAlertEnabled: boolean;
   smsAlertEnabled: boolean;
@@ -42,7 +47,7 @@ export default function ProfileSetting({ user }: { user: User }) {
 
   // MAIN USER STATE (Auto updates UI)
   const [userData, setUserData] = useState(user);
-
+  console.log("userdar", userData);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
 
@@ -107,8 +112,32 @@ export default function ProfileSetting({ user }: { user: User }) {
     }
   };
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const uploaded = await uploadMedia(fd);
+      const fileUrl = uploaded?.data?.httpsUrl;
+
+      if (!fileUrl) {
+        toast.error("Failed to upload image");
+        return;
+      }
+      await updateProfilePicture(fileUrl);
+
+      toast.success("Profile picture uploaded successfully.");
+
+      setUserData((prev) => ({ ...prev, avatar: fileUrl }));
+    } catch {
+      toast.error("Failed to update picture");
+    }
+  };
+
   return (
-    <section className="min-h-screen bg-white">
+    <section className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Header */}
       <div className="relative">
         <Image
@@ -121,27 +150,44 @@ export default function ProfileSetting({ user }: { user: User }) {
 
       {/* Profile Card */}
       <section className="flex flex-col items-center py-12 px-4">
-        <div className="w-full max-w-3xl border border-[#CDE9FE] rounded-xl shadow-sm p-6 flex flex-col sm:flex-row items-center sm:items-start gap-6">
-          <Image
-            src="/profile-user-avatar.svg"
-            alt="Profile"
-            width={100}
-            height={100}
-            className="rounded-full object-cover"
-          />
+        <div className="w-full max-w-3xl border border-[#CDE9FE] dark:border-gray-700 rounded-xl shadow-sm p-6 flex flex-col sm:flex-row items-center sm:items-start gap-6 bg-white dark:bg-gray-800">
+          <div className="flex flex-col items-center sm:items-start gap-2">
+            <Image
+              src={userData?.profilePicture || "/profile-user-avatar.svg"}
+              alt="Profile"
+              width={100}
+              height={100}
+              className="rounded-full object-cover"
+              unoptimized
+            />
+
+            <label className="cursor-pointer text-primary text-sm hover:underline text-center w-full">
+              Change Photo
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarUpload}
+              />
+            </label>
+          </div>
 
           <div className="text-center sm:text-left">
-            <p className="text-[24px] text-gray-900">{userData?.name}</p>
+            <p className="text-[24px] text-gray-900 dark:text-gray-100">
+              {userData?.name}
+            </p>
             <p className="text-primary text-sm">{userData?.email}</p>
             <p className="text-sm">
               {userData?.countryCode} {userData?.phone}
             </p>
-            <p className="text-[#666666] text-sm mt-1">{userData?.location}</p>
+            <p className="text-[#666666] dark:text-gray-400 text-sm mt-1">
+              {userData?.location}
+            </p>
           </div>
 
           <button
             onClick={() => setEditOpen(true)}
-            className="flex items-center gap-2 text-sm hover:underline mt-[1em] cursor-pointer"
+            className="flex items-center gap-2 text-sm hover:underline mt-[1em] cursor-pointer text-gray-700 dark:text-gray-300"
           >
             <FaEdit size={16} className="text-primary" />
             {t("editProfile")}
@@ -149,20 +195,22 @@ export default function ProfileSetting({ user }: { user: User }) {
         </div>
 
         {/* SETTINGS */}
-        <h3 className="text-[#141414] text-[20px] w-full max-w-3xl mt-8 mb-4">
+        <h3 className="text-[#141414] dark:text-gray-100 text-[20px] w-full max-w-3xl mt-8 mb-4">
           {t("settingsTitle")}
         </h3>
 
-        <div className="w-full max-w-3xl border border-[#CDE9FE] rounded-xl shadow-sm p-6">
+        <div className="w-full max-w-3xl border border-[#CDE9FE] dark:border-gray-700 rounded-xl shadow-sm p-6 bg-white dark:bg-gray-800">
           {/* PASSWORD */}
-          <Label className="mb-2">{t("changePassword")}</Label>
+          <Label className="mb-2 text-gray-700 dark:text-gray-300">
+            {t("changePassword")}
+          </Label>
 
           <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
             <div className="relative max-w-xs w-full">
               <Input
                 type={showPassword ? "text" : "password"}
                 placeholder="************"
-                className="pr-10"
+                className="pr-10 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
@@ -170,7 +218,7 @@ export default function ProfileSetting({ user }: { user: User }) {
               <button
                 type="button"
                 onClick={() => setShowPassword((p) => !p)}
-                className="absolute inset-y-0 right-3 flex items-center text-gray-500 cursor-pointer"
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 dark:text-gray-400 cursor-pointer"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -178,20 +226,20 @@ export default function ProfileSetting({ user }: { user: User }) {
 
             <Button
               onClick={handlePasswordChange}
-              className="bg-primary text-white px-8"
+              className="bg-primary hover:bg-primary text-white px-8"
             >
               {t("changeButton")}
             </Button>
           </div>
 
-          <Separator className="my-4" />
+          <Separator className="my-4 bg-gray-200 dark:bg-gray-700" />
 
           {/* NOTIFICATIONS */}
-          <h4 className="text-[16px] font-medium text-gray-700 mb-6">
+          <h4 className="text-[16px] font-medium text-gray-700 dark:text-gray-300 mb-6">
             {t("notificationPreferences")}
           </h4>
 
-          <div className="space-y-6 text-[16px] text-gray-600">
+          <div className="space-y-6 text-[16px] text-gray-600 dark:text-gray-400">
             <div className="flex justify-between">
               <span>{t("emailAlerts")}</span>
               <Switch
@@ -236,7 +284,7 @@ export default function ProfileSetting({ user }: { user: User }) {
             onClick={() => setDeleteOpen(true)}
             variant="destructive"
             style={{ padding: "22px 30px" }}
-            className="w-full bg-[#FEF6F6] hover:bg-red-100 border border-[#F28F97] text-[#E52030] flex items-center justify-start gap-2 text-[16px] font-[400px]"
+            className="w-full bg-[#FEF6F6] hover:bg-red-100 border border-[#F28F97] text-[#E52030] flex items-center justify-start gap-2 text-[16px] font-[400px] dark:bg-red-950 dark:hover:bg-red-900 dark:border-red-700 dark:text-red-300"
           >
             <UserRoundX size={20} /> {t("deleteAccount")}
           </Button>

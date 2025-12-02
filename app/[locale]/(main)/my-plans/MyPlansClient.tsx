@@ -46,7 +46,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
   console.log("selected Plan", selectedPlan);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Banner */}
       <div className="relative">
         <Image
@@ -94,12 +94,14 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
         {tab === "active" && (
           <div className="space-y-4">
             {activePlans.length === 0 ? (
-              <p className="text-center">No Active plan available</p>
+              <p className="text-center dark:text-gray-300">
+                No Active plan available
+              </p>
             ) : (
               activePlans.map((plan) => (
                 <div
                   key={plan.id}
-                  className="bg-[#F1F8FE] flex rounded-2xl p-4 space-y-4 shadow-sm"
+                  className="bg-[#F1F8FE] dark:bg-gray-800 flex rounded-2xl p-4 space-y-4 shadow-sm"
                 >
                   <div className="flex-1">
                     <div className="flex flex-col gap-2 w-1/2">
@@ -111,24 +113,24 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                           height={50}
                           className="rounded"
                         />
-                        <p className="font-medium text-lg">
+                        <p className="font-medium text-lg dark:text-white">
                           {plan.package_name} – {plan.provider}
                         </p>
                       </div>
-                      <div className="text-sm flex justify-between text-gray-500">
+                      <div className="text-sm flex justify-between text-gray-500 dark:text-gray-400">
                         <p>
                           {plan.package_data >= 1024
                             ? `${parseFloat(
-                                (plan.package_data / 1024).toFixed(2)
-                              )} GB`
+                              (plan.package_data / 1024).toFixed(2)
+                            )} GB`
                             : `${plan.package_data} MB`}{" "}
                           {t("dataLeft")}
                         </p>
                         <p>
                           {plan.package_data >= 1024
                             ? `${parseFloat(
-                                (plan.package_data / 1024).toFixed(2)
-                              )} GB`
+                              (plan.package_data / 1024).toFixed(2)
+                            )} GB`
                             : `${plan.package_data} MB`}
                         </p>
                       </div>
@@ -137,15 +139,14 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                         <div
                           className="bg-[#FF7623] h-1.5"
                           style={{
-                            width: `${
-                              (parseFloat(plan.dataLeft || "0") /
+                            width: `${(parseFloat(plan.dataLeft || "0") /
                                 parseFloat(plan.totalData)) *
                               100
-                            }%`,
+                              }%`,
                           }}
                         />
                       </div>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         {t("validUntil")} {plan.perioddays} days
                       </p>
                     </div>
@@ -197,7 +198,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
               expiredPlans.map((plan) => (
                 <div
                   key={plan.id}
-                  className="bg-[#F1F8FE] rounded-2xl p-4 flex flex-col md:flex-row justify-between items-center shadow-sm"
+                  className="bg-[#F1F8FE] dark:bg-gray-800 rounded-2xl p-4 flex flex-col md:flex-row justify-between items-center shadow-sm"
                 >
                   <div>
                     <div className="flex gap-4">
@@ -208,14 +209,14 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                         height={50}
                         className="rounded"
                       />
-                      <p className="font-medium text-lg">
+                      <p className="font-medium text-lg dark:text-white">
                         {plan.country} – {plan.provider}
                       </p>
                     </div>
-                    <p className="text-sm text-gray-500 mt-3">
+                    <p className="text-sm text-gray-500 mt-3 dark:text-gray-400">
                       {t("expiredOn")} {plan.expiredOn}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {t("lastPlan")}: {plan.lastPlan} • {plan.price}
                     </p>
                   </div>
@@ -231,7 +232,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                 </div>
               ))
             ) : (
-              <p>No expired plan available</p>
+              <p className="dark:text-gray-300">No expired plan available</p>
             )}
           </div>
         )}
@@ -240,32 +241,32 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
       {/* Dialog Modal */}
       {selectedPlan && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 relative">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6 relative">
             {/* Close Button */}
             <button
               onClick={() => setSelectedPlan(null)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-red-500 text-2xl cursor-pointer"
+              className="absolute top-4 right-4 text-gray-500 hover:text-red-500 text-2xl cursor-pointer dark:text-gray-400"
             >
               &times;
             </button>
 
             {/* Header */}
-            <h2 className="text-lg font-medium mb-1">
+            <h2 className="text-lg font-medium mb-1 dark:text-white">
               {selectedPlan.package_name || "-"}
             </h2>
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="text-sm text-gray-500 mb-6 dark:text-gray-400">
               Order Id {selectedPlan.orderId || 0}
             </p>
 
             {/* Plan Details */}
-            <div className="space-y-2 text-sm text-gray-700">
+            <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
               <p>Country: {selectedPlan.country || "-"}</p>
               <p>
                 Data:{" "}
                 {selectedPlan.package_data >= 1024
                   ? `${parseFloat(
-                      (selectedPlan.package_data / 1024).toFixed(2)
-                    )} GB`
+                    (selectedPlan.package_data / 1024).toFixed(2)
+                  )} GB`
                   : `${selectedPlan.package_data} MB`}
               </p>
               <p>SMS: {selectedPlan?.package_sms || 0}</p>

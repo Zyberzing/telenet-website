@@ -270,7 +270,7 @@ export default function RegisterForm() {
           type="submit"
           loading={loading}
           label={loading ? t("loading") : t("registerButton")}
-          className="w-full bg-gradient-to-r from-primary to-indigo-600 text-white"
+          className="w-full bg-gradient from-primary to-indigo-600 text-white"
         />
 
         <div className="text-center text-sm flex gap-2 justify-center">

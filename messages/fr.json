@@ -203,7 +203,7 @@
       "nameLabel": "Nom",
       "emailLabel": "E-mail",
       "phoneLabel": "Votre Téléphone",
-      "phonePlaceholder": "+33 123456789",
+      "phonePlaceholder": "Saisissez votre numéro de téléphone",
       "messageLabel": "Votre Message",
       "namePlaceholder": "Rashed Kabir",
       "emailPlaceholder": "rshdkabir@gmail.com",
@@ -437,7 +437,8 @@
         "language": "Langue",
         "currency": "Devise",
         "cancel": "Annuler",
-        "submit": "Soumettre"
+        "submit": "Soumettre",
+        "loading": "Chargement..."
       }
     }
   },

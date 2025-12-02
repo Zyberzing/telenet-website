@@ -59,3 +59,7 @@ export type UpdateTicketInput = Omit<
   | "countryCode"
   | "phoneNumber"
 >;
+
+export type ProfilePictureUpdate = {
+  profilePicture: string;
+};

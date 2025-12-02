@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { FaBookmark, FaUser } from "react-icons/fa";
 import { FaGem } from "react-icons/fa6";
+import { useEffect, useState } from "react";
 
 interface AboutUsProps {
   exploreCards: {
@@ -25,6 +26,19 @@ interface AboutUsProps {
 
 export default function AboutUs({ exploreCards, values, stats }: AboutUsProps) {
   const t = useTranslations("AboutUs");
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    setIsDarkMode(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setIsDarkMode(e.matches);
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   const getIcon = (name: string) => {
     switch (name) {
@@ -40,7 +54,10 @@ export default function AboutUs({ exploreCards, values, stats }: AboutUsProps) {
   };
 
   return (
-    <div className="min-h-screen overflow-hidden bg-background text-foreground transition-colors duration-300">
+    <div
+      className={`min-h-screen overflow-hidden bg-background text-foreground transition-colors duration-300 ${isDarkMode ? "dark" : ""
+        }`}
+    >
       {/* ================= BANNER ================= */}
       <div className="relative">
         <Image

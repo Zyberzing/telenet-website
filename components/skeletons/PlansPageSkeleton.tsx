@@ -11,7 +11,7 @@ export function PlanCardSkeleton() {
       </div>
 
       {/* Plan card skeleton */}
-      <div className="rounded-2xl p-5 shadow-sm border border-gray-100 bg-[#F1F8FE] flex flex-col justify-between">
+      <div className="rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 bg-[#F1F8FE] dark:bg-gray-900 flex flex-col justify-between">
         <div className="flex justify-between">
           <Skeleton className="h-8 w-16" /> {/* Price */}
           <Skeleton className="h-6 w-6 rounded" /> {/* Arrow icon */}
@@ -37,7 +37,7 @@ export function PlanCardSkeleton() {
 // Filter sidebar skeleton
 export function FilterSidebarSkeleton() {
   return (
-    <aside className="border border-gray-200 rounded-2xl p-5 shadow-sm">
+    <aside className="border border-gray-200 dark:border-gray-700 rounded-2xl p-5 shadow-sm">
       <h2 className="font-[400] text-lg mb-4 flex items-center gap-2">
         <SlidersHorizontal className="w-5 h-5 text-purple-600" />
         Filter
@@ -87,9 +87,9 @@ export function PlansGridSkeleton() {
 // Complete plans page skeleton
 export function PlansPageSkeleton() {
   return (
-    <section className="w-full min-h-screen bg-white text-gray-900">
+    <section className="w-full min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       {/* Banner skeleton */}
-      <div className="relative w-full h-[22.6vh] bg-gray-200 animate-pulse">
+      <div className="relative w-full h-[22.6vh] bg-gray-200 dark:bg-gray-800 animate-pulse">
         <Skeleton className="w-full h-full" />
       </div>
 
@@ -107,10 +107,10 @@ export function PlansPageSkeleton() {
 // Compact skeleton for loading states
 export function PlansLoadingSkeleton() {
   return (
-    <div className="w-full min-h-screen bg-white">
+    <div className="w-full min-h-screen bg-white dark:bg-gray-950">
       {/* Header skeleton */}
-      <div className="h-[22.6vh] bg-gray-100 animate-pulse" />
-      
+      <div className="h-[22.6vh] bg-gray-100 dark:bg-gray-800 animate-pulse" />
+
       {/* Content skeleton */}
       <div className="max-w-7xl mx-auto py-12 px-4 md:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
@@ -121,7 +121,7 @@ export function PlansLoadingSkeleton() {
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-16 w-full" />
           </div>
-          
+
           {/* Main content */}
           <div className="lg:col-span-4 space-y-6">
             <Skeleton className="h-8 w-48" />
@@ -129,7 +129,7 @@ export function PlansLoadingSkeleton() {
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="space-y-3">
                   <Skeleton className="h-6 w-20" />
-                  <div className="border rounded-2xl p-5 space-y-4">
+                  <div className="border dark:border-gray-700 rounded-2xl p-5 space-y-4">
                     <div className="flex justify-between">
                       <Skeleton className="h-8 w-16" />
                       <Skeleton className="h-6 w-6" />

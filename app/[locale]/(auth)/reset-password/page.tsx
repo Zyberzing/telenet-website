@@ -110,9 +110,9 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen w-full flex flex-col p-3">
-      <main className="flex flex-1 items-center justify-center bg-white p-8">
-        <div className="max-w-md w-full shadow-lg rounded-2xl overflow-hidden p-8">
-          <h2 className="text-2xl font-normal mb-6 text-center">
+      <main className="flex flex-1 items-center justify-center bg-white dark:bg-gray-950 p-8">
+        <div className="max-w-md w-full shadow-lg rounded-2xl overflow-hidden p-8 bg-white dark:bg-gray-900 dark:text-gray-100">
+          <h2 className="text-2xl font-normal mb-6 text-center text-gray-900 dark:text-gray-50">
             Reset Your Password
           </h2>
 
@@ -128,13 +128,13 @@ export default function ResetPassword() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="dark:text-gray-200">Email</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="email"
                         disabled
-                        className="bg-gray-100 cursor-not-allowed"
+                        className="bg-gray-100 cursor-not-allowed dark:bg-gray-700 dark:text-gray-400 dark:border-gray-600"
                       />
                     </FormControl>
                     <FormMessage />
@@ -148,7 +148,7 @@ export default function ResetPassword() {
                 name="otp"
                 render={() => (
                   <FormItem>
-                    <FormLabel>Enter OTP</FormLabel>
+                    <FormLabel className="dark:text-gray-200">Enter OTP</FormLabel>
                     <FormControl>
                       <div className="flex justify-between gap-2">
                         {Array.from({ length: 6 }).map((_, i) => (
@@ -158,7 +158,7 @@ export default function ResetPassword() {
                               otpRefs.current[i] = el;
                             }}
                             maxLength={1}
-                            className="w-12 h-12 text-center text-lg font-semibold border rounded-md focus:border-primary focus:ring-1 focus:ring-primary"
+                            className="w-12 h-12 text-center text-lg font-semibold border rounded-md focus:border-primary focus:ring-1 focus:ring-primary dark:bg-gray-800 dark:text-gray-50 dark:border-gray-700 dark:focus:border-primary dark:focus:ring-primary"
                             onChange={(e) => handleOtpChange(i, e.target.value)}
                             onKeyDown={(e) => handleKeyDown(i, e)}
                             onPaste={(e) => {
@@ -196,12 +196,13 @@ export default function ResetPassword() {
                 name="newPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New Password</FormLabel>
+                    <FormLabel className="dark:text-gray-200">New Password</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="password"
                         placeholder="Enter your new password"
+                        className="dark:bg-gray-800 dark:text-gray-50 dark:border-gray-700"
                       />
                     </FormControl>
                     <FormMessage />
@@ -212,7 +213,7 @@ export default function ResetPassword() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary text-white font-medium"
+                className="w-full bg-gradient from-primary to-indigo-600 text-white"
               >
                 {loading ? "Resetting..." : "Reset Password"}
               </Button>

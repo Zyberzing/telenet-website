@@ -153,7 +153,7 @@ export default function TicketDetailModal({
 
         <DialogFooter className="justify-center gap-2 pt-4">
           <Button
-            className="py-6 bg-primary text-white w-1/2 rounded-full"
+            className="py-6 bg-primary text-white dark:text-black w-1/2 rounded-full"
             onClick={handleSave}
           >
             {loading ? (
@@ -165,7 +165,7 @@ export default function TicketDetailModal({
             )}
           </Button>
           <Button
-            className="py-6 w-1/2 rounded-full bg-black"
+            className="py-6 w-1/2 rounded-full bg-black dark:bg-white dark:text-black"
             onClick={() => setSelectedTicket(null)}
           >
             {t("cancel")}

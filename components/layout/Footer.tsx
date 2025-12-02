@@ -46,22 +46,22 @@ export default function Footer({ locale }: { locale: string }) {
 
         {/* Purchase */}
         <div className="flex flex-col items-start">
-          <h3 className="font-[400] text-[18px] sm:text-[20px] text-primary">
+          <h3 className="font-[400] text-[18px] sm:text-[20px] text-primary dark:text-primary">
             {t("purchase")}
           </h3>
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
             {["destinations", "regions", "topUp", "downloadApp"].map((key) => (
               <li key={key}>
                 <Link
-                  className="hover:text-primary"
+                  className="hover:text-primary dark:hover:text-primary"
                   href={
                     key === "destinations"
                       ? ROUTES.DESTINATION(locale)
                       : key === "regions"
-                      ? ROUTES.REGION(locale)
-                      : key === "topUp"
-                      ? "#"
-                      : "#"
+                        ? ROUTES.REGION(locale)
+                        : key === "topUp"
+                          ? "#"
+                          : "#"
                   }
                 >
                   {t(key)}
@@ -73,7 +73,7 @@ export default function Footer({ locale }: { locale: string }) {
 
         {/* Top Destinations */}
         <div className="flex flex-col items-start">
-          <h3 className="font-[400] text-[18px] sm:text-[20px] text-primary">
+          <h3 className="font-[400] text-[18px] sm:text-[20px] text-primary dark:text-primary">
             {t("topDestinations")}
           </h3>
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
@@ -86,7 +86,7 @@ export default function Footer({ locale }: { locale: string }) {
               "UAE",
             ].map((country) => (
               <li key={country}>
-                <Link href="#">{t(`countries.${country}`)}</Link>
+                <Link className="hover:text-primary dark:hover:text-primary" href="#">{t(`countries.${country}`)}</Link>
               </li>
             ))}
           </ul>
@@ -94,31 +94,31 @@ export default function Footer({ locale }: { locale: string }) {
 
         {/* Company */}
         <div className="flex flex-col items-start">
-          <h3 className="font-[400] text-[18px] sm:text-[20px] text-primary">
+          <h3 className="font-[400] text-[18px] sm:text-[20px] text-primary dark:text-primary">
             {t("company")}
           </h3>
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
             <li>
-              <Link href={ROUTES.ABOUT_US(locale)}>{t("aboutUs")}</Link>
+              <Link className="hover:text-primary dark:hover:text-primary" href={ROUTES.ABOUT_US(locale)}>{t("aboutUs")}</Link>
             </li>
             <li>
-              <Link href={ROUTES.CONTACT_US(locale)}>{t("contactUs")}</Link>
+              <Link className="hover:text-primary dark:hover:text-primary" href={ROUTES.CONTACT_US(locale)}>{t("contactUs")}</Link>
             </li>
             <li>
-              <Link href={ROUTES.PARTNER_WITH_US(locale)}>{t("partner")}</Link>
+              <Link className="hover:text-primary dark:hover:text-primary" href={ROUTES.PARTNER_WITH_US(locale)}>{t("partner")}</Link>
             </li>
           </ul>
         </div>
 
         {/* Resources */}
         <div className="flex flex-col items-start">
-          <h3 className="font-[400] text-[18px] sm:text-[20px] text-primary">
+          <h3 className="font-[400] text-[18px] sm:text-[20px] text-primary dark:text-primary">
             {t("resources")}
           </h3>
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
             {["blog", "helpCenter", "events"].map((key) => (
               <li key={key}>
-                <Link href="#">{t(key)}</Link>
+                <Link className="hover:text-primary dark:hover:text-primary" href="#">{t(key)}</Link>
               </li>
             ))}
           </ul>
@@ -130,7 +130,7 @@ export default function Footer({ locale }: { locale: string }) {
         {/* Left: Copyright */}
         <p className="text-sm sm:text-[15px]">
           {t("copyright")}
-          <span className="text-primary font-medium mx-2">
+          <span className="text-primary dark:text-primary font-medium mx-2">
             {t("footerlink")}
           </span>
           {t("reserved")}
@@ -160,7 +160,7 @@ export default function Footer({ locale }: { locale: string }) {
         <div className="flex flex-wrap justify-center md:justify-end gap-2 sm:gap-4 text-sm sm:text-[15px]">
           {["cookie", "terms", "privacy"].map((key, idx) => (
             <React.Fragment key={key}>
-              <Link href="#">{t(key)}</Link>
+              <Link className="hover:text-primary dark:hover:text-primary" href="#">{t(key)}</Link>
               {idx < 2 && <span className="hidden sm:inline">|</span>}
             </React.Fragment>
           ))}

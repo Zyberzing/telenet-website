@@ -23,7 +23,7 @@ export default function VirtualNumberPage({
   const t = useTranslations("VirtualNumber");
 
   return (
-    <div className="w-full min-h-screen bg-white">
+    <div className="w-full min-h-screen bg-white dark:bg-gray-950">
       {/* Banner */}
       <header className="relative w-full h-[13vh] sm:h-[10vh] md:h-[20vh]">
         <Image
@@ -37,9 +37,9 @@ export default function VirtualNumberPage({
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12 max-w-4xl">
-        <Card className="border-0 shadow-sm">
+        <Card className="border-0 shadow-sm dark:bg-gray-900 dark:border-gray-800">
           <CardHeader>
-            <CardTitle className="text-[20px] font-normal text-[#141414] flex items-center">
+            <CardTitle className="text-[20px] font-normal text-[#141414] dark:text-gray-50 flex items-center">
               {t("numbers")}
             </CardTitle>
           </CardHeader>
@@ -51,12 +51,12 @@ export default function VirtualNumberPage({
                   {virtualNumbers.map((item) => (
                     <TableRow
                       key={item.id}
-                      className="hover:bg-gray-50 transition-colors border-0"
+                      className="hover:bg-gray-50 transition-colors border-0 dark:hover:bg-gray-800"
                     >
-                      <TableCell className="px-6 py-3 text-[16px]">
+                      <TableCell className="px-6 py-3 text-[16px] dark:text-gray-200">
                         {item.number}
                       </TableCell>
-                      <TableCell className="px-6 py-3 text-[16px]">
+                      <TableCell className="px-6 py-3 text-[16px] dark:text-gray-200">
                         {item.duplicate}
                       </TableCell>
                     </TableRow>

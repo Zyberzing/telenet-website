@@ -85,7 +85,7 @@ export default function DeleteAccountModal({
         >
           <Button
             variant="secondary"
-            className="bg-black px-10 flex-1 rounded-3xl text-[15px]"
+            className="bg-black dark:bg-gray-700 px-10 flex-1 rounded-3xl text-[15px]"
             onClick={() => onOpenChange(false)}
           >
             {t("modal.delete.cancel")}

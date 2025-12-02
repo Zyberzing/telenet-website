@@ -292,13 +292,13 @@ export default function EditProfileModal({
           <Button
             variant="secondary"
             onClick={() => onOpenChange(false)}
-            className="bg-black"
+            className="bg-black dark:bg-gray-700"
           >
             {t("modal.edit.cancel")}
           </Button>
 
           <Button
-            className="bg-primary"
+            className="bg-primary text-white hover:text-white"
             onClick={handleSubmit}
             disabled={saving}
           >

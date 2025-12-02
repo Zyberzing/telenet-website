@@ -63,11 +63,11 @@ export default function Destination({ countries, onSelect }: Props) {
   return (
     <div className="max-w-7xl mx-auto py-12">
       {/* Hero / header */}
-      <div className="text-center px-3 mb-10 bg-gradient-to-b from-white via-[#F4F7FF] to-[#E4ECFF] pt-12 pb-16">
-        <h1 className="text-4xl md:text-[60px] font-bold tracking-tight text-[#111111]">
+      <div className="text-center px-3 mb-10 bg-gradient-to-b from-white via-[#F4F7FF] to-[#E4ECFF] dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 pt-12 pb-16">
+        <h1 className="text-4xl md:text-[60px] font-bold tracking-tight text-[#111111] dark:text-white">
           Search an international <span className="block">destination</span>
         </h1>
-        <p className="text-sm text-primary mt-2">
+        <p className="text-sm text-primary dark:text-primary-light mt-2">
           Find & buy the best eSIMs for your travel.
         </p>
 
@@ -78,10 +78,9 @@ export default function Destination({ countries, onSelect }: Props) {
               key={g.key}
               onClick={() => setActiveAlpha(g.key)}
               className={`px-3 py-1 rounded-full text-sm border cursor-pointer transition
-                ${
-                  activeAlpha === g.key
-                    ? "bg-primary text-white"
-                    : "bg-white text-gray-700"
+                ${activeAlpha === g.key
+                  ? "bg-primary text-white"
+                  : "bg-white text-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600"
                 }`}
             >
               {g.label}
@@ -97,10 +96,10 @@ export default function Destination({ countries, onSelect }: Props) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search an International Destination"
-              className="w-full py-4 px-6 border-2 rounded-full shadow-sm placeholder-gray-400 text-gray-800 outline-none focus:ring-2 focus:ring-primary"
+              className="w-full py-4 px-6 border-2 rounded-full shadow-sm placeholder-gray-400 text-gray-800 outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-300"
             />
             <button
-              onClick={() => {}}
+              onClick={() => { }}
               className="absolute right-1 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-gradient text-white flex items-center justify-center shadow"
             >
               <svg
@@ -125,7 +124,7 @@ export default function Destination({ countries, onSelect }: Props) {
       {/* grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 px-5 mx-1 md:mx-10">
         {filtered.length === 0 ? (
-          <div className="col-span-full text-center py-12 text-gray-500">
+          <div className="col-span-full text-center py-12 text-gray-500 dark:text-gray-400">
             No destinations found.
           </div>
         ) : null}
@@ -135,7 +134,7 @@ export default function Destination({ countries, onSelect }: Props) {
             key={r.id}
             role="button"
             onClick={() => onSelect?.(r)}
-            className="group rounded-lg overflow-hidden shadow hover:shadow-lg transition cursor-pointer bg-white"
+            className="group rounded-lg overflow-hidden shadow hover:shadow-lg transition cursor-pointer bg-white dark:bg-gray-800"
           >
             <div className="h-[15em] w-full relative">
               {r.image ? (
@@ -147,7 +146,7 @@ export default function Destination({ countries, onSelect }: Props) {
                   className="object-cover"
                 />
               ) : (
-                <div className="bg-gray-100 w-full h-full flex items-center justify-center text-gray-400">
+                <div className="bg-gray-100 w-full h-full flex items-center justify-center text-gray-400 dark:bg-gray-700 dark:text-gray-300">
                   No image
                 </div>
               )}
