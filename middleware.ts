@@ -16,7 +16,9 @@ const publicRoutes = [
   "/virtual-number",
   "/partner-with-us",
   "/destination",
-  "/region"
+  "/region",
+  "/blog",
+  "/blog/:slug"
 ];
 
 const locales = ["en", "fr", "es"]; // supported languages
@@ -34,10 +36,23 @@ export async function middleware(req: NextRequest) {
   if (maybeLocale && locales.includes(maybeLocale)) {
     pathWithoutLocale = "/" + pathSegments.slice(2).join("/");
     if (pathWithoutLocale === "/") pathWithoutLocale = "/";
+  } else {
+    // Redirect to default locale if missing
+    const defaultLocale = "en";
+    return NextResponse.redirect(new URL(`/${defaultLocale}${pathname}`, req.url));
   }
 
   // Allow public routes
-  if (publicRoutes.includes(pathWithoutLocale)) {
+  const isPublicRoute = publicRoutes.some((route) => {
+    if (route.includes(":")) {
+      // Simple pattern matching for :slug, :id etc
+      const routeRegex = new RegExp("^" + route.replace(/:[^\s/]+/g, "([^/]+)") + "$");
+      return routeRegex.test(pathWithoutLocale);
+    }
+    return route === pathWithoutLocale;
+  });
+
+  if (isPublicRoute) {
     return NextResponse.next();
   }
 

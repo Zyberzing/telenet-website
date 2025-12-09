@@ -4,6 +4,12 @@ import { PlanDetailsModal } from "@/components/modals";
 import { PlanFilters } from "@/components/plans";
 import { PlanCardSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/Button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { crateCheckout } from "@/services/payment";
 import {
   ArrowDownUp,
@@ -15,7 +21,7 @@ import {
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { User } from "../profile-setting/ProfileSetting";
 
@@ -68,6 +74,14 @@ export default function Plans({
   const t = useTranslations("Plans");
   const router = useRouter();
   const searchParams = useSearchParams();
+  const search = useSearchParams();
+  const urlFilterBy =
+    search.get("filterby") === "Region" ? "region" : "country";
+  const urlCountry = search.get("country_code") ?? "";
+  const urlRegion = search.get("region_name") ?? "";
+  const urlDataSize = Number(search.get("data_size") ?? 50);
+  const urlMaxValidity = Number(search.get("max_validity"));
+  const urlPlanType = Number(search.get("plan_name") ?? 1);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [orderLoading, setOrderLoading] = useState(false);
   const [filterType, setFilterType] = useState<"country" | "region">(
@@ -80,21 +94,43 @@ export default function Plans({
   const [dataSize, setDataSize] = useState([
     Number(searchParams.get("data_size")) || 50,
   ]);
+  const [maxValidity, setMaxValidity] = useState(
+    Number(searchParams.get("max_validity")) || undefined
+  );
   const [isPending, startTransition] = useTransition();
   const [planType, setPlanType] = useState(
     Number(searchParams.get("plan_name")) || 1
   );
 
+  useEffect(() => {
+    setFilterType(urlFilterBy);
+    setInternalSelectedCountry(urlCountry);
+    setInternalSelectedRegion(urlRegion);
+    setDataSize([urlDataSize]);
+    setMaxValidity(urlMaxValidity || undefined);
+    setPlanType(urlPlanType);
+  }, [
+    urlFilterBy,
+    urlCountry,
+    urlRegion,
+    urlDataSize,
+    urlMaxValidity,
+    urlPlanType,
+  ]);
+
   const selectedDataSize = dataSize?.[0] ?? 0;
+  const selectedMaxValidity = maxValidity;
 
   const updateUrlAndReload = ({
     newDataSize,
+    newMaxValidity,
     newCountry,
     newRegion,
     newFilterType,
     newPlanType,
   }: {
     newDataSize?: number;
+    newMaxValidity?: number;
     newCountry?: string;
     newRegion?: string;
     newFilterType?: "country" | "region";
@@ -103,12 +139,14 @@ export default function Plans({
     const params = new URLSearchParams(searchParams.toString());
     const filter = newFilterType ?? filterType;
     const size = newDataSize ?? selectedDataSize;
+    const maxValidityValue = newMaxValidity ?? selectedMaxValidity;
     const country = newCountry ?? internalSelectedCountry;
     const region = newRegion ?? internalSelectedRegion;
 
     params.set("filterby", filter === "country" ? "Country" : "Region");
     params.set("plan_name", (newPlanType ?? planType).toString());
     params.set("data_size", size.toString());
+    params.set("max_validity", maxValidityValue?.toString() || "");
     params.delete("country_code");
     params.delete("region_name");
 
@@ -119,8 +157,7 @@ export default function Plans({
     }
 
     startTransition(() => {
-      router.replace(`?${params.toString()}`);
-      router.refresh();
+      router.replace(`?${params.toString()}`, { scroll: false });
     });
   };
 
@@ -180,7 +217,7 @@ export default function Plans({
       </div>
 
       {/* Main Section */}
-      <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:h-[calc(100vh-22.6vh)]">
+      <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:h-[calc(100vh)-88px-22.6vh]">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:h-full">
           {/* Filter Component */}
           <PlanFilters
@@ -217,6 +254,11 @@ export default function Plans({
             onDataSizeCommit={(v) => {
               updateUrlAndReload({ newDataSize: v[0] });
             }}
+            maxValidity={maxValidity}
+            onMaxValidityChange={setMaxValidity}
+            onMaxValidityCommit={(v) => {
+              updateUrlAndReload({ newMaxValidity: v });
+            }}
             planType={planType}
             onPlanTypeChange={(type) => {
               setPlanType(type);
@@ -245,11 +287,22 @@ export default function Plans({
                   {plans.map((plan) => (
                     <div key={plan.package_id}>
                       <div className="flex justify-between items-center mb-1">
-                        {plan?.network && (
-                          <span className="text-[14px] capitalize font-medium text-white rounded-[7px] px-2 bg-[#A22BE6]">
-                            {plan?.network}
-                          </span>
+                        {plan.network && (
+                          <TooltipProvider delayDuration={100}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="max-w-40 truncate block text-[14px] capitalize font-medium text-white rounded-[7px] px-2 bg-primary cursor-default">
+                                  {plan.network}
+                                </span>
+                              </TooltipTrigger>
+
+                              <TooltipContent className="bg-black text-white px-3 py-2 text-xs rounded-lg max-w-[250px] break-words">
+                                {plan.network}
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         )}
+
                         <span className="text-[14px] font-extrabold text-[#A70123] rounded-[7px] px-2 ">
                           {plan.coverage}
                         </span>

@@ -37,12 +37,12 @@
     "downloadApp": "Télécharger l'application",
     "topDestinations": "Destinations principales",
     "countries": {
-      "Australia": "Australie",
-      "United Kingdom": "Royaume-Uni",
-      "Thailand": "Thaïlande",
-      "USA": "États-Unis",
-      "Canada": "Canada",
-      "UAE": "Émirats arabes unis"
+      "AU": "Australie",
+      "GB": "Royaume-Uni",
+      "TH": "Thaïlande",
+      "US": "États-Unis",
+      "CA": "Canada",
+      "AE": "Émirats arabes unis"
     },
     "company": "Telenet Global",
     "aboutUs": "À propos",

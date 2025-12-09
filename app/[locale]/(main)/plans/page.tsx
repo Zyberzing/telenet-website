@@ -21,6 +21,7 @@ interface PageProps {
     country_code?: string;
     region_name?: string;
     data_size?: number;
+    max_validity?: number;
     plan_name?: number;
   }>;
 }
@@ -73,6 +74,7 @@ export default async function Page({ searchParams }: PageProps) {
   const selectedCountryCode = params.country_code ?? "";
   const selectedRegion = params.region_name ?? "";
   const selectedDataSize = params.data_size ? Number(params.data_size) : 50;
+  const selectedMaxValidity = params.max_validity && Number(params.max_validity);
   const selectedPlanType = params.plan_name ? Number(params.plan_name) : 1;
 
   let initialPlans: Plan[] = [];
@@ -87,6 +89,7 @@ export default async function Page({ searchParams }: PageProps) {
         country_code: filterby === "Country" ? selectedCountryCode : undefined,
         region_name: filterby === "Region" ? selectedRegion : undefined,
         data_size: selectedDataSize,
+        max_validity: selectedMaxValidity,
         plan_name: selectedPlanType,
       });
 

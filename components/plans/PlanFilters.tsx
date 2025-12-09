@@ -1,8 +1,5 @@
 "use client";
 
-import { Slider } from "@/components/ui/slider";
-import { Check, ChevronsUpDown, SlidersHorizontal } from "lucide-react";
-import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import {
   Command,
@@ -17,7 +14,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
+import { Check, ChevronsUpDown, SlidersHorizontal } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface FilterDropdownProps {
   label: string;
@@ -47,10 +47,10 @@ function FilterDropdown({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full mt-1 justify-between text-sm font-normal"
+            className="w-full mt-1 flex justify-between items-center text-sm font-normal text-left min-h-[42px]"
           >
-            {selectedLabel}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            <span className="truncate">{selectedLabel}</span>
+            <ChevronsUpDown className="ml-2 h-4 w-4 flex-shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
@@ -103,6 +103,9 @@ interface PlanFiltersProps {
   dataSize: number[];
   onDataSizeChange: (value: number[]) => void;
   onDataSizeCommit: (value: number[]) => void;
+  maxValidity?: number;
+  onMaxValidityChange: (value: number | undefined) => void;
+  onMaxValidityCommit: (value: number | undefined) => void;
   planType: number;
   onPlanTypeChange: (type: number) => void;
   countryLabel: string;
@@ -122,6 +125,9 @@ export function PlanFilters({
   dataSize,
   onDataSizeChange,
   onDataSizeCommit,
+  maxValidity,
+  onMaxValidityChange,
+  onMaxValidityCommit,
   planType,
   onPlanTypeChange,
   countryLabel,
@@ -129,6 +135,21 @@ export function PlanFilters({
   filterTitle,
 }: PlanFiltersProps) {
   const [showTooltip, setShowTooltip] = useState(false);
+
+  /* eslint-disable react-hooks/exhaustive-deps */
+  useEffect(() => {
+    if (filterType === "country") {
+      if (!selectedCountry && countries.length > 0) {
+        onCountryChange(countries[0]?.value || "");
+      }
+    }
+
+    if (filterType === "region") {
+      if (!selectedRegion && regions.length > 0) {
+        onRegionChange(regions[0]?.value || "");
+      }
+    }
+  }, [filterType, selectedCountry, selectedRegion, countries, regions]);
 
   return (
     <aside className="rounded-xl border border-gray-200 shadow-sm bg-white overflow-hidden h-fit lg:sticky lg:top-4 dark:bg-gray-900 dark:border-gray-700">
@@ -141,7 +162,7 @@ export function PlanFilters({
 
       <div className="p-4 space-y-4">
         {/* Radio buttons */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <label className="flex items-center gap-2 cursor-pointer text-gray-700 dark:text-gray-200">
             <input
               type="radio"
@@ -286,6 +307,76 @@ export function PlanFilters({
               <span>Voice</span>
             </label>
           </div>
+        </div>
+
+        <hr className="border-gray-200 dark:border-gray-700" />
+        {/* MAX VALIDITY */}
+        <div>
+          <p className="text-[14px] font-medium text-gray-700 dark:text-gray-200">
+            Max Validity (days)
+          </p>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full mt-2 flex justify-between items-center text-sm font-normal text-left min-h-[42px]"
+              >
+                <span className="truncate">
+                  {maxValidity ? `${maxValidity} days` : "Select validity..."}
+                </span>
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+              <Command>
+                <CommandList>
+                  <CommandGroup>
+                    {[
+                      { label: "All", value: "" },
+                      { label: "1 day", value: 1 },
+                      { label: "7 days", value: 7 },
+                      { label: "30 days", value: 30 },
+                      { label: "90 days", value: 90 },
+                      { label: "180 days", value: 180 },
+                      { label: "365 days", value: 365 },
+                    ].map((item) => (
+                      <CommandItem
+                        key={item.value}
+                        value={String(item.value)}
+                        onSelect={() => {
+                          onMaxValidityChange(
+                            typeof item.value === "number"
+                              ? item.value
+                              : Number(item.value)
+                          );
+                          onMaxValidityCommit(
+                            typeof item.value === "number"
+                              ? item.value
+                              : item.value === ""
+                              ? undefined
+                              : Number(item.value)
+                          );
+                        }}
+                        className={cn(
+                          maxValidity === item.value && "bg-gradient text-white"
+                        )}
+                      >
+                        {item.label}
+                        <Check
+                          className={cn(
+                            "ml-auto h-4 w-4",
+                            maxValidity === item.value
+                              ? "opacity-100 text-white"
+                              : "opacity-0"
+                          )}
+                        />
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
     </aside>

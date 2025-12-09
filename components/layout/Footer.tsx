@@ -76,17 +76,18 @@ export default function Footer({ locale }: { locale: string }) {
           <h3 className="font-[400] text-[18px] sm:text-[20px] text-primary dark:text-primary">
             {t("topDestinations")}
           </h3>
+
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
-            {[
-              "Australia",
-              "United Kingdom",
-              "Thailand",
-              "USA",
-              "Canada",
-              "UAE",
-            ].map((country) => (
+            {["AU", "GB", "TH", "US", "CA", "AE"].map((country) => (
               <li key={country}>
-                <Link className="hover:text-primary dark:hover:text-primary" href="#">{t(`countries.${country}`)}</Link>
+                <Link
+                  className="hover:text-primary dark:hover:text-primary"
+                  href={`/${locale}/plans?filterby=Country&country_code=${encodeURIComponent(
+                    country
+                  )}`}
+                >
+                  {t(`countries.${country}`)}
+                </Link>
               </li>
             ))}
           </ul>
@@ -99,13 +100,28 @@ export default function Footer({ locale }: { locale: string }) {
           </h3>
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
             <li>
-              <Link className="hover:text-primary dark:hover:text-primary" href={ROUTES.ABOUT_US(locale)}>{t("aboutUs")}</Link>
+              <Link
+                className="hover:text-primary dark:hover:text-primary"
+                href={ROUTES.ABOUT_US(locale)}
+              >
+                {t("aboutUs")}
+              </Link>
             </li>
             <li>
-              <Link className="hover:text-primary dark:hover:text-primary" href={ROUTES.CONTACT_US(locale)}>{t("contactUs")}</Link>
+              <Link
+                className="hover:text-primary dark:hover:text-primary"
+                href={ROUTES.CONTACT_US(locale)}
+              >
+                {t("contactUs")}
+              </Link>
             </li>
             <li>
-              <Link className="hover:text-primary dark:hover:text-primary" href={ROUTES.PARTNER_WITH_US(locale)}>{t("partner")}</Link>
+              <Link
+                className="hover:text-primary dark:hover:text-primary"
+                href={ROUTES.PARTNER_WITH_US(locale)}
+              >
+                {t("partner")}
+              </Link>
             </li>
           </ul>
         </div>
@@ -118,7 +134,16 @@ export default function Footer({ locale }: { locale: string }) {
           <ul className="mt-4 space-y-2 text-[15px] sm:text-[16px] text-left">
             {["blog", "helpCenter", "events"].map((key) => (
               <li key={key}>
-                <Link className="hover:text-primary dark:hover:text-primary" href="#">{t(key)}</Link>
+                <Link
+                  className="hover:text-primary dark:hover:text-primary"
+                  href={
+                    key === "blog"
+                      ? ROUTES.BLOG(locale)
+                      : "#"
+                  }
+                >
+                  {t(key)}
+                </Link>
               </li>
             ))}
           </ul>
@@ -160,7 +185,12 @@ export default function Footer({ locale }: { locale: string }) {
         <div className="flex flex-wrap justify-center md:justify-end gap-2 sm:gap-4 text-sm sm:text-[15px]">
           {["cookie", "terms", "privacy"].map((key, idx) => (
             <React.Fragment key={key}>
-              <Link className="hover:text-primary dark:hover:text-primary" href="#">{t(key)}</Link>
+              <Link
+                className="hover:text-primary dark:hover:text-primary"
+                href="#"
+              >
+                {t(key)}
+              </Link>
               {idx < 2 && <span className="hidden sm:inline">|</span>}
             </React.Fragment>
           ))}

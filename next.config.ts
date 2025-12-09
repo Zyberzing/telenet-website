@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "media.dev.zetexa.com" },
       { protocol: "https", hostname: "admin.dev.zetexa.com" },
       { protocol: "https", hostname: "res.cloudinary.com" },
+      { protocol: "https", hostname: "images.unsplash.com" }
     ],
   },
 

@@ -39,12 +39,14 @@ export const getPlans = async ({
   region_name,
   filterby,
   data_size,
+  max_validity,
   plan_name,
 }: {
   country_code?: string;
   region_name?: string;
   filterby?: "Country" | "Region";
   data_size?: number;
+  max_validity?: number;
   plan_name?: number;
 }): Promise<GetPlansResponse> => {
   try {
@@ -61,7 +63,10 @@ export const getPlans = async ({
     if (data_size) {
       params.set("data_size", data_size.toString());
     }
-    if (plan_name) params.set("plan_name", plan_name.toString()); // 👈 NEW
+    if (max_validity) {
+      params.set("max_validity", max_validity.toString());
+    }
+    if (plan_name) params.set("plan_name", plan_name.toString());
 
     const apiUrl = `/plan/package-list?${params.toString()}`;
 

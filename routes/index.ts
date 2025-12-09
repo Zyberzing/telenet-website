@@ -22,4 +22,6 @@ export const ROUTES = {
   PARTNER_WITH_US: (locale: string) => `/${locale}/partner-with-us`,
   DESTINATION: (locale: string) => `/${locale}/destination`,
   REGION: (locale: string) => `/${locale}/region`,
+  BLOG: (locale: string) => `/${locale}/blog`,
+  BLOG_DETAIL: (locale: string, slug: string) => `/${locale}/blog/${slug}`,
 };
