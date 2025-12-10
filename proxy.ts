@@ -18,12 +18,12 @@ const publicRoutes = [
   "/destination",
   "/region",
   "/blog",
-  "/blog/:slug"
+  "/blog/:slug",
 ];
 
 const locales = ["en", "fr", "es"]; // supported languages
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Extract locale if present
@@ -39,14 +39,18 @@ export async function middleware(req: NextRequest) {
   } else {
     // Redirect to default locale if missing
     const defaultLocale = "en";
-    return NextResponse.redirect(new URL(`/${defaultLocale}${pathname}`, req.url));
+    return NextResponse.redirect(
+      new URL(`/${defaultLocale}${pathname}`, req.url)
+    );
   }
 
   // Allow public routes
   const isPublicRoute = publicRoutes.some((route) => {
     if (route.includes(":")) {
       // Simple pattern matching for :slug, :id etc
-      const routeRegex = new RegExp("^" + route.replace(/:[^\s/]+/g, "([^/]+)") + "$");
+      const routeRegex = new RegExp(
+        "^" + route.replace(/:[^\s/]+/g, "([^/]+)") + "$"
+      );
       return routeRegex.test(pathWithoutLocale);
     }
     return route === pathWithoutLocale;
