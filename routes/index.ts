@@ -1,6 +1,7 @@
 export const ROUTES = {
   HOME: (locale: string) => `/${locale}`,
   LOGIN: (locale: string) => `/${locale}/login`,
+  KYC: (locale: string) => `/${locale}/kyc`,
   REGISTER: (locale: string) => `/${locale}/register`,
   OTP: (locale: string) => `/${locale}/otp`,
   FORGOT_PASSWORD: (locale: string) => `/${locale}/forgot-password`,

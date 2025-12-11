@@ -3,6 +3,7 @@
 import { saveSession } from "@/lib/session";
 import { ROUTES } from "@/routes";
 import { loginUser } from "@/services/auth";
+import { getKYC } from "@/services/kyc";
 import { setCredentials } from "@/store/slices/authSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { jwtDecode } from "jwt-decode";
@@ -29,6 +30,7 @@ import {
 export const formSchema = z.object({
   email: z.string().email("Invalid email"),
   password: z.string().min(1, "Password is required"),
+  kycStatus: z.string().optional(),
 });
 
 export type LoginFormSchemaType = z.infer<typeof formSchema>;
@@ -51,7 +53,7 @@ export default function LoginForm() {
       setLoading(true);
 
       const res = await loginUser(values);
-      toast.success("Signed in successfully.");
+
       const accessTokenRaw = res.access; // directly from response
       const refreshTokenRaw = res.refresh;
 
@@ -90,6 +92,32 @@ export default function LoginForm() {
         })
       );
 
+      const { kycStatus } = res || {}; // Adjust based on actual structure
+
+      if (kycStatus === "pending") {
+        try {
+          const kycRes = (await getKYC()) as { data?: { token?: string } };
+          const token = kycRes?.data?.token;
+
+          if (!token) {
+            toast.error("Unable to start KYC");
+            return;
+          }
+
+          // Save token
+          sessionStorage.setItem("sumsub_kyc_token", token);
+
+          // Navigate to KYC screen
+          router.push(ROUTES.KYC(locale));
+          return;
+        } catch (error) {
+          console.error("KYC fetch failed:", error);
+          toast.error("Unable to load KYC verification.");
+          return;
+        }
+      }
+
+      toast.success("Signed in successfully.");
       router.push(ROUTES.DASHBOARD(locale));
     } catch (err: unknown) {
       console.error("Login failed:", err);

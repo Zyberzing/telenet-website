@@ -88,11 +88,19 @@ export default function RegisterForm() {
       };
 
       const res = await createUser(payload);
+
+      if (res.status !== "success") {
+        toast.error(res.message || "Registration failed");
+        return; // STOP here, do not continue
+      }
+
       sessionStorage.setItem(
         "registrationState",
         JSON.stringify({ email: data.email })
       );
+
       toast.success(res.message);
+
       router.push(ROUTES.OTP(locale));
     } catch (err: unknown) {
       console.error("Registration failed:", err);
@@ -108,6 +116,7 @@ export default function RegisterForm() {
       setLoading(false);
     }
   };
+
 
   return (
     <Form {...form}>
@@ -270,7 +279,7 @@ export default function RegisterForm() {
           type="submit"
           loading={loading}
           label={loading ? t("loading") : t("registerButton")}
-          className="w-full bg-gradient from-primary to-indigo-600 text-white"
+          className="w-full bg-gradient from-primary to-indigo-600 text-white cursor-pointer"
         />
 
         <div className="text-center text-sm flex gap-2 justify-center">

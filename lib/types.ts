@@ -10,6 +10,7 @@ export type UserSession = {
   token: string;
   refreshToken: string;
   user: string | null;
+  kycStatus?: string;
 };
 
 export type AuthResponse<T = unknown> = {
