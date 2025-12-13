@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/Button";
 import { ROUTES } from "@/routes";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -15,6 +16,7 @@ export default function KYC() {
   const locale = useLocale();
   const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
+  const [kycCompleted, setKycCompleted] = useState(false);
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem("sumsub_kyc_token");
@@ -57,9 +59,17 @@ export default function KYC() {
         })
         .on("idCheck.onStepCompleted", (payload: any) => {
           console.log("Step completed:", payload);
+          // router.push(ROUTES.DASHBOARD(locale));
+          if (payload.reviewResult?.reviewAnswer === "GREEN") {
+            router.push(ROUTES.DASHBOARD(locale));
+          }
+        })
+        .on("idCheck.onApplicantSubmitted", () => {
+          setKycCompleted(true);
         })
         .on("idCheck.onError", (error: unknown) => {
           console.error("KYC error:", error);
+          router.push(ROUTES.LOGIN(locale));
         })
         .build();
 
@@ -74,8 +84,19 @@ export default function KYC() {
   }, [token]);
 
   return (
-    <div className="my-3">
+    <div className="my-3 w-full">
       <div id="sumsub-websdk-container"></div>
+
+      {kycCompleted && (
+        <div className="flex justify-center mt-6">
+          <Button
+            className="px-6 py-3 bg-primary text-white rounded-lg cursor-pointer"
+            onClick={() => router.push(ROUTES.DASHBOARD(locale))}
+          >
+            Go to Dashboard
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

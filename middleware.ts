@@ -17,6 +17,7 @@ const publicRoutes = [
 
 const authRoutes = [
   "/login",
+  "/kyc",
   "/register",
   "/otp",
   "/forgot-password",
