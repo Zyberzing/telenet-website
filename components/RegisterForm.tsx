@@ -66,7 +66,7 @@ export default function RegisterForm() {
   }));
 
   const form = useForm<RegistrationFormSchemaType>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema as any),
     defaultValues: {
       name: "",
       email: "",
@@ -116,7 +116,6 @@ export default function RegisterForm() {
       setLoading(false);
     }
   };
-
 
   return (
     <Form {...form}>

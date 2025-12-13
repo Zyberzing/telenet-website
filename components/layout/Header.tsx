@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme } from "@/app/providers/ThemeProvider";
+import { useLoadProfile } from "@/hooks/useLoadProfile";
 import { cn } from "@/lib/utils";
 import { RootState } from "@/store/Store";
 import {
@@ -65,16 +66,13 @@ export default function Header() {
 
   const [open, setOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGE[0]);
-  // const [user, setUser] = useState<any | null>(null);
 
-  // useEffect(() => {
-  //   async function fetchUser() {
-  //     const profile = await getProfile();
-  //     setUser(profile);
-  //   }
-  //   fetchUser();
-  // }, []);
+  // Load user profile on mount
+  useLoadProfile();
+
+  // Get user from Redux
   const { user } = useSelector((state: RootState) => state.auth);
+
   // Detect language from URL
   useEffect(() => {
     const parts = pathname.split("/").filter(Boolean);
@@ -82,17 +80,22 @@ export default function Header() {
     if (currentLocale) setSelectedLanguage(currentLocale);
   }, [pathname]);
 
-  // Apply dark theme if system preference is dark on initial load
+  // Apply dark theme if system preference is dark on initial load (only once)
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      if (prefersDark && theme !== "dark") {
-        toggleTheme();
+      const savedTheme = localStorage.getItem("theme");
+      // Only apply system preference if no theme is saved
+      if (!savedTheme) {
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+        if (prefersDark && theme !== "dark") {
+          toggleTheme();
+        }
       }
     }
-  }, [toggleTheme, theme]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run only once on mount
 
   const handleLanguageChange = (lang: Language) => {
     setSelectedLanguage(lang);
@@ -167,14 +170,26 @@ export default function Header() {
                       className="rounded-full object-cover"
                     />
                   ) : (
-                    <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                      <User className="h-4 w-4 text-gray-600" />
+                    <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                      <User className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                     </div>
                   )}
                   <ChevronDown className="h-4 w-4" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 p-2">
+              <DropdownMenuContent align="end" className="w-64 p-2">
+                {/* User Info Section */}
+                <div className="px-3 py-2 mb-2">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                    {user.name || "User"}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    {user.email}
+                  </p>
+                </div>
+
+                <DropdownMenuSeparator />
+
                 <div className="space-y-1">
                   {MENU_ITEMS.map((item) => (
                     <DropdownMenuItem key={item.href} asChild>
@@ -192,7 +207,7 @@ export default function Header() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onSelect={(e) => e.preventDefault()}
-                  className="text-primary font-[400] px-3 cursor-pointer"
+                  className="text-primary font-normal px-3 cursor-pointer"
                 >
                   <LogoutConfirm className="flex gap-3">
                     <LogOut className="h-4 w-4" />
@@ -204,7 +219,7 @@ export default function Header() {
           ) : (
             <button
               onClick={() => router.push(`/${selectedLanguage?.code}/login`)}
-              className="cursor-pointer whitespace-nowrap px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer"
+              className="whitespace-nowrap px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md cursor-pointer"
             >
               {t("signIn")}
             </button>
@@ -290,15 +305,27 @@ export default function Header() {
                             className="rounded-full object-cover"
                           />
                         ) : (
-                          <div className="h-9 w-9 rounded-full bg-gray-200 flex items-center justify-center">
-                            <User className="h-4 w-4 text-gray-600" />
+                          <div className="h-9 w-9 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                            <User className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                           </div>
                         )}
                         <ChevronDown className="h-4 w-4" />
                       </button>
                     </DropdownMenuTrigger>
 
-                    <DropdownMenuContent align="start" className="w-56 p-2">
+                    <DropdownMenuContent align="start" className="w-64 p-2">
+                      {/* User Info Section */}
+                      <div className="px-3 py-2 mb-2">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                          {user.name || "User"}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                          {user.email}
+                        </p>
+                      </div>
+
+                      <DropdownMenuSeparator />
+
                       <div className="space-y-1">
                         {MENU_ITEMS.map((item) => (
                           <DropdownMenuItem key={item.href} asChild>
@@ -317,11 +344,7 @@ export default function Header() {
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onSelect={(e) => e.preventDefault()}
-                        // onClick={() => {
-                        //   handleLogout();
-                        //   setOpen(false);
-                        // }}
-                        className="text-primary font-[400] px-3 cursor-pointer"
+                        className="text-primary font-normal px-3 cursor-pointer"
                       >
                         <LogoutConfirm className="flex gap-3">
                           <LogOut className="h-4 w-4" />
@@ -343,7 +366,11 @@ export default function Header() {
                 )}
               </div>
               <button onClick={toggleTheme}>
-                <Sun className="h-5 w-5 text-gray-600 dark:text-gray-300 cursor-pointer" />
+                {theme === "dark" ? (
+                  <Moon className="h-5 w-5 text-gray-300 cursor-pointer" />
+                ) : (
+                  <Sun className="h-5 w-5 text-gray-600 cursor-pointer" />
+                )}
               </button>
             </div>
           </nav>

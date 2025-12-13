@@ -9,7 +9,7 @@ export type UserSession = {
   refresh: string;
   token: string;
   refreshToken: string;
-  user: string | null;
+  user: User | string | null;
   kycStatus?: string;
 };
 

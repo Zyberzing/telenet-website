@@ -78,7 +78,7 @@ export default function CreateTicketModal({
   }));
 
   const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema as any),
     defaultValues: {
       name: "",
       email: "",

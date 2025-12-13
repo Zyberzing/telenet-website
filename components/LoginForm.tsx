@@ -44,7 +44,7 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
 
   const form = useForm<LoginFormSchemaType>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema as any),
     defaultValues: { email: "", password: "" },
   });
 
@@ -73,7 +73,7 @@ export default function LoginForm() {
       // Decode access token to get user info
       const decoded: { authId: string; role: string; exp: number } =
         jwtDecode(accessToken);
-
+      console.log("decoded", decoded);
       // Save session (localStorage / cookie)
       saveSession({
         user: decoded.authId,
@@ -84,13 +84,15 @@ export default function LoginForm() {
         refresh: refreshToken,
       });
 
+      // Save credentials to Redux
       dispatch(
         setCredentials({
           token: accessToken,
-          user: { id: decoded.authId, role: decoded.role },
           refreshToken,
         })
       );
+
+      // Note: User profile will be loaded automatically by useLoadProfile hook in Header
 
       const { kycStatus } = res || {}; // Adjust based on actual structure
 

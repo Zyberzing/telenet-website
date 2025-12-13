@@ -40,7 +40,7 @@ export default function OTPVerification({
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof otpSchema>>({
-    resolver: zodResolver(otpSchema),
+    resolver: zodResolver(otpSchema as any),
     defaultValues: {
       email: "",
       otp: "",
@@ -133,7 +133,9 @@ export default function OTPVerification({
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 dark:text-gray-300">Email</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">
+                      Email
+                    </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -153,7 +155,9 @@ export default function OTPVerification({
                 name="otp"
                 render={() => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 dark:text-gray-300">Enter OTP</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">
+                      Enter OTP
+                    </FormLabel>
                     <FormControl>
                       <div className="flex justify-between gap-2">
                         {Array.from({ length: 6 }).map((_, i) => (
