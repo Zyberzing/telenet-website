@@ -95,7 +95,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
           <div className="space-y-4">
             {activePlans.length === 0 ? (
               <p className="text-center dark:text-gray-300">
-                No Active plan available
+                No active plan available
               </p>
             ) : (
               activePlans.map((plan) => (
@@ -232,7 +232,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                 </div>
               ))
             ) : (
-              <p className="dark:text-gray-300">No expired plan available</p>
+              <p className="text-center dark:text-gray-300">No expired plan available</p>
             )}
           </div>
         )}
