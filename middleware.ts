@@ -13,11 +13,11 @@ const publicRoutes = [
   "/destination",
   "/region",
   "/blog",
+  "/kyc",
 ];
 
 const authRoutes = [
   "/login",
-  "/kyc",
   "/register",
   "/otp",
   "/forgot-password",
@@ -44,36 +44,33 @@ export function middleware(req: NextRequest) {
   const session = req.cookies.get(cookieName)?.value;
 
   const segments = pathname.split("/").filter(Boolean);
-  const locale = segments[0] && locales.includes(segments[0]) ? segments[0] : DEFAULT_LOCALE;
+  const locale =
+    segments[0] && locales.includes(segments[0]) ? segments[0] : DEFAULT_LOCALE;
 
-  const pathWithoutLocale = segments[0] && locales.includes(segments[0])
-    ? `/${segments.slice(1).join("/")}`
-    : pathname;
+  const pathWithoutLocale =
+    segments[0] && locales.includes(segments[0])
+      ? `/${segments.slice(1).join("/")}`
+      : pathname;
 
   const isPublic = publicRoutes.some(
-    (route) => pathWithoutLocale === route || pathWithoutLocale.startsWith(`${route}/`)
+    (route) =>
+      pathWithoutLocale === route || pathWithoutLocale.startsWith(`${route}/`)
   );
 
-  const isAuthRoute = authRoutes.some(
-    (route) => pathWithoutLocale === route
-  );
+  const isAuthRoute = authRoutes.some((route) => pathWithoutLocale === route);
 
-  const isProtected = protectedRoutes.some(
-    (route) => pathWithoutLocale.startsWith(route)
+  const isProtected = protectedRoutes.some((route) =>
+    pathWithoutLocale.startsWith(route)
   );
 
   /** 🔐 Logged-in user trying to access login/register */
   if (session && isAuthRoute) {
-    return NextResponse.redirect(
-      new URL(`/${locale}/dashboard`, req.url)
-    );
+    return NextResponse.redirect(new URL(`/${locale}/dashboard`, req.url));
   }
 
   /** 🚫 Not logged-in user trying to access protected routes */
   if (!session && isProtected) {
-    return NextResponse.redirect(
-      new URL(`/${locale}/login`, req.url)
-    );
+    return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
   }
 
   /** ✅ Public pages always allowed */
@@ -86,5 +83,7 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico)$).*)",],
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico)$).*)",
+  ],
 };

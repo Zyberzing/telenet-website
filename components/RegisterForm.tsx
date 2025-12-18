@@ -59,10 +59,20 @@ export default function RegisterForm() {
   const locale = useLocale();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  // const countryCodes = getCountries().map((country) => ({
+  //   code: `+${getCountryCallingCode(country)}`,
+  //   country,
+  // }));
+  const regionNames = new Intl.DisplayNames([locale], {
+    type: "region",
+  });
 
   const countryCodes = getCountries().map((country) => ({
+    iso: country,
+    name: regionNames.of(country) ?? country,
     code: `+${getCountryCallingCode(country)}`,
-    country,
   }));
 
   const form = useForm<RegistrationFormSchemaType>({
@@ -213,7 +223,7 @@ export default function RegisterForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t("fields.countryCode")}</FormLabel>
-              <Popover>
+              <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
@@ -229,13 +239,14 @@ export default function RegisterForm() {
                           {
                             countryCodes.find(
                               (item) => item.code === field.value
-                            )?.country
+                            )?.name
                           }{" "}
                           {field.value}
                         </span>
                       ) : (
                         <span>{t("placeholders.countryCode")}</span>
                       )}
+
                       <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
                     </Button>
                   </FormControl>
@@ -245,18 +256,21 @@ export default function RegisterForm() {
                     <CommandInput placeholder={t("searchCountry")} />
                     <CommandEmpty>{t("noCountryFound")}</CommandEmpty>
                     <CommandGroup className="max-h-[300px] overflow-auto">
-                      {countryCodes.map(({ code, country }) => (
+                      {countryCodes.map(({ iso, name, code }) => (
                         <CommandItem
-                          key={country}
-                          value={code}
-                          onSelect={() => field.onChange(code)}
+                          key={iso}
+                          value={`${name.toLowerCase()} ${iso.toLowerCase()} ${code}`}
+                          onSelect={() => {
+                            field.onChange(code);
+                            setOpen(false);
+                          }}
                         >
                           <ReactCountryFlag
                             svg
-                            countryCode={country}
+                            countryCode={iso}
                             className="mr-2"
                           />
-                          {country} ({code})
+                          {name} ({code})
                           <Check
                             className={cn(
                               "ml-auto h-4 w-4",

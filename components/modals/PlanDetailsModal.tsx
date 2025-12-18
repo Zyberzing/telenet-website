@@ -105,14 +105,14 @@ export default function PlanDetailsModal({
             <p className="text-[15px] mb-3 font-normal">Price Breakdown</p>
             <div className="flex justify-between text-sm gap-1 mb-1">
               <span className="text-[#565656] bg-[#F1F8FE] dark:text-gray-300 dark:bg-zinc-800 w-full p-2 rounded-tl-xl">
-                Base Price
+                Price
               </span>
               <span className="text-start bg-[#F1F8FE] dark:bg-zinc-800 w-full p-2 rounded-tr-xl">
                 ${basePrice.toFixed(2)}
               </span>
             </div>
 
-            {(() => {
+            {/* {(() => {
               let markupAmount = 0;
 
               if (selectedPlan.markupType === "percentage") {
@@ -139,7 +139,7 @@ export default function PlanDetailsModal({
                   </span>
                 </div>
               );
-            })()}
+            })()} */}
 
             {/* Tax */}
 
