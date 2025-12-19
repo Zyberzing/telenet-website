@@ -74,7 +74,8 @@ export default async function Page({ searchParams }: PageProps) {
   const selectedCountryCode = params.country_code ?? "";
   const selectedRegion = params.region_name ?? "";
   const selectedDataSize = params.data_size ? Number(params.data_size) : 50;
-  const selectedMaxValidity = params.max_validity && Number(params.max_validity);
+  const selectedMaxValidity =
+    params.max_validity && Number(params.max_validity);
   const selectedPlanType = params.plan_name ? Number(params.plan_name) : 1;
 
   let initialPlans: Plan[] = [];
@@ -107,7 +108,7 @@ export default async function Page({ searchParams }: PageProps) {
         name: c.name,
       }))}
       regions={regions.map((r) => ({ name: r.name }))}
-      plans={initialPlans}
+      result={initialPlans}
       selectedCountry={selectedCountryCode}
       selectedRegion={selectedRegion}
       filterby={filterby}

@@ -26,8 +26,6 @@ export default function PlanDetailsModal({
 }: PlanDetailsModalProps) {
   if (!selectedPlan) return null;
 
-  const basePrice = selectedPlan.price || 0;
-
   return (
     <Dialog open={!!selectedPlan} onOpenChange={onClose}>
       <DialogContent
@@ -108,7 +106,7 @@ export default function PlanDetailsModal({
                 Price
               </span>
               <span className="text-start bg-[#F1F8FE] dark:bg-zinc-800 w-full p-2 rounded-tr-xl">
-                ${basePrice.toFixed(2)}
+                ${selectedPlan.taxAmount?.toFixed(2) || "0.00"}
               </span>
             </div>
 
@@ -142,46 +140,34 @@ export default function PlanDetailsModal({
             })()} */}
 
             {/* Tax */}
-
-            <div className="flex justify-between text-sm gap-1">
-              <span className="text-[#565656] bg-[#F1F8FE] dark:text-gray-300 dark:bg-zinc-800 w-full p-2 rounded-bl-xl">
+            <div className="flex justify-between text-sm gap-1 mb-1">
+              <span className="text-[#565656] bg-[#F1F8FE] dark:text-gray-300 dark:bg-zinc-800 w-full p-2">
                 Tax
               </span>
 
+              <span className="text-start bg-[#F1F8FE] dark:bg-zinc-800 w-full p-2">
+                ${selectedPlan.taxAmount?.toFixed(2) || "0.00"}
+              </span>
+            </div>
+
+            <div className="flex justify-between text-sm gap-1">
+              <span className="text-[#565656] bg-[#F1F8FE] dark:text-gray-300 dark:bg-zinc-800 w-full p-2 rounded-bl-xl">
+                Stripe
+              </span>
+
               <span className="text-start bg-[#F1F8FE] dark:bg-zinc-800 w-full p-2 rounded-br-xl">
-                ${selectedPlan.tax?.toFixed(2) || "0.00"}
+                ${selectedPlan.stripe?.toFixed(2) || "0.00"}
               </span>
             </div>
 
             {/* FINAL TOTAL */}
+            <div className="flex justify-between font-[400] text-sm border border-primary dark:border-primary-dark rounded-xl px-3 text-center py-2 gap-1 mt-2">
+              <span className="w-full text-start px-2">Final Price</span>
 
-            {(() => {
-              const base = basePrice;
-
-              const markupAmount =
-                selectedPlan.markupType === "percentage"
-                  ? (base * selectedPlan.markupValue) / 100
-                  : selectedPlan.markupValue;
-
-              const applied =
-                selectedPlan.actionType === "increase"
-                  ? markupAmount
-                  : -markupAmount;
-
-              const taxAmount = selectedPlan.tax ?? 0;
-
-              const finalTotal = base + applied + taxAmount;
-
-              return (
-                <div className="flex justify-between font-[400] text-sm border border-primary dark:border-primary-dark rounded-xl px-3 text-center py-2 gap-1 mt-2">
-                  <span className="w-full text-start px-2">Final Price</span>
-
-                  <span className="text-start w-full px-2">
-                    ${finalTotal.toFixed(2)}
-                  </span>
-                </div>
-              );
-            })()}
+              <span className="text-start w-full px-2">
+                ${selectedPlan.finalPrice.toFixed(2)}
+              </span>
+            </div>
           </div>
 
           {/* FUP / Notes */}

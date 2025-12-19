@@ -32,6 +32,9 @@ export type Plan = {
   validity: number;
   coverage: string;
   price: number;
+  basePrice?: number;
+  taxAmount?: number;
+  stripe?: number;
   tax?: number;
   call: number;
   sms: number;
@@ -49,7 +52,7 @@ export type Plan = {
 export interface PlansProps {
   countries: { iso2: string; code: string; name: string }[];
   regions: { name: string }[];
-  plans: Plan[];
+  result: Plan[];
   selectedCountry: string;
   selectedRegion: string;
   filterby: "Country" | "Region";
@@ -65,7 +68,7 @@ export type orderDetails = {
 export default function Plans({
   countries,
   regions,
-  plans = [],
+  result = [],
   selectedCountry,
   selectedRegion,
   filterby,
@@ -282,9 +285,9 @@ export default function Plans({
                     <PlanCardSkeleton key={i} />
                   ))}
                 </div>
-              ) : plans.length > 0 ? (
+              ) : result.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {plans.map((plan) => (
+                  {result.map((plan) => (
                     <div key={plan.package_id}>
                       <div className="flex justify-between items-center mb-1">
                         {plan.network && (

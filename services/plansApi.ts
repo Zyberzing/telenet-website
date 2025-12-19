@@ -74,7 +74,7 @@ export const getPlans = async ({
     const data = response?.data || {};
 
     return {
-      plans: data.plans || [],
+      plans: data.result || [],
       // adminMarkup: data.adminMarkup || null,
     };
   } catch (error) {
