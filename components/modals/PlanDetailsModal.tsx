@@ -106,7 +106,7 @@ export default function PlanDetailsModal({
                 Price
               </span>
               <span className="text-start bg-[#F1F8FE] dark:bg-zinc-800 w-full p-2 rounded-tr-xl">
-                ${selectedPlan.taxAmount?.toFixed(2) || "0.00"}
+                ${selectedPlan.basePrice?.toFixed(2) || "0.00"}
               </span>
             </div>
 

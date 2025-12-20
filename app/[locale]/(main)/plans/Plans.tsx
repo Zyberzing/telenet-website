@@ -10,7 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { crateCheckout } from "@/services/payment";
+import { createCheckout } from "@/services/payment";
 import {
   ArrowDownUp,
   Calendar,
@@ -181,7 +181,7 @@ export default function Plans({
 
     try {
       setOrderLoading(true);
-      const res = await crateCheckout(orderBody);
+      const res = await createCheckout(orderBody);
       toast.success(res.message || "Order successfully created!");
 
       setSelectedPlan(null);
