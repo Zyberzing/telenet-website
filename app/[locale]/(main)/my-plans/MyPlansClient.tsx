@@ -1,5 +1,7 @@
 "use client";
 
+import QRModal from "@/components/modals/QRModal";
+import BillingModal from "@/components/modals/ViewBillingModal";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/routes";
@@ -29,6 +31,7 @@ export interface Plan {
   status: "active" | "expired";
   package_sms: number;
   package_call: number;
+  qrcode?: string;
 }
 
 interface MyPlansClientProps {
@@ -39,11 +42,14 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
   const t = useTranslations("MyPlans");
   const [tab, setTab] = useState<"active" | "expired">("active");
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  console.log("Selected Plan:", selectedPlan);
   const router = useRouter();
   const locale = useLocale();
   const activePlans = plans;
   const expiredPlans = plans.filter((p) => p.status === "expired");
-  console.log("selected Plan", selectedPlan);
+  const [showRefund, setShowRefund] = useState(false);
+  const [showQR, setShowQR] = useState(false);
+  const [showBilling, setShowBilling] = useState(false);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
@@ -121,16 +127,16 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                         <p>
                           {plan.package_data >= 1024
                             ? `${parseFloat(
-                              (plan.package_data / 1024).toFixed(2)
-                            )} GB`
+                                (plan.package_data / 1024).toFixed(2)
+                              )} GB`
                             : `${plan.package_data} MB`}{" "}
                           {t("dataLeft")}
                         </p>
                         <p>
                           {plan.package_data >= 1024
                             ? `${parseFloat(
-                              (plan.package_data / 1024).toFixed(2)
-                            )} GB`
+                                (plan.package_data / 1024).toFixed(2)
+                              )} GB`
                             : `${plan.package_data} MB`}
                         </p>
                       </div>
@@ -139,10 +145,11 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                         <div
                           className="bg-[#FF7623] h-1.5"
                           style={{
-                            width: `${(parseFloat(plan.dataLeft || "0") /
+                            width: `${
+                              (parseFloat(plan.dataLeft || "0") /
                                 parseFloat(plan.totalData)) *
                               100
-                              }%`,
+                            }%`,
                           }}
                         />
                       </div>
@@ -154,19 +161,34 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                     <div className="flex flex-col sm:flex-row gap-3 mt-3">
                       <Button
                         onClick={() => router.push(ROUTES.PLANS(locale))}
-                        className="bg-primary hover:bg-primary px-10 rounded-full"
+                        className="bg-primary dark:text-white hover:bg-primary px-10 rounded-full"
                       >
                         {t("renew")}
                       </Button>
                       <Button
                         onClick={() => router.push(ROUTES.TOP_UP(locale))}
-                        className="bg-black hover:bg-gray-800 px-10 rounded-full"
+                        className="bg-black dark:text-white dark:hover:text-black dark:hover:bg-purple-50 hover:bg-gray-800 px-10 rounded-full"
                       >
                         {t("topUp")}
                       </Button>
-                      <Button className="px-10 bg-black hover:bg-gray-800 rounded-full">
+                      <Button
+                        onClick={() => {
+                          setSelectedPlan(plan);
+                          setShowQR(true);
+                        }}
+                        className="px-10 bg-black dark:text-white dark:hover:text-black dark:hover:bg-purple-50 hover:bg-gray-800 rounded-full"
+                      >
                         {t("viewQR")}
                       </Button>
+                      {/* <Button
+                        onClick={() => {
+                          setSelectedPlan(plan);
+                          setShowRefund(true);
+                        }}
+                        className="px-10 bg-black dark:text-white dark:hover:text-black dark:hover:bg-purple-50 hover:bg-gray-800 rounded-full"
+                      >
+                        {t("refund")}
+                      </Button> */}
                       <p
                         onClick={() =>
                           router.push(ROUTES.INSTALLATION_GUIDE(locale))
@@ -179,7 +201,10 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                   </div>
                   <div>
                     <p
-                      onClick={() => setSelectedPlan(plan)}
+                      onClick={() => {
+                        setSelectedPlan(plan);
+                        setShowBilling(true);
+                      }}
                       className="border-b border-primary text-primary h-fit place-self-center cursor-pointer"
                     >
                       View Billing
@@ -232,69 +257,38 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                 </div>
               ))
             ) : (
-              <p className="text-center dark:text-gray-300">No expired plan available</p>
+              <p className="text-center dark:text-gray-300">
+                No expired plan available
+              </p>
             )}
           </div>
         )}
       </div>
 
       {/* Dialog Modal */}
-      {selectedPlan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6 relative">
-            {/* Close Button */}
-            <button
-              onClick={() => setSelectedPlan(null)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-red-500 text-2xl cursor-pointer dark:text-gray-400"
-            >
-              &times;
-            </button>
+      <BillingModal
+        open={showBilling}
+        plan={selectedPlan}
+        onClose={() => setShowBilling(false)}
+      />
 
-            {/* Header */}
-            <h2 className="text-lg font-medium mb-1 dark:text-white">
-              {selectedPlan.package_name || "-"}
-            </h2>
-            <p className="text-sm text-gray-500 mb-6 dark:text-gray-400">
-              Order Id {selectedPlan.orderId || 0}
-            </p>
+      {/* <RefundModal
+        open={showRefund}
+        plan={selectedPlan}
+        onClose={() => {
+          setShowRefund(false);
+          setSelectedPlan(null);
+        }}
+      /> */}
 
-            {/* Plan Details */}
-            <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-              <p>Country: {selectedPlan.country || "-"}</p>
-              <p>
-                Data:{" "}
-                {selectedPlan.package_data >= 1024
-                  ? `${parseFloat(
-                    (selectedPlan.package_data / 1024).toFixed(2)
-                  )} GB`
-                  : `${selectedPlan.package_data} MB`}
-              </p>
-              <p>SMS: {selectedPlan?.package_sms || 0}</p>
-              <p>Call: {selectedPlan?.package_call || 0}</p>
-              <p>
-                Unit price gross amount:{" "}
-                {selectedPlan?.unit_price_gross_amount || 0}
-              </p>
-              <p>
-                Unit price net amount:{" "}
-                {selectedPlan?.unit_price_net_amount || 0}
-              </p>
-
-              <p>Validity: {selectedPlan?.perioddays || "-"} days</p>
-            </div>
-
-            {/* Footer */}
-            <div className="mt-6 flex justify-end">
-              <Button
-                onClick={() => setSelectedPlan(null)}
-                className="bg-primary text-white rounded-full px-4 py-2"
-              >
-                Close
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <QRModal
+        open={showQR}
+        plan={selectedPlan}
+        onClose={() => {
+          setShowQR(false);
+          setSelectedPlan(null);
+        }}
+      />
     </div>
   );
 }

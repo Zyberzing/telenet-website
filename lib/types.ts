@@ -64,3 +64,8 @@ export type UpdateTicketInput = Omit<
 export type ProfilePictureUpdate = {
   profilePicture: string;
 };
+
+export interface Refund {
+  packageId: string; // orderId of the plan
+  refundComment: string; // user entered reason
+}

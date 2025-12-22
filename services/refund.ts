@@ -1,0 +1,19 @@
+import { authFetcher } from "@/lib/authFetcher";
+import { Refund } from "@/lib/types";
+
+export const createRefund = async (body: Refund): Promise<any> => {
+  const response = await authFetcher<{ status: string; message: string }>(
+    "/refund/create",
+    {
+      method: "POST",
+      body,
+    }
+  );
+  console.log("Refund response:", response);
+  if (response?.status !== "success") {
+    console.error("Refund error:", response?.message);
+    throw new Error(response?.message || "Failed to create refund.");
+  }
+
+  return response;
+};

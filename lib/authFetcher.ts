@@ -1,6 +1,6 @@
 "use server";
 
-import { hasSession, clearSession } from "./session";
+import { clearSession, hasSession } from "./session";
 
 type FetchOptions = {
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
@@ -74,6 +74,7 @@ export async function authFetcher<T = unknown>(
     return data as T;
   } catch (err) {
     console.error("🔴 [authFetcher] Error caught:", err);
-    throw err;
+    // throw err;
+    throw new Error((err as any)?.message || "Something went wrong");
   }
 }

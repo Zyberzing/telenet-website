@@ -1,8 +1,14 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/Button";
+import { ROUTES } from "@/routes";
+import { useLocale } from "next-intl";
+import { useRouter, useSearchParams } from "next/navigation";
+import { IoMdArrowBack } from "react-icons/io";
 
 export default function SuccessPage() {
+  const router = useRouter();
+  const locale = useLocale();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
 
@@ -19,6 +25,12 @@ export default function SuccessPage() {
           Session ID: <span className="font-mono">{sessionId}</span>
         </p>
       )}
+      <Button
+        className="px-6 py-3 bg-primary text-white rounded-lg cursor-pointer mt-8"
+        onClick={() => router.push(ROUTES.HOME(locale))}
+      >
+        <IoMdArrowBack /> Back to Home
+      </Button>
     </div>
   );
 }
