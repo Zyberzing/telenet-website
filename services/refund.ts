@@ -3,7 +3,7 @@ import { Refund } from "@/lib/types";
 
 export const createRefund = async (body: Refund): Promise<any> => {
   const response = await authFetcher<{ status: string; message: string }>(
-    "/refund/create",
+    "/refund/request-refund",
     {
       method: "POST",
       body,

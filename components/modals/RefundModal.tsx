@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { Refund } from "@/lib/types";
+import { createRefund } from "@/services/refund";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -16,9 +17,15 @@ interface RefundModalProps {
   open: boolean;
   plan: Plan | null;
   onClose: () => void;
+  onRefundSuccess: () => void;
 }
 
-export default function RefundModal({ open, plan, onClose }: RefundModalProps) {
+export default function RefundModal({
+  open,
+  plan,
+  onClose,
+  onRefundSuccess,
+}: RefundModalProps) {
   const [refundComment, setRefundComment] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -29,17 +36,16 @@ export default function RefundModal({ open, plan, onClose }: RefundModalProps) {
     }
 
     const payload: Refund = {
-      packageId: plan.orderId,
-      refundComment,
+      orderId: plan.orderId,
+      reason: refundComment,
     };
-    console.log("Submitting refund with payload:", payload);
     setLoading(true);
 
     try {
-      // const res = await createRefund(payload);
-      // console.log("Refund created successfully:", res);
-      // toast.success(res.message || "Refund initiated successfully");
+      const res = await createRefund(payload);
+      toast.success(res.message || "Refund initiated successfully");
       onClose();
+      onRefundSuccess();
       setRefundComment("");
     } catch (err: any) {
       toast.error(err.message || "Refund failed");

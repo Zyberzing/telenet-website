@@ -1,6 +1,7 @@
 "use client";
 
 import QRModal from "@/components/modals/QRModal";
+import RefundModal from "@/components/modals/RefundModal";
 import BillingModal from "@/components/modals/ViewBillingModal";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -42,7 +43,6 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
   const t = useTranslations("MyPlans");
   const [tab, setTab] = useState<"active" | "expired">("active");
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  console.log("Selected Plan:", selectedPlan);
   const router = useRouter();
   const locale = useLocale();
   const activePlans = plans;
@@ -50,6 +50,12 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
   const [showRefund, setShowRefund] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const [showBilling, setShowBilling] = useState(false);
+
+  const handleRefundSuccess = () => {
+    setShowRefund(false);
+    setSelectedPlan(null);
+    router.refresh();
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
@@ -180,7 +186,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                       >
                         {t("viewQR")}
                       </Button>
-                      {/* <Button
+                      <Button
                         onClick={() => {
                           setSelectedPlan(plan);
                           setShowRefund(true);
@@ -188,7 +194,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                         className="px-10 bg-black dark:text-white dark:hover:text-black dark:hover:bg-purple-50 hover:bg-gray-800 rounded-full"
                       >
                         {t("refund")}
-                      </Button> */}
+                      </Button>
                       <p
                         onClick={() =>
                           router.push(ROUTES.INSTALLATION_GUIDE(locale))
@@ -272,14 +278,15 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
         onClose={() => setShowBilling(false)}
       />
 
-      {/* <RefundModal
+      <RefundModal
         open={showRefund}
         plan={selectedPlan}
         onClose={() => {
           setShowRefund(false);
           setSelectedPlan(null);
         }}
-      /> */}
+        onRefundSuccess={handleRefundSuccess}
+      />
 
       <QRModal
         open={showQR}

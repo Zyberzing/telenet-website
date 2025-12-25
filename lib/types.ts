@@ -66,6 +66,6 @@ export type ProfilePictureUpdate = {
 };
 
 export interface Refund {
-  packageId: string; // orderId of the plan
-  refundComment: string; // user entered reason
+  orderId: string;
+  reason: string;
 }
