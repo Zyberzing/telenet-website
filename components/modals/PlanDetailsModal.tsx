@@ -181,10 +181,10 @@ export default function PlanDetailsModal({
           )}
 
           {/* Countries */}
-          <div>
+          {/* <div>
             <p className="text-[15px] font-medium mb-2">Available in:</p>
             <div className="flex flex-wrap gap-2 text-sm text-gray-700 dark:text-gray-300">
-              {selectedPlan.countries.map((c) => (
+              {selectedPlan?.countries?.map((c) => (
                 <span
                   key={c.countryiso2}
                   className="px-2 py-1 bg-gray-100 dark:bg-zinc-700 rounded-md"
@@ -193,7 +193,7 @@ export default function PlanDetailsModal({
                 </span>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Footer */}
