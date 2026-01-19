@@ -24,7 +24,7 @@ type RefreshTokenResponse = {
   status: "success" | "error";
   message?: string;
   data: {
-    accessToken: string;
+    access: string;
     refreshToken: string;
     user: string;
   };
@@ -87,10 +87,10 @@ async function refreshAccessToken(refreshToken: string): Promise<UserSession | n
     }
 
     const newSession: UserSession = {
-      accessToken: data.data.accessToken,
-      token: data.data.accessToken,
+      accessToken: data.data.access,
+      token: data.data.access,
       refreshToken: data.data.refreshToken,
-      access: data.data.accessToken,
+      access: data.data.access,
       refresh: data.data.refreshToken,
       user: data.data.user,
     };
