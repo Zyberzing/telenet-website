@@ -1,7 +1,9 @@
 "use client";
 
 import { useTheme } from "@/app/providers/ThemeProvider";
+import { useLoadProfile } from "@/hooks/useLoadProfile";
 import { cn } from "@/lib/utils";
+import { RootState } from "@/store/Store";
 import {
   ChevronDown,
   FileText,
@@ -21,6 +23,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import LogoutConfirm from "../shared/LogoutConfirm";
 import {
   DropdownMenu,
@@ -29,9 +32,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Skeleton } from "../ui/skeleton";
-import { fetcher } from "@/lib/fetcher";
-import { authFetcher } from "@/lib/authFetcher";
 
 const LANGUAGE = [
   { code: "en", name: "English" },
@@ -66,35 +66,13 @@ export default function Header() {
 
   const [open, setOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGE[0]);
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
 
-  // Fetch user profile on mount
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setLoading(true);
-        const res = await authFetcher<{ data: any }>("/auth/profile");
-        console.log("Fetching user profile from /auth/profile", res);
+  // Load user profile on mount
+  useLoadProfile();
 
-        if (res) {
-          const data = res?.data || res;
-          setUser(data);
-          console.log("✅ User loaded:", data?.email);
-        } else {
-          console.log("❌ Failed to fetch user");
-          setUser(null);
-        }
-      } catch (err) {
-        console.error("❌ Error fetching user:", err);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Get user from Redux
+  const { user } = useSelector((state: RootState) => state.auth);
 
-    fetchUser();
-  }, []);
   // Detect language from URL
   useEffect(() => {
     const parts = pathname.split("/").filter(Boolean);
@@ -238,8 +216,6 @@ export default function Header() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          ) : loading ? (
-            <Skeleton className="h-8 w-8 rounded-full" />
           ) : (
             <button
               onClick={() => router.push(`/${selectedLanguage?.code}/login`)}
@@ -377,8 +353,6 @@ export default function Header() {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                ) : loading ? (
-                  <Skeleton className="h-9 w-9 rounded-full" />
                 ) : (
                   <button
                     onClick={() => {
