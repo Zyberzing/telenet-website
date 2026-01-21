@@ -20,7 +20,7 @@ import { FaEdit } from "react-icons/fa";
 import { toast } from "sonner";
 
 export type User = {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   country: string;
@@ -57,9 +57,9 @@ export default function ProfileSetting({ user }: { user: User }) {
 
   // Notification settings — bind to ProfileSetting page
   const [emailAlertEnabled, setEmailAlertEnabled] = useState(
-    user.emailAlertEnabled
+    user?.emailAlertEnabled
   );
-  const [smsAlertEnabled, setSmsAlertEnabled] = useState(user.smsAlertEnabled);
+  const [smsAlertEnabled, setSmsAlertEnabled] = useState(user?.smsAlertEnabled);
   const [pushNotificationEnabled, setPushNotificationEnabled] = useState(
     user.pushNotificationEnabled
   );

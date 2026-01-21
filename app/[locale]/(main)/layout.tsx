@@ -1,6 +1,6 @@
-"use client";
+// "use client";
 import Footer from "@/components/layout/Footer";
-import Header from "@/components/layout/Header";
+import Header from "@/components/layout/header/Header";
 import { use } from "react";
 
 export default function MainLayout({
@@ -15,7 +15,7 @@ export default function MainLayout({
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow">{children}</main>
+      <main className="grow">{children}</main>
       <Footer locale={locale} />
     </div>
   );

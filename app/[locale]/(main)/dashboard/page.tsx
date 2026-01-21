@@ -20,7 +20,7 @@ export default async function Page() {
   const userData = {
     name: user?.name ?? "",
     email: user?.email ?? "",
-    id: user?.id ?? "",
+    id: user?._id ?? "",
     phone: user?.phone ?? "",
     country: user?.countryCode ?? "",
     location: user?.location ?? "",
