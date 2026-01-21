@@ -14,6 +14,25 @@ export function useLoadProfile() {
   useEffect(() => {
     // Only load if we don't have user data yet
     if (!user) {
+      // Try to read persisted user from localStorage (client-only)
+      if (typeof window !== "undefined") {
+        try {
+          const raw = localStorage.getItem("user");
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed) {
+              console.log("🔁 Rehydrated user from localStorage:", parsed.email || parsed);
+              dispatch(setUser(parsed));
+              return; // don't call server-side profile fetch from client
+            }
+          }
+        } catch (err) {
+          console.warn("[useLoadProfile] Failed to read user from localStorage:", err);
+        }
+      }
+
+      // If no local user, attempt to load via server-aware helper as a best-effort.
+      // This may fail on client because `getProfile` uses server-only cookies; handle errors gracefully.
       loadProfile();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

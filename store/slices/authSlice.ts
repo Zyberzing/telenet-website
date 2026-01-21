@@ -26,14 +26,35 @@ const authSlice = createSlice({
       state.refreshToken = refreshToken;
       state.user = user;
 
-      // if (typeof window !== "undefined") {
-      //   localStorage.setItem("token", token);
-      //   localStorage.setItem("refreshToken", refreshToken);
-      //   localStorage.setItem("user", JSON.stringify(user));
-      // }
+      if (typeof window !== "undefined") {
+        try {
+          if (token !== undefined && token !== null) {
+            localStorage.setItem("token", token);
+          }
+          if (refreshToken !== undefined && refreshToken !== null) {
+            localStorage.setItem("refreshToken", refreshToken);
+          }
+          if (user !== undefined && user !== null) {
+            localStorage.setItem("user", JSON.stringify(user));
+          }
+        } catch (err) {
+          console.warn("[authSlice] Failed to persist auth to localStorage:", err);
+        }
+      }
     },
     setUser: (state, action) => {
       state.user = action.payload;
+      if (typeof window !== "undefined") {
+        try {
+          if (action.payload !== undefined && action.payload !== null) {
+            localStorage.setItem("user", JSON.stringify(action.payload));
+          } else {
+            localStorage.removeItem("user");
+          }
+        } catch (err) {
+          console.warn("[authSlice] Failed to persist user to localStorage:", err);
+        }
+      }
     },
     logout: (state) => {
       state.token = null;
