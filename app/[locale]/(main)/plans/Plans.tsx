@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import { User } from "../profile-setting/ProfileSetting";
 
 export type Plan = {
+  _id: string;
   package_id: string;
   package_name: string;
   data: string;
@@ -46,6 +47,7 @@ export type Plan = {
   actionType: "increase" | "decrease";
   markupType: "percentage" | "fixed";
   markupValue: number;
+  markupAmount: number;
   percentage: number;
 };
 
@@ -175,7 +177,7 @@ export default function Plans({
     }
 
     const orderBody: orderDetails = {
-      packageId: selectedPlan.package_id,
+      packageId: selectedPlan?._id,
       country: selectedCountry,
     };
 
