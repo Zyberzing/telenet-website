@@ -15,6 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Order } from "@/lib/types";
+import { getOrderList } from "@/services/order";
 import { format } from "date-fns";
 import {
   CalendarDays,
@@ -27,28 +29,47 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaRegFilePdf } from "react-icons/fa";
 
-export interface Order {
-  _id: string;
-  plan: {
-    package_name: string;
-    package_data: string;
-  };
-  provider: string;
-  payment: string;
-  status: string;
-}
-
-export default function OrderBilling({ orders }: { orders: Order[] }) {
+export default function OrderBilling({
+  initialOrders,
+  initialPagination,
+  limit,
+}: {
+  initialOrders: Order[];
+  initialPagination: any;
+  limit: number;
+}) {
   const t = useTranslations("OrderBilling");
-
+  const [orders, setOrders] = useState<Order[]>(initialOrders);
+  const [pagination, setPagination] = useState(initialPagination);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [statusFilter, setStatusFilter] = useState("");
   const [providerFilter, setProviderFilter] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   // const itemsPerPage = 5;
+  const totalPages = pagination?.totalPages || 1;
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const res = await getOrderList(currentPage, limit);
+        if (res) {
+          setOrders(res.result || []);
+          setPagination(res.pagination);
+        }
+      } catch (e) {
+        console.error("Pagination fetch error", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, [currentPage, limit]);
 
   // const filteredOrders = useMemo(() => {
   //   return orders.filter((order) => {
@@ -122,36 +143,56 @@ export default function OrderBilling({ orders }: { orders: Order[] }) {
 
           {/* Status Filter */}
           <Select onValueChange={setStatusFilter} value={statusFilter}>
-            <SelectTrigger className="w-[140px] text-sm rounded-md dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700">
+            <SelectTrigger className="w-[140px] text-sm rounded-md dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 cursor-pointer">
               <SelectValue placeholder={t("status")} />
             </SelectTrigger>
-            <SelectContent className="dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700">
-              <SelectItem value="processing">{t("processing")}</SelectItem>
-              <SelectItem value="cancelled">{t("cancelled")}</SelectItem>
-              <SelectItem value="inReview">{t("inReview")}</SelectItem>
-              <SelectItem value="refunded">{t("refunded")}</SelectItem>
-              <SelectItem value="active">{t("active")}</SelectItem>
-              <SelectItem value="expired">{t("expired")}</SelectItem>
+            <SelectContent className="dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 cursor-pointer">
+              <SelectItem className="cursor-pointer" value="processing">
+                {t("processing")}
+              </SelectItem>
+              <SelectItem className="cursor-pointer" value="cancelled">
+                {t("cancelled")}
+              </SelectItem>
+              <SelectItem className="cursor-pointer" value="inReview">
+                {t("inReview")}
+              </SelectItem>
+              <SelectItem className="cursor-pointer" value="refunded">
+                {t("refunded")}
+              </SelectItem>
+              <SelectItem className="cursor-pointer" value="active">
+                {t("active")}
+              </SelectItem>
+              <SelectItem className="cursor-pointer" value="expired">
+                {t("expired")}
+              </SelectItem>
             </SelectContent>
           </Select>
 
           {/* Provider Filter */}
           <Select onValueChange={setProviderFilter} value={providerFilter}>
-            <SelectTrigger className="w-[140px] text-sm rounded-md dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700">
+            <SelectTrigger className="w-[140px] text-sm rounded-md dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 cursor-pointer">
               <SelectValue placeholder={t("provider")} />
             </SelectTrigger>
-            <SelectContent className="dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700">
-              <SelectItem value="Verizon">Verizon</SelectItem>
-              <SelectItem value="Vodafone">Vodafone</SelectItem>
-              <SelectItem value="NTT Docomo">NTT Docomo</SelectItem>
-              <SelectItem value="Telstra">Telstra</SelectItem>
+            <SelectContent className="dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 cursor-pointer">
+              <SelectItem className="cursor-pointer" value="Verizon">
+                Verizon
+              </SelectItem>
+              <SelectItem className="cursor-pointer" value="Vodafone">
+                Vodafone
+              </SelectItem>
+              <SelectItem className="cursor-pointer" value="NTT Docomo">
+                NTT Docomo
+              </SelectItem>
+              <SelectItem className="cursor-pointer" value="Telstra">
+                Telstra
+              </SelectItem>
             </SelectContent>
           </Select>
 
           {/* Reset Filters */}
           <button
             onClick={resetFilters}
-            className="flex items-center gap-1 text-primary hover:underline dark:text-blue-400 dark:hover:text-blue-300"
+            className="flex items-center gap-1 text-primary hover:underline dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer"
           >
             <XCircle size={14} />
             {t("resetFilters")}
@@ -172,7 +213,7 @@ export default function OrderBilling({ orders }: { orders: Order[] }) {
                 <th className="py-3 px-4 text-left font-medium">
                   {t("provider")}
                 </th>
-                <th className="py-3 px-4 text-left font-medium">
+                <th className="py-3 px-4 text-left font-medium whitespace-nowrap">
                   {t("paymentOption")}
                 </th>
                 <th className="py-3 px-4 text-left font-medium">
@@ -194,13 +235,20 @@ export default function OrderBilling({ orders }: { orders: Order[] }) {
                     className="border-b last:border-0 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700 transition"
                   >
                     <td className="py-3 px-4">{order?._id}</td>
-                    <td className="py-3 px-4">{order.plan?.package_name}</td>
-                    <td className="py-3 px-4">{order?.provider || "-"}</td>
-                    <td className="py-3 px-4">{order?.payment || "-"}</td>
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      {order?.package_name}
+                    </td>
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      {order?.network || "-"}
+                    </td>
+                    <td className="py-3 px-4">
+                      {order?.paymentIntentId || "-"}
+                    </td>
                     <td className="py-3 px-4">
                       <span
-                        className={`px-3 py-1 rounded text-xs font-medium
-                        ${order.status === "processing"
+                        className={`px-3 py-1 rounded text-xs font-medium capitalize
+                        ${
+                          order.status === "processing"
                             ? "border border-[#00B625] text-[#00B625]"
                             : order.status === "cancelled"
                               ? "border border-[#FF6262] text-[#FF6262]"
@@ -211,7 +259,7 @@ export default function OrderBilling({ orders }: { orders: Order[] }) {
                                   : order.status === "Completed"
                                     ? "border border-[#00B625] text-[#00B625]"
                                     : "border border-[#929292] text-[#929292] dark:border-gray-500 dark:text-gray-400"
-                          }`}
+                        }`}
                       >
                         {order?.status}
                       </span>
@@ -224,26 +272,29 @@ export default function OrderBilling({ orders }: { orders: Order[] }) {
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex gap-2">
-                        <button className="text-primary hover:text-primary dark:text-blue-400 dark:hover:text-blue-300">
+                        <button className="text-primary hover:text-primary dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer">
                           <RotateCw size={16} />
                         </button>
-                        <button className="text-[#EE3D4A] hover:text-primary dark:text-red-400 dark:hover:text-red-300">
+                        <button className="text-[#EE3D4A] hover:text-primary dark:text-red-400 dark:hover:text-red-300 cursor-pointer">
                           <DollarSign size={16} />
                         </button>
-                        <button className="text-primary hover:text-primary dark:text-blue-400 dark:hover:text-blue-300">
+                        <button className="text-primary hover:text-primary dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer">
                           <LifeBuoy size={16} />
                         </button>
                       </div>
                     </td>
                   </tr>
-                )))
-                : (
-                  <tr>
-                    <td colSpan={7} className="py-3 px-4 text-center dark:text-gray-300">
-                      No Order Available
-                    </td>
-                  </tr>
-                )}
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="py-3 px-4 text-center dark:text-gray-300"
+                  >
+                    No Order Available
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </Card>
@@ -254,30 +305,30 @@ export default function OrderBilling({ orders }: { orders: Order[] }) {
             variant="outline"
             size="sm"
             className="rounded border border-primary dark:border-blue-400 dark:text-blue-400 dark:bg-gray-800 dark:hover:bg-gray-700"
-            // onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1 || loading}
           >
             <ChevronLeft /> Prev
           </Button>
 
-          {/* {Array.from({ length: totalPages }, (_, i) => ( */}
-          <Button
-            // key={i}
-            size="sm"
-            // variant={currentPage === i + 1 ? "default" : "outline"}
-            className={`rounded border border-primary dark:border-blue-400 dark:text-blue-400 dark:bg-gray-800 dark:hover:bg-gray-700`}
-          // onClick={() => handlePageChange(i + 1)}
-          >
-            1{/* {String(i + 1).padStart(2, "0")} */}
-          </Button>
-          {/* ))} */}
+          {Array.from({ length: totalPages }, (_, i) => (
+            <Button
+              key={i}
+              size="sm"
+              variant={currentPage === i + 1 ? "default" : "outline"}
+              onClick={() => setCurrentPage(i + 1)}
+              disabled={loading}
+            >
+              {i + 1}
+            </Button>
+          ))}
 
           <Button
             variant="outline"
             size="sm"
             className="rounded border border-primary dark:border-blue-400 dark:text-blue-400 dark:bg-gray-800 dark:hover:bg-gray-700"
-          // onClick={() => handlePageChange(currentPage + 1)}
-          // disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            disabled={currentPage === totalPages || loading}
           >
             Next <ChevronRight />
           </Button>

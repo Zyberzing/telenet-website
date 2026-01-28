@@ -71,23 +71,49 @@ export default function OTPVerification({
 
   // Handle OTP input changes
   const handleOtpChange = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return; // only numbers
-    const currentOtp = form.getValues("otp").split("");
-    currentOtp[index] = value;
-    const newOtp = currentOtp.join("");
+    if (!/^\d?$/.test(value)) return;
+
+    const otpArray = form.getValues("otp").padEnd(6, " ").split("");
+    otpArray[index] = value;
+    const newOtp = otpArray.join("").trim();
+
     form.setValue("otp", newOtp);
 
-    // Auto-focus next input
-    if (value && index < 5) otpRefs.current[index + 1]?.focus();
+    if (value && index < 5) {
+      otpRefs.current[index + 1]?.focus();
+    }
   };
 
   const handleKeyDown = (
     index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
+    e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     if (e.key === "Backspace" && !form.getValues("otp")[index] && index > 0) {
       otpRefs.current[index - 1]?.focus();
     }
+  };
+
+  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+
+    const pastedData = e.clipboardData.getData("text").trim();
+    if (!/^\d+$/.test(pastedData)) return;
+
+    const digits = pastedData.slice(0, 6).split(""); // max 6 digits
+    const otpArray = Array(6).fill("");
+
+    digits.forEach((digit, index) => {
+      otpArray[index] = digit;
+      if (otpRefs.current[index]) {
+        otpRefs.current[index]!.value = digit;
+      }
+    });
+
+    form.setValue("otp", otpArray.join(""));
+
+    // focus last filled or last box
+    const focusIndex = digits.length >= 6 ? 5 : digits.length;
+    otpRefs.current[focusIndex]?.focus();
   };
 
   async function onSubmit(values: z.infer<typeof otpSchema>) {
@@ -167,9 +193,12 @@ export default function OTPVerification({
                               otpRefs.current[i] = el;
                             }}
                             maxLength={1}
+                            inputMode="numeric"
+                            autoComplete="one-time-code"
                             className="w-12 h-12 text-center text-lg font-semibold border rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                             onChange={(e) => handleOtpChange(i, e.target.value)}
                             onKeyDown={(e) => handleKeyDown(i, e)}
+                            onPaste={handleOtpPaste} // ✨ THIS is the key line
                           />
                         ))}
                       </div>

@@ -1,5 +1,6 @@
+import { Order } from "@/lib/types";
 import { getOrderList } from "@/services/order";
-import OrderBilling, { Order } from "./OrderBilling";
+import OrderBilling from "./OrderBilling";
 
 export interface GetOrderListResponse {
   // status: string;
@@ -12,8 +13,16 @@ export interface GetOrderListResponse {
 }
 
 export default async function OrderBillingPage() {
-  const res = (await getOrderList()) as GetOrderListResponse | null;
-  const orders: Order[] = res?.result || [];
+  const page = 1;
+  const limit = 10;
 
-  return <OrderBilling orders={orders} />;
+  const res = await getOrderList(page, limit);
+
+  return (
+    <OrderBilling
+      initialOrders={res?.result || []}
+      initialPagination={res?.pagination}
+      limit={limit}
+    />
+  );
 }
