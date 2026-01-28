@@ -69,3 +69,38 @@ export interface Refund {
   orderId: string;
   reason: string;
 }
+
+// services/order.ts
+export interface Pagination {
+  total: number;
+  totalPages: number;
+  currentPage: number;
+}
+
+export interface Order {
+  _id: string;
+  package_name: string;
+  package_data: string;
+  network: string;
+  providerName: string;
+  paymentIntentId: string;
+  status: string;
+  createdAt: string;
+}
+
+export interface GetOrderListApiResponse {
+  status: string;
+  message: string;
+  data: {
+    result: Order[];
+    pagination: Pagination;
+  };
+  statusCode: number;
+}
+
+export interface Currency {
+  _id: string;
+  country: string;
+  currency: string;
+  rate?: number;
+}

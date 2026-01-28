@@ -1,7 +1,7 @@
 import { Plan } from "@/app/[locale]/(main)/my-plans/MyPlansClient";
-import { Order } from "@/app/[locale]/(main)/order-billing/OrderBilling";
 import { orderDetails } from "@/app/[locale]/(main)/plans/Plans";
 import { authFetcher } from "@/lib/authFetcher";
+import { GetOrderListApiResponse } from "@/lib/types";
 
 export const createOrder = async (body: orderDetails): Promise<any> => {
   const response = await authFetcher<{ status: string; message: string }>(
@@ -9,7 +9,7 @@ export const createOrder = async (body: orderDetails): Promise<any> => {
     {
       method: "POST",
       body,
-    }
+    },
   );
 
   if (response?.status !== "success") {
@@ -19,9 +19,16 @@ export const createOrder = async (body: orderDetails): Promise<any> => {
   return response;
 };
 
-export const getOrderList = async (): Promise<Order | null> => {
+export const getOrderList = async (
+  page = 1,
+  limit = 5,
+): Promise<GetOrderListApiResponse["data"] | null> => {
   try {
-    const response = await authFetcher<{ data: Order }>("/order/list");
+    const response = await authFetcher<GetOrderListApiResponse>(
+      `/order/list?page=${page}&limit=${limit}`,
+    );
+    console.log("API PAGE:", page, response.data.pagination); // 👈 ADD THIS
+
     return response?.data || null;
   } catch (error) {
     console.error("Error fetching order list:", error);
@@ -38,7 +45,7 @@ export const getMyPlans = async ({
 }): Promise<Plan | null> => {
   try {
     const response = await authFetcher<{ data: Plan }>(
-      `/order/my-plans?page=${page}&limit=${limit}`
+      `/order/my-plans?page=${page}&limit=${limit}`,
     );
     return response?.data || null;
   } catch (error) {
