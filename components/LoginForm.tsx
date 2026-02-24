@@ -24,7 +24,6 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
-import router from "next/dist/shared/lib/router/router";
 
 export const formSchema = z.object({
   email: z.string().email("Invalid email"),
