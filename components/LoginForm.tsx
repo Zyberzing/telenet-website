@@ -64,7 +64,7 @@ export default function LoginForm() {
         toast.error(
           `KYC status is ${statusLabel}. You can login only after approval.`,
         );
-        return router.push(ROUTES.KYC(locale));
+        // return router.push(ROUTES.KYC(locale));
       }
 
       const accessTokenRaw = res.accessToken || res.access;
