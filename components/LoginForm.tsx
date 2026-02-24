@@ -63,6 +63,7 @@ export default function LoginForm() {
         toast.error(
           `KYC status is ${statusLabel}. You can login only after approval.`,
         );
+        return;
         // return router.push(ROUTES.KYC(locale));
       }
 
