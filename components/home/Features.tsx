@@ -1,11 +1,13 @@
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
-import { FaApple, FaGooglePlay } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
+import { getCmsBanners } from "@/services/cms";
 import { Button } from "../ui/Button";
 
-export default function Features() {
-  const t = useTranslations("Features");
+export default async function Features() {
+  const t = await getTranslations("Features");
+  const banners = await getCmsBanners();
+  const firstBanner = banners[0];
 
   const awards = [
     { img: "/award-logo.png", text: t("awards.award1") },
@@ -89,8 +91,9 @@ export default function Features() {
         </div>
       </section>
 
-      {/* 📱 Download Banner */}
-      <section className="max-w-6xl mx-auto px-6 pt-12">
+      {/* Download Banner (static block kept for now) */}
+      {/*
+       <section className="max-w-6xl mx-auto px-6 pt-12">
         <div className="relative overflow-hidden bg-gradient text-white rounded-2xl pt-3 flex flex-col-reverse lg:flex-row items-center justify-between gap-6">
           <div className="absolute inset-0 bg-[url(/line-press-award.svg)] bg-center bg-no-repeat rounded-4xl" />
 
@@ -169,6 +172,29 @@ export default function Features() {
           </div>
         </div>
       </section>
+      */}
+
+      {firstBanner && (
+        <section className="max-w-6xl mx-auto px-6 pt-12">
+          <a
+            href={firstBanner.redirectUrl || "#"}
+            target={firstBanner.redirectUrl ? "_blank" : undefined}
+            rel={firstBanner.redirectUrl ? "noopener noreferrer" : undefined}
+            className="block"
+          >
+            <div className="relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700">
+              <Image
+                src={firstBanner.banner}
+                alt={firstBanner.title || "Banner"}
+                width={1200}
+                height={360}
+                className="w-full h-50 object-cover"
+                priority
+              />
+            </div>
+          </a>
+        </section>
+      )}
 
       {/* Popular Countries */}
       <section className="pb-8 my-4 text-center bg-[url(/alldots.svg)] bg-no-repeat bg-center bg-cover px-6 ">

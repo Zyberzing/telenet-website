@@ -10,6 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/Input";
+import { OTPVerificationProps } from "@/lib/types";
 import { ROUTES } from "@/routes";
 import { verifyOtp } from "@/services/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,10 +28,6 @@ const otpSchema = z.object({
     .length(6, "OTP must be 6 digits")
     .regex(/^\d+$/, "OTP must be numeric"),
 });
-
-export type OTPVerificationProps = {
-  prefilledEmail?: string;
-};
 
 export default function OTPVerification({
   prefilledEmail,
@@ -122,14 +119,30 @@ export default function OTPVerification({
       const res = await verifyOtp(values);
       toast.success(res.message || "OTP verified successfully!");
 
-      // Clear local/session storage
-      sessionStorage.removeItem("registrationState");
-      localStorage.removeItem("registrationState");
-      localStorage.removeItem("authToken");
-      sessionStorage.removeItem("authToken");
+      // Keep registrationState for KYC auto-fill + temporary KYC auth tokens.
+      try {
+        const regRaw =
+          sessionStorage.getItem("registrationState") ||
+          localStorage.getItem("registrationState");
+        const parsed = regRaw ? JSON.parse(regRaw) : {};
 
-      // Redirect to login
-      router.push(ROUTES.LOGIN(locale));
+        const nextRegistrationState = {
+          ...parsed,
+          email: values.email,
+          otpAccessToken: res?.data?.access || "",
+          otpRefreshToken: res?.data?.refresh || "",
+        };
+
+        sessionStorage.setItem(
+          "registrationState",
+          JSON.stringify(nextRegistrationState),
+        );
+      } catch {
+        // ignore storage parse failures and continue navigation
+      }
+
+      // Redirect to KYC step after OTP verification
+      router.push(ROUTES.KYC(locale));
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "OTP verification failed!";

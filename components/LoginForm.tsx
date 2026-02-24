@@ -3,10 +3,8 @@
 import { saveSession } from "@/lib/session";
 import { ROUTES } from "@/routes";
 import { loginUser } from "@/services/auth";
-import { getKYC } from "@/services/kyc";
 import { setCredentials } from "@/store/slices/authSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { jwtDecode } from "jwt-decode";
 import { Apple, Chrome, Eye, EyeOff, Facebook } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -26,6 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
+import router from "next/dist/shared/lib/router/router";
 
 export const formSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -53,30 +52,34 @@ export default function LoginForm() {
       setLoading(true);
 
       const res = await loginUser(values);
+      const user =
+        typeof res?.user === "object" && res?.user !== null ? res.user : null;
+      const rawKycStatus =
+        (user as { kycStatus?: string } | null)?.kycStatus ??
+        (res as { kycStatus?: string } | null)?.kycStatus;
+      const normalizedKycStatus = (rawKycStatus || "").toLowerCase();
 
-      const accessTokenRaw = res.access; // directly from response
-      const refreshTokenRaw = res.refresh;
+      if (normalizedKycStatus !== "approved") {
+        const statusLabel = rawKycStatus || "pending";
+        toast.error(
+          `KYC status is ${statusLabel}. You can login only after approval.`,
+        );
+        return router.push(ROUTES.KYC(locale));
+      }
+
+      const accessTokenRaw = res.accessToken || res.access;
+      const refreshTokenRaw = res.refreshToken || res.refresh;
 
       if (!accessTokenRaw) throw new Error("Access token missing");
 
       const accessToken = accessTokenRaw.replace(/^Bearer\s+/i, "");
       const refreshToken = refreshTokenRaw?.replace(/^Bearer\s+/i, "");
 
-      // const { accessToken:access, refreshToken:refresh } = await loginUser(values);
-
-      // // Strip "Bearer " prefix
-      // const accessToken = access.replace(/^Bearer\s+/i, "");
-      // const refreshToken = refresh.replace(/^Bearer\s+/i, "");
-
       if (!accessToken) throw new Error("Access token missing");
 
-      // Decode access token to get user info
-      const decoded: { authId: string; role: string; exp: number } =
-        jwtDecode(accessToken);
-      console.log("decoded", decoded);
       // Save session (localStorage / cookie)
-      saveSession({
-        user: decoded.authId,
+      await saveSession({
+        user,
         token: accessToken,
         refreshToken,
         accessToken: accessToken,
@@ -89,35 +92,9 @@ export default function LoginForm() {
         setCredentials({
           token: accessToken,
           refreshToken,
-        })
+          user,
+        }),
       );
-
-      // Note: User profile will be loaded automatically by useLoadProfile hook in Header
-
-      const { kycStatus } = res || {}; // Adjust based on actual structure
-
-      if (kycStatus === "pending") {
-        try {
-          const kycRes = (await getKYC()) as { data?: { token?: string } };
-          const token = kycRes?.data?.token;
-
-          if (!token) {
-            toast.error("Unable to start KYC");
-            return;
-          }
-
-          // Save token
-          sessionStorage.setItem("sumsub_kyc_token", token);
-
-          // Navigate to KYC screen
-          router.push(ROUTES.KYC(locale));
-          return;
-        } catch (error) {
-          console.error("KYC fetch failed:", error);
-          toast.error("Unable to load KYC verification.");
-          return;
-        }
-      }
 
       toast.success("Signed in successfully.");
       router.push(ROUTES.DASHBOARD(locale));
@@ -128,12 +105,12 @@ export default function LoginForm() {
 
       if (errorMessage.includes("User is not verified")) {
         toast.info(
-          "Please verify your account with the OTP sent to your email."
+          "Please verify your account with the OTP sent to your email.",
         );
 
         sessionStorage.setItem(
           "registrationState",
-          JSON.stringify({ email: form.getValues("email") })
+          JSON.stringify({ email: form.getValues("email") }),
         );
 
         router.push(ROUTES.OTP(locale));

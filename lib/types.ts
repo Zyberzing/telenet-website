@@ -104,3 +104,164 @@ export interface Currency {
   currency: string;
   rate?: number;
 }
+
+export type Plan = {
+  _id: string;
+  package_id: string;
+  package_name: string;
+  data: string;
+  validity: number;
+  coverage: string;
+  price: number;
+  basePrice?: number;
+  taxAmount?: number;
+  stripe?: number;
+  tax?: number;
+  call: number;
+  sms: number;
+  finalPrice: number;
+  network: string;
+  fup_policy: string | null;
+  // providerName: string;
+  countries: { countryname: string; countryiso2: string }[];
+  actionType: "increase" | "decrease";
+  markupType: "percentage" | "fixed";
+  markupValue: number;
+  markupAmount: number;
+  percentage: number;
+};
+
+export interface PlansProps {
+  countries: { iso2: string; code: string; name: string }[];
+  regions: { name: string }[];
+  result: Plan[];
+  selectedCountry: string;
+  selectedRegion: string;
+  filterby: "Country" | "Region";
+  planType: number;
+  userProfile: User | null;
+}
+
+export type orderDetails = {
+  packageId: string;
+  country: string;
+  _id?: string;
+};
+
+export type KycMethod = "sumsub" | "manual";
+export type ManualDocumentType =
+  | "passport"
+  | "national_id"
+  | "driving_license"
+  | "other";
+
+export type ManualKycForm = {
+  fullName: string;
+  dateOfBirth: string;
+  address: string;
+  country: string;
+  countryCode: string;
+  documentType: ManualDocumentType;
+  otherDocumentName: string;
+};
+
+export type RegistrationState = {
+  email?: string;
+  name?: string;
+  phone?: string;
+  countryCode?: string;
+  otpAccessToken?: string;
+  otpRefreshToken?: string;
+};
+
+export type ManualFilePreview = {
+  name: string;
+  type: string;
+  previewUrl: string;
+};
+
+export const defaultManualForm: ManualKycForm = {
+  fullName: "",
+  dateOfBirth: "",
+  address: "",
+  country: "",
+  countryCode: "",
+  documentType: "passport",
+  otherDocumentName: "",
+};
+
+export interface PromotionSelectionModalProps {
+  open: boolean;
+  selectedPlan: Plan | null;
+  onBack: () => void;
+  onClose: () => void;
+  onBuy: (promotionId?: string) => void;
+  orderLoading: boolean;
+}
+
+export type ManualKycSubmitPayload = {
+  fullName: string;
+  dateOfBirth: string;
+  address: string;
+  country: string;
+  documentUrls: {
+    documentType: string;
+    documentUrl: string;
+  }[];
+};
+
+export type KycOtpTokens = {
+  accessToken: string;
+  refreshToken?: string;
+};
+
+export type UsedFor = "companyName" | "model";
+
+export type DeviceCompatibilityApiResponse = {
+  data?: {
+    result?: unknown[];
+  };
+  result?: unknown[];
+};
+
+export type CmsBanner = {
+  _id: string;
+  title: string;
+  banner: string;
+  redirectUrl?: string;
+  status?: string;
+  isDeleted?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  lang?: string;
+};
+
+export type CmsBannerListResponse = {
+  status: string;
+  message: string;
+  data: CmsBanner[];
+  statusCode: number;
+};
+
+export type UploadOtpTokens = {
+  accessToken: string;
+  refreshToken?: string;
+};
+
+export type PromotionItem = {
+  _id: string;
+  promotionName: string;
+  promoCode: string;
+};
+
+export type PromotionListResponse = {
+  status: string;
+  message: string;
+  data?: {
+    result?: PromotionItem[];
+  };
+};
+
+export type OTPVerificationProps = {
+  prefilledEmail?: string;
+};

@@ -1,5 +1,5 @@
-import { orderDetails } from "@/app/[locale]/(main)/plans/Plans";
 import { authFetcher } from "@/lib/authFetcher";
+import { orderDetails } from "@/lib/types";
 
 export const createCheckout = async (body: orderDetails): Promise<any> => {
   const response = await authFetcher<{ status: string; message: string }>(
@@ -7,7 +7,7 @@ export const createCheckout = async (body: orderDetails): Promise<any> => {
     {
       method: "POST",
       body,
-    }
+    },
   );
 
   if (response?.status !== "success") {

@@ -10,6 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { orderDetails, Plan, PlansProps } from "@/lib/types";
 import { createCheckout } from "@/services/payment";
 import {
   ArrowDownUp,
@@ -23,49 +24,6 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { User } from "../profile-setting/ProfileSetting";
-
-export type Plan = {
-  _id: string;
-  package_id: string;
-  package_name: string;
-  data: string;
-  validity: number;
-  coverage: string;
-  price: number;
-  basePrice?: number;
-  taxAmount?: number;
-  stripe?: number;
-  tax?: number;
-  call: number;
-  sms: number;
-  finalPrice: number;
-  network: string;
-  fup_policy: string | null;
-  // providerName: string;
-  countries: { countryname: string; countryiso2: string }[];
-  actionType: "increase" | "decrease";
-  markupType: "percentage" | "fixed";
-  markupValue: number;
-  markupAmount: number;
-  percentage: number;
-};
-
-export interface PlansProps {
-  countries: { iso2: string; code: string; name: string }[];
-  regions: { name: string }[];
-  result: Plan[];
-  selectedCountry: string;
-  selectedRegion: string;
-  filterby: "Country" | "Region";
-  planType: number;
-  userProfile: User | null;
-}
-
-export type orderDetails = {
-  packageId: string;
-  country: string;
-};
 
 export default function Plans({
   countries,
@@ -90,7 +48,7 @@ export default function Plans({
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [orderLoading, setOrderLoading] = useState(false);
   const [filterType, setFilterType] = useState<"country" | "region">(
-    filterby === "Region" ? "region" : "country"
+    filterby === "Region" ? "region" : "country",
   );
   const [internalSelectedCountry, setInternalSelectedCountry] =
     useState(selectedCountry);
@@ -100,11 +58,11 @@ export default function Plans({
     Number(searchParams.get("data_size")) || 50,
   ]);
   const [maxValidity, setMaxValidity] = useState(
-    Number(searchParams.get("max_validity")) || undefined
+    Number(searchParams.get("max_validity")) || undefined,
   );
   const [isPending, startTransition] = useTransition();
   const [planType, setPlanType] = useState(
-    Number(searchParams.get("plan_name")) || 1
+    Number(searchParams.get("plan_name")) || 1,
   );
 
   useEffect(() => {
@@ -166,7 +124,7 @@ export default function Plans({
     });
   };
 
-  const handleBuy = async (): Promise<void> => {
+  const handleBuy = async (promotionId?: string): Promise<void> => {
     if (!userProfile) {
       toast.error("Please login first to buy.");
       return Promise.resolve();
@@ -179,6 +137,7 @@ export default function Plans({
     const orderBody: orderDetails = {
       packageId: selectedPlan?._id,
       country: selectedCountry,
+      ...(promotionId ? { couponId: promotionId } : {}),
     };
 
     try {
@@ -365,6 +324,7 @@ export default function Plans({
         onClose={() => setSelectedPlan(null)}
         onBuy={handleBuy}
         orderLoading={orderLoading}
+        isLoggedIn={!!userProfile}
       />
     </section>
   );

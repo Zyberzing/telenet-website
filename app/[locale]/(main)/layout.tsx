@@ -1,16 +1,15 @@
 // "use client";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/header/Header";
-import { use } from "react";
 
-export default function MainLayout({
+export default async function MainLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = use(params);
+  const { locale } = await params;
 
   return (
     <div className="flex flex-col min-h-screen">

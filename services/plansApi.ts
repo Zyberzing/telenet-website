@@ -1,11 +1,7 @@
 "use server";
 import { countryItems, regionItems } from "@/app/[locale]/(main)/plans/page";
-import {
-  // AdminMarkup,
-  Plan,
-  PlansProps,
-} from "@/app/[locale]/(main)/plans/Plans";
 import { fetcher } from "@/lib/fetcher";
+import { Plan, PlansProps } from "@/lib/types";
 
 export const getCountries = async (): Promise<countryItems[]> => {
   try {

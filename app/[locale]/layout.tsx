@@ -1,5 +1,7 @@
 import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
+import { messagesMap } from "@/i18n/messagesMap";
+import { routing } from "@/i18n/routing";
 
 export default async function LocaleLayout({
   children,
@@ -10,11 +12,13 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
 
-  let messages;
-  try {
-    messages = (await import(`@/messages/${locale}.json`)).default;
-  } catch (error) {
-    console.log("error", error);
+  if (!routing.locales.includes(locale)) {
+    notFound();
+  }
+
+  const messages = messagesMap[locale];
+
+  if (!messages) {
     notFound();
   }
 

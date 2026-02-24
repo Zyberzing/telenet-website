@@ -1,4 +1,3 @@
-
 import {
   ChangePassword,
   User,
@@ -11,13 +10,11 @@ import {
   enhancedFetcher,
 } from "@/lib/enhancedAuthFetcher";
 import { fetcher } from "@/lib/fetcher";
-import { clearSession, hasSession, saveSession } from "@/lib/session";
+import { clearSession, hasSession } from "@/lib/session";
 import { UserSession } from "@/lib/types";
-import { setCredentials } from "@/store/slices/authSlice";
-import { store } from "@/store/Store";
 
 export const createUser = async (
-  body: RegistrationFormSchemaType
+  body: RegistrationFormSchemaType,
 ): Promise<any> => {
   const result = await enhancedFetcher("/auth/signup", {
     method: "POST",
@@ -40,27 +37,6 @@ export async function loginUser(formData: LoginFormSchemaType) {
     throw new Error(res.message || "Login failed");
   }
 
-  const { accessToken: access, refreshToken: refresh, user } = res.data;
-  await saveSession({
-    token: access,
-    refreshToken: refresh,
-    user,
-    accessToken: access,
-    access: access,
-    refresh: refresh,
-  });
-
-  store.dispatch(
-    setCredentials({
-      token: access,
-      refreshToken: refresh,
-      user,
-      accessToken: access,
-      access: access,
-      refresh: refresh,
-    })
-  );
-
   return res.data;
 }
 
@@ -69,6 +45,12 @@ export const verifyOtp = async (body: { email: string; otp: string }) => {
     const res = await enhancedFetcher<{
       status: string;
       message: string;
+      data?: {
+        access?: string;
+        refresh?: string;
+        role?: string;
+        kycStatus?: string;
+      };
     }>("/auth/verify-email", {
       method: "POST",
       body,

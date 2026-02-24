@@ -100,13 +100,19 @@ export default function RegisterForm() {
       const res = await createUser(payload);
 
       if (res.status !== "success") {
+        console.log("Registration failed:", res);
         toast.error(res.message || "Registration failed");
         return; // STOP here, do not continue
       }
 
       sessionStorage.setItem(
         "registrationState",
-        JSON.stringify({ email: data.email })
+        JSON.stringify({
+          email: data.email,
+          name: data.name,
+          phone: data.phone,
+          countryCode: data.countryCode,
+        }),
       );
 
       toast.success(res.message);
@@ -231,14 +237,14 @@ export default function RegisterForm() {
                       role="combobox"
                       className={cn(
                         "w-full justify-between",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value ? (
                         <span>
                           {
                             countryCodes.find(
-                              (item) => item.code === field.value
+                              (item) => item.code === field.value,
                             )?.name
                           }{" "}
                           {field.value}
@@ -274,7 +280,9 @@ export default function RegisterForm() {
                           <Check
                             className={cn(
                               "ml-auto h-4 w-4",
-                              field.value === code ? "opacity-100" : "opacity-0"
+                              field.value === code
+                                ? "opacity-100"
+                                : "opacity-0",
                             )}
                           />
                         </CommandItem>

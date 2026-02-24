@@ -1,7 +1,8 @@
+import { Plan } from "@/lib/types";
 import { getProfile } from "@/services/auth";
 import { getCountries, getPlans, getRegions } from "@/services/plansApi";
 import { Metadata } from "next";
-import Plans, { Plan } from "./Plans";
+import Plans from "./Plans";
 
 export type countryItems = {
   id: string;

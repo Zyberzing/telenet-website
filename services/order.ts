@@ -1,7 +1,6 @@
 import { Plan } from "@/app/[locale]/(main)/my-plans/MyPlansClient";
-import { orderDetails } from "@/app/[locale]/(main)/plans/Plans";
 import { authFetcher } from "@/lib/authFetcher";
-import { GetOrderListApiResponse } from "@/lib/types";
+import { GetOrderListApiResponse, orderDetails } from "@/lib/types";
 
 export const createOrder = async (body: orderDetails): Promise<any> => {
   const response = await authFetcher<{ status: string; message: string }>(
