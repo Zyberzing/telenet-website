@@ -133,7 +133,7 @@ export default function LoginForm() {
       >
         <div className="text-start">
           <p className="text-gray-500 dark:text-gray-300">{t("welcomeText")}</p>
-          <h2 className="text-2xl font-[400] dark:text-white">
+          <h2 className="text-2xl font-normal dark:text-white">
             {t("loginTitle")}
           </h2>
         </div>

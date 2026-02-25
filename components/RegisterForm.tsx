@@ -60,6 +60,7 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [selectedCountryIso, setSelectedCountryIso] = useState("");
 
   // const countryCodes = getCountries().map((country) => ({
   //   code: `+${getCountryCallingCode(country)}`,
@@ -105,13 +106,21 @@ export default function RegisterForm() {
         return; // STOP here, do not continue
       }
 
+      const selectedCountry = countryCodes.find((item) =>
+        selectedCountryIso
+          ? item.iso === selectedCountryIso
+          : item.code === data.countryCode,
+      );
+
       sessionStorage.setItem(
         "registrationState",
         JSON.stringify({
           email: data.email,
           name: data.name,
           phone: data.phone,
+          country: selectedCountry?.name || "",
           countryCode: data.countryCode,
+          countryIso: selectedCountry?.iso || selectedCountryIso || "",
         }),
       );
 
@@ -243,8 +252,10 @@ export default function RegisterForm() {
                       {field.value ? (
                         <span>
                           {
-                            countryCodes.find(
-                              (item) => item.code === field.value,
+                            countryCodes.find((item) =>
+                              selectedCountryIso
+                                ? item.iso === selectedCountryIso
+                                : item.code === field.value,
                             )?.name
                           }{" "}
                           {field.value}
@@ -267,6 +278,7 @@ export default function RegisterForm() {
                           key={iso}
                           value={`${name.toLowerCase()} ${iso.toLowerCase()} ${code}`}
                           onSelect={() => {
+                            setSelectedCountryIso(iso);
                             field.onChange(code);
                             setOpen(false);
                           }}
@@ -280,7 +292,7 @@ export default function RegisterForm() {
                           <Check
                             className={cn(
                               "ml-auto h-4 w-4",
-                              field.value === code
+                              selectedCountryIso === iso && field.value === code
                                 ? "opacity-100"
                                 : "opacity-0",
                             )}

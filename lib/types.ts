@@ -169,7 +169,9 @@ export type RegistrationState = {
   email?: string;
   name?: string;
   phone?: string;
+  country?: string;
   countryCode?: string;
+  countryIso?: string;
   otpAccessToken?: string;
   otpRefreshToken?: string;
 };

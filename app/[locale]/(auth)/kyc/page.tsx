@@ -38,7 +38,7 @@ import { getCountries, getCountryCallingCode } from "libphonenumber-js";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { toast } from "sonner";
 
@@ -50,22 +50,19 @@ declare global {
 
 const MAX_MANUAL_FILES = 3;
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
+const ALLOWED_FILE_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "heic", "pdf"];
 const ALLOWED_FILE_MIME_TYPES = new Set([
   "image/jpeg",
   "image/png",
   "image/webp",
   "image/heic",
-  "image/heif",
   "application/pdf",
 ]);
-const ALLOWED_FILE_EXTENSIONS = new Set([
-  "jpg",
-  "jpeg",
-  "png",
-  "webp",
-  "heic",
-  "pdf",
-]);
+const ALLOWED_FILE_EXTENSION_SET = new Set(ALLOWED_FILE_EXTENSIONS);
+const FILE_INPUT_ACCEPT = ALLOWED_FILE_EXTENSIONS.map((ext) => `.${ext}`).join(
+  ",",
+);
+type ManualFormErrors = Partial<Record<keyof ManualKycForm | "files", string>>;
 
 export default function KYC() {
   const locale = useLocale();
@@ -85,6 +82,13 @@ export default function KYC() {
   const [manualSubmitting, setManualSubmitting] = useState(false);
   const [registrationState, setRegistrationState] =
     useState<RegistrationState | null>(null);
+  const [selectedCountryIso, setSelectedCountryIso] = useState("");
+  const [manualErrors, setManualErrors] = useState<ManualFormErrors>({});
+  const fullNameRef = useRef<HTMLInputElement>(null);
+  const dateOfBirthRef = useRef<HTMLInputElement>(null);
+  const addressRef = useRef<HTMLInputElement>(null);
+  const countryTriggerRef = useRef<HTMLButtonElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const countryCodes = useMemo(() => {
     const regionNames = new Intl.DisplayNames([locale], {
@@ -122,9 +126,14 @@ export default function KYC() {
       const parsed = JSON.parse(regRaw) as RegistrationState;
       setRegistrationState(parsed);
 
-      const selectedCountry = countryCodes.find(
-        (item) => item.code === parsed?.countryCode,
-      );
+      const selectedCountry =
+        (parsed?.countryIso &&
+          countryCodes.find((item) => item.iso === parsed.countryIso)) ||
+        (parsed?.country &&
+          countryCodes.find(
+            (item) => item.name.toLowerCase() === parsed.country?.toLowerCase(),
+          )) ||
+        countryCodes.find((item) => item.code === parsed?.countryCode);
 
       setManualForm((prev) => ({
         ...prev,
@@ -132,6 +141,7 @@ export default function KYC() {
         country: selectedCountry?.name || prev.country,
         countryCode: parsed?.countryCode || prev.countryCode,
       }));
+      setSelectedCountryIso(selectedCountry?.iso || "");
     } catch {
       // Ignore parsing issues and keep manual entry available.
     }
@@ -145,17 +155,27 @@ export default function KYC() {
 
         const profileCountryCode =
           profile?.countryCode || registrationState?.countryCode;
-        const selectedCountry = countryCodes.find(
-          (item) => item.code === profileCountryCode,
-        );
+        const selectedCountry =
+          (profile?.country &&
+            countryCodes.find(
+              (item) =>
+                item.name.toLowerCase() === profile.country?.toLowerCase(),
+            )) ||
+          (registrationState?.countryIso &&
+            countryCodes.find(
+              (item) => item.iso === registrationState.countryIso,
+            )) ||
+          countryCodes.find((item) => item.code === profileCountryCode);
 
         setManualForm((prev) => ({
           ...prev,
           fullName: profile?.name || prev.fullName,
           address: profile?.address || prev.address,
           country: selectedCountry?.name || profile?.country || prev.country,
-          countryCode: profileCountryCode || prev.countryCode,
+          countryCode:
+            selectedCountry?.code || profileCountryCode || prev.countryCode,
         }));
+        setSelectedCountryIso(selectedCountry?.iso || "");
       } catch {
         // Keep static flow functional even if profile fetch is unavailable.
       } finally {
@@ -164,7 +184,11 @@ export default function KYC() {
     };
 
     loadProfile();
-  }, [countryCodes, registrationState?.countryCode]);
+  }, [
+    countryCodes,
+    registrationState?.countryCode,
+    registrationState?.countryIso,
+  ]);
 
   useEffect(() => {
     if (method !== "sumsub" || token) return;
@@ -249,8 +273,36 @@ export default function KYC() {
     };
   }, [method, token]);
 
+  const validateManualField = (
+    key: keyof ManualKycForm | "files",
+    formValue: ManualKycForm,
+    files: File[],
+  ) => {
+    if (key === "fullName")
+      return formValue.fullName.trim() ? "" : "Full name is required.";
+    if (key === "dateOfBirth")
+      return formValue.dateOfBirth ? "" : "Date of birth is required.";
+    if (key === "address")
+      return formValue.address.trim() ? "" : "Address is required.";
+    if (key === "countryCode")
+      return formValue.countryCode ? "" : "Country is required.";
+    if (key === "files")
+      return files.length > 0 ? "" : "At least one document is required.";
+    return "";
+  };
+
   const handleManualChange = (key: keyof ManualKycForm, value: string) => {
-    setManualForm((prev) => ({ ...prev, [key]: value }));
+    setManualForm((prev) => {
+      const next = { ...prev, [key]: value };
+      if (manualErrors[key]) {
+        const message = validateManualField(key, next, manualFiles);
+        setManualErrors((current) => ({
+          ...current,
+          [key]: message,
+        }));
+      }
+      return next;
+    });
   };
 
   const handleManualFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -261,13 +313,18 @@ export default function KYC() {
 
     const invalidFormatFile = selectedFiles.find((file) => {
       const extension = file.name.split(".").pop()?.toLowerCase() || "";
-      const isMimeAllowed = ALLOWED_FILE_MIME_TYPES.has(file.type);
-      const isExtensionAllowed = ALLOWED_FILE_EXTENSIONS.has(extension);
-      return !isMimeAllowed && !isExtensionAllowed;
+      const isExtensionAllowed = ALLOWED_FILE_EXTENSION_SET.has(extension);
+      const mimeType = file.type.toLowerCase();
+      const isMimeAllowed =
+        mimeType.length === 0 || ALLOWED_FILE_MIME_TYPES.has(mimeType);
+      return !isExtensionAllowed || !isMimeAllowed;
     });
 
     if (invalidFormatFile) {
-      toast.error("Invalid format. Allowed: JPG, PNG, JPEG, WEBP, HEIC, PDF.");
+      const message =
+        "Invalid format. Allowed: JPG, PNG, JPEG, WEBP, HEIC, PDF.";
+      setManualErrors((prev) => ({ ...prev, files: message }));
+      toast.error(message);
       return;
     }
 
@@ -276,7 +333,9 @@ export default function KYC() {
     );
 
     if (oversizedFile) {
-      toast.error("Each file must be 10MB or smaller.");
+      const message = "Each file must be 10MB or smaller.";
+      setManualErrors((prev) => ({ ...prev, files: message }));
+      toast.error(message);
       return;
     }
 
@@ -292,16 +351,26 @@ export default function KYC() {
           ) === index,
       );
 
-      if (unique.length > MAX_MANUAL_FILES) {
-        toast.error("You can upload a maximum of 3 files.");
-      }
+      const exceedsMax = unique.length > MAX_MANUAL_FILES;
+      const fileMessage = exceedsMax
+        ? "You can upload a maximum of 3 files."
+        : "";
+      setManualErrors((current) => ({ ...current, files: fileMessage }));
+      if (exceedsMax) toast.error(fileMessage);
 
       return unique.slice(0, MAX_MANUAL_FILES);
     });
   };
 
   const removeManualFile = (targetIndex: number) => {
-    setManualFiles((prev) => prev.filter((_, index) => index !== targetIndex));
+    setManualFiles((prev) => {
+      const updated = prev.filter((_, index) => index !== targetIndex);
+      setManualErrors((current) => ({
+        ...current,
+        files: validateManualField("files", manualForm, updated),
+      }));
+      return updated;
+    });
   };
 
   useEffect(() => {
@@ -319,28 +388,26 @@ export default function KYC() {
   }, [manualFiles]);
 
   const handleManualSubmit = async () => {
-    if (!manualForm.fullName.trim()) {
-      toast.error("Please enter full name.");
-      return;
-    }
-
-    if (!manualForm.dateOfBirth) {
-      toast.error("Please select date of birth.");
-      return;
-    }
-
-    if (!manualForm.address.trim()) {
-      toast.error("Please enter address.");
-      return;
-    }
-
-    if (!manualForm.countryCode) {
-      toast.error("Please select country.");
-      return;
-    }
-
-    if (manualFiles.length === 0) {
-      toast.error("Please upload at least one document.");
+    const nextErrors: ManualFormErrors = {
+      fullName: validateManualField("fullName", manualForm, manualFiles),
+      dateOfBirth: validateManualField("dateOfBirth", manualForm, manualFiles),
+      address: validateManualField("address", manualForm, manualFiles),
+      countryCode: validateManualField("countryCode", manualForm, manualFiles),
+      files: validateManualField("files", manualForm, manualFiles),
+    };
+    setManualErrors(nextErrors);
+    if (Object.values(nextErrors).some(Boolean)) {
+      if (nextErrors.fullName) {
+        fullNameRef.current?.focus();
+      } else if (nextErrors.dateOfBirth) {
+        dateOfBirthRef.current?.focus();
+      } else if (nextErrors.address) {
+        addressRef.current?.focus();
+      } else if (nextErrors.countryCode) {
+        countryTriggerRef.current?.focus();
+      } else if (nextErrors.files) {
+        fileInputRef.current?.focus();
+      }
       return;
     }
 
@@ -459,115 +526,171 @@ export default function KYC() {
           {method === "manual" && (
             <div className="mt-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input
-                  placeholder="Full Name"
-                  className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                  value={manualForm.fullName}
-                  onChange={(e) =>
-                    handleManualChange("fullName", e.target.value)
-                  }
-                />
-                <Input
-                  type="date"
-                  placeholder="Date of Birth"
-                  className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                  value={manualForm.dateOfBirth}
-                  onChange={(e) =>
-                    handleManualChange("dateOfBirth", e.target.value)
-                  }
-                />
-                <Input
-                  placeholder="Address"
-                  className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                  value={manualForm.address}
-                  onChange={(e) =>
-                    handleManualChange("address", e.target.value)
-                  }
-                />
-                <Popover open={countryOpen} onOpenChange={setCountryOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "w-full justify-between dark:bg-gray-700 dark:text-white dark:border-gray-600",
-                        !manualForm.countryCode && "text-muted-foreground",
-                      )}
-                    >
-                      {manualForm.countryCode ? (
-                        <span>
-                          {
-                            countryCodes.find(
-                              (item) => item.code === manualForm.countryCode,
-                            )?.name
-                          }{" "}
-                          {manualForm.countryCode}
-                        </span>
-                      ) : (
-                        <span>Select country</span>
-                      )}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[300px] p-0 dark:bg-gray-800 dark:border-gray-700">
-                    <Command className="dark:bg-gray-800">
-                      <CommandInput placeholder="Search country..." />
-                      <CommandEmpty>No country found</CommandEmpty>
-                      <CommandGroup className="max-h-[300px] overflow-auto">
-                        {countryCodes.map(({ iso, name, code }) => (
-                          <CommandItem
-                            key={iso}
-                            value={`${name.toLowerCase()} ${iso.toLowerCase()} ${code}`}
-                            onSelect={() => {
-                              setManualForm((prev) => ({
-                                ...prev,
-                                country: name,
-                                countryCode: code,
-                              }));
-                              setCountryOpen(false);
-                            }}
-                          >
-                            <ReactCountryFlag
-                              svg
-                              countryCode={iso}
-                              className="mr-2"
-                            />
-                            {name} ({code})
-                            <Check
-                              className={cn(
-                                "ml-auto h-4 w-4",
-                                manualForm.countryCode === code
-                                  ? "opacity-100"
-                                  : "opacity-0",
-                              )}
-                            />
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                <Select
-                  value={manualForm.documentType}
-                  onValueChange={(value) =>
-                    handleManualChange(
-                      "documentType",
-                      value as ManualDocumentType,
-                    )
-                  }
-                >
-                  <SelectTrigger className="w-full dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                    <SelectValue placeholder="Select document type" />
-                  </SelectTrigger>
-                  <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
-                    <SelectItem value="passport">Passport</SelectItem>
-                    <SelectItem value="national_id">National ID</SelectItem>
-                    <SelectItem value="driving_license">
-                      Driving License
-                    </SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div>
+                  <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+                    Full Name
+                  </label>
+                  <Input
+                    ref={fullNameRef}
+                    placeholder="Enter full name"
+                    className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                    value={manualForm.fullName}
+                    onChange={(e) =>
+                      handleManualChange("fullName", e.target.value)
+                    }
+                  />
+                  {manualErrors.fullName && (
+                    <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                      {manualErrors.fullName}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+                    Date of Birth
+                  </label>
+                  <Input
+                    ref={dateOfBirthRef}
+                    type="date"
+                    className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                    value={manualForm.dateOfBirth}
+                    onChange={(e) =>
+                      handleManualChange("dateOfBirth", e.target.value)
+                    }
+                  />
+                  {manualErrors.dateOfBirth && (
+                    <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                      {manualErrors.dateOfBirth}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+                    Address
+                  </label>
+                  <Input
+                    ref={addressRef}
+                    placeholder="Enter address"
+                    className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                    value={manualForm.address}
+                    onChange={(e) =>
+                      handleManualChange("address", e.target.value)
+                    }
+                  />
+                  {manualErrors.address && (
+                    <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                      {manualErrors.address}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+                    Country
+                  </label>
+                  <Popover open={countryOpen} onOpenChange={setCountryOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        ref={countryTriggerRef}
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          "w-full justify-between dark:bg-gray-700 dark:text-white dark:border-gray-600",
+                          !manualForm.countryCode && "text-muted-foreground",
+                        )}
+                      >
+                        {manualForm.countryCode ? (
+                          <span>
+                            {
+                              countryCodes.find((item) =>
+                                selectedCountryIso
+                                  ? item.iso === selectedCountryIso
+                                  : item.code === manualForm.countryCode,
+                              )?.name
+                            }{" "}
+                            {manualForm.countryCode}
+                          </span>
+                        ) : (
+                          <span>Select country</span>
+                        )}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[300px] p-0 dark:bg-gray-800 dark:border-gray-700">
+                      <Command className="dark:bg-gray-800">
+                        <CommandInput placeholder="Search country..." />
+                        <CommandEmpty>No country found</CommandEmpty>
+                        <CommandGroup className="max-h-[300px] overflow-auto">
+                          {countryCodes.map(({ iso, name, code }) => (
+                            <CommandItem
+                              key={iso}
+                              value={`${name.toLowerCase()} ${iso.toLowerCase()} ${code}`}
+                              onSelect={() => {
+                                setSelectedCountryIso(iso);
+                                setManualForm((prev) => ({
+                                  ...prev,
+                                  country: name,
+                                  countryCode: code,
+                                }));
+                                setManualErrors((prev) => ({
+                                  ...prev,
+                                  countryCode: "",
+                                }));
+                                setCountryOpen(false);
+                              }}
+                            >
+                              <ReactCountryFlag
+                                svg
+                                countryCode={iso}
+                                className="mr-2"
+                              />
+                              {name} ({code})
+                              <Check
+                                className={cn(
+                                  "ml-auto h-4 w-4",
+                                  selectedCountryIso === iso &&
+                                    manualForm.countryCode === code
+                                    ? "opacity-100"
+                                    : "opacity-0",
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  {manualErrors.countryCode && (
+                    <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                      {manualErrors.countryCode}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
+                    Document Type
+                  </label>
+                  <Select
+                    value={manualForm.documentType}
+                    onValueChange={(value) =>
+                      handleManualChange(
+                        "documentType",
+                        value as ManualDocumentType,
+                      )
+                    }
+                  >
+                    <SelectTrigger className="w-full dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                      <SelectValue placeholder="Select document type" />
+                    </SelectTrigger>
+                    <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
+                      <SelectItem value="passport">Passport</SelectItem>
+                      <SelectItem value="national_id">National ID</SelectItem>
+                      <SelectItem value="driving_license">
+                        Driving License
+                      </SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               {/* {manualForm.documentType === "other" && (
@@ -586,9 +709,10 @@ export default function KYC() {
                   Upload KYC Document
                 </label>
                 <Input
+                  ref={fileInputRef}
                   type="file"
                   multiple
-                  accept=".jpg,.jpeg,.png,.webp,.heic,.pdf,image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf"
+                  accept={FILE_INPUT_ACCEPT}
                   className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   onChange={handleManualFileChange}
                 />
@@ -596,6 +720,11 @@ export default function KYC() {
                   Allowed: JPG, PNG, JPEG, WEBP, HEIC, PDF. Max size: 10MB each.
                   Maximum 3 files.
                 </p>
+                {manualErrors.files && (
+                  <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                    {manualErrors.files}
+                  </p>
+                )}
 
                 {manualFiles.length > 0 && (
                   <div className="mt-2 space-y-2">
