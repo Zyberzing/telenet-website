@@ -2,6 +2,7 @@
 
 import { TicketDetailModal } from "@/components/modals";
 import CreateTicketModal from "@/components/modals/CreateTicketModal";
+import TicketConversationModal from "@/components/modals/TicketConversationModal";
 import { Button } from "@/components/ui/Button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/Input";
@@ -21,6 +22,7 @@ import { Ticket } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { getTickets } from "@/services/ticket";
 import { format } from "date-fns";
+import { MessageSquare } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
@@ -42,6 +44,8 @@ export default function Support({ initialTickets }: SupportProps) {
   const [isDateOpen, setIsDateOpen] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [isNewTicketOpen, setIsNewTicketOpen] = useState(false);
+  const [chatTicket, setChatTicket] = useState<Ticket | null>(null);
+  const [chatOpen, setChatOpen] = useState(false);
 
   const fetchTickets = useCallback(async () => {
     setLoading(true);
@@ -93,7 +97,7 @@ export default function Support({ initialTickets }: SupportProps) {
                   "capitalize",
                   tab === status
                     ? "bg-primary text-white hover:bg-primary border border-primary"
-                    : "border-primary border bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    : "border-primary border bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700",
                 )}
               >
                 {t(status.toLowerCase())}
@@ -131,7 +135,10 @@ export default function Support({ initialTickets }: SupportProps) {
             {/* Date Calendar */}
             <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
+                <Button
+                  variant="outline"
+                  className="border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
                   {format(date, "dd MMM yyyy")}
                 </Button>
               </PopoverTrigger>
@@ -157,13 +164,22 @@ export default function Support({ initialTickets }: SupportProps) {
                 <SelectValue placeholder={t("priority")} />
               </SelectTrigger>
               <SelectContent className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-                <SelectItem className="capitalize focus:bg-gray-100 dark:focus:bg-gray-700" value="low">
+                <SelectItem
+                  className="capitalize focus:bg-gray-100 dark:focus:bg-gray-700"
+                  value="low"
+                >
                   {t("low")}
                 </SelectItem>
-                <SelectItem className="capitalize focus:bg-gray-100 dark:focus:bg-gray-700" value="medium">
+                <SelectItem
+                  className="capitalize focus:bg-gray-100 dark:focus:bg-gray-700"
+                  value="medium"
+                >
                   {t("medium")}
                 </SelectItem>
-                <SelectItem className="capitalize focus:bg-gray-100 dark:focus:bg-gray-700" value="high">
+                <SelectItem
+                  className="capitalize focus:bg-gray-100 dark:focus:bg-gray-700"
+                  value="high"
+                >
                   {t("high")}
                 </SelectItem>
               </SelectContent>
@@ -182,6 +198,7 @@ export default function Support({ initialTickets }: SupportProps) {
                 <th className="p-3">{t("createdOn")}</th>
                 <th className="p-3">{t("lastUpdate")}</th>
                 <th className="p-3">{t("status")}</th>
+                <th className="p-3">Action</th>
               </tr>
             </thead>
 
@@ -189,7 +206,10 @@ export default function Support({ initialTickets }: SupportProps) {
               {/* Loading State */}
               {loading && (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-primary bg-white dark:bg-gray-800">
+                  <td
+                    colSpan={7}
+                    className="p-6 text-center text-primary bg-white dark:bg-gray-800"
+                  >
                     <div className="flex items-center justify-center gap-2">
                       <FaSpinner className="animate-spin" />
                       {t("loading")}...
@@ -201,7 +221,10 @@ export default function Support({ initialTickets }: SupportProps) {
               {/* No Tickets State */}
               {!loading && tickets.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-gray-500 bg-white dark:bg-gray-800">
+                  <td
+                    colSpan={7}
+                    className="p-6 text-center text-gray-500 bg-white dark:bg-gray-800"
+                  >
                     No tickets found
                   </td>
                 </tr>
@@ -230,15 +253,29 @@ export default function Support({ initialTickets }: SupportProps) {
                         className={cn(
                           "px-3 py-1 rounded text-xs capitalize",
                           ticket.status === "open" &&
-                          "border border-[#00B625] text-[#00B625]",
+                            "border border-[#00B625] text-[#00B625]",
                           ticket.status === "pending" &&
-                          "border border-[#B69B00] text-[#B69B00]",
+                            "border border-[#B69B00] text-[#B69B00]",
                           ticket.status === "closed" &&
-                          "border border-primary text-primary"
+                            "border border-primary text-primary",
                         )}
                       >
                         {t(ticket.status.toLowerCase())}
                       </span>
+                    </td>
+                    <td className="p-3">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setChatTicket(ticket);
+                          setChatOpen(true);
+                        }}
+                        className="text-primary hover:bg-primary/10 cursor-pointer"
+                        aria-label="Open chat"
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -255,6 +292,15 @@ export default function Support({ initialTickets }: SupportProps) {
         <CreateTicketModal
           isNewTicketOpen={isNewTicketOpen}
           setIsNewTicketOpen={setIsNewTicketOpen}
+        />
+
+        <TicketConversationModal
+          open={chatOpen}
+          ticket={chatTicket}
+          onClose={() => {
+            setChatOpen(false);
+            setChatTicket(null);
+          }}
         />
       </div>
     </div>

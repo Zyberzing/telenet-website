@@ -19,11 +19,10 @@ export default async function Page() {
 
   try {
     user = await getProfile();
-    console.log("fetched profile in header page.tsx", user);
   } catch (err) {
     console.error("Failed to fetch profile:", err);
   }
-  console.log("user in header page.tsx", user);
+
   const userData = {
     name: user?.name ?? "",
     email: user?.email ?? "",

@@ -1,5 +1,10 @@
 import { authFetcher } from "@/lib/authFetcher";
-import { CreateTicketInput, Ticket, UpdateTicketInput } from "@/lib/types";
+import {
+  CreateTicketInput,
+  RefundTicketInput,
+  Ticket,
+  UpdateTicketInput,
+} from "@/lib/types";
 
 export interface TicketFilters {
   page?: number;
@@ -10,7 +15,9 @@ export interface TicketFilters {
   status: "open" | "pending" | "closed";
 }
 
-export const crateTicket = async (body: CreateTicketInput): Promise<any> => {
+export const crateTicket = async (
+  body: CreateTicketInput | RefundTicketInput
+): Promise<any> => {
   const response = await authFetcher<{ status: string; message: string }>(
     "/ticket/create",
     {

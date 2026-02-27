@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import type { Refund } from "@/lib/types";
 import { createRefund } from "@/services/refund";
+import { crateTicket } from "@/services/ticket";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -42,8 +43,19 @@ export default function RefundModal({
     setLoading(true);
 
     try {
-      const res = await createRefund(payload);
-      toast.success(res.message || "Refund initiated successfully");
+      const refundRes = await createRefund(payload);
+      const refundData = refundRes?.data?.createTicketPayload;
+      console.log("refund", refundRes, refundData);
+      if (refundData) {
+        const ticketRes = await crateTicket({
+          subject: refundData.subject ?? "",
+          description: refundData.description ?? "",
+          // document: refundData.document ?? null,
+          category: refundData.category ?? "",
+        });
+        console.log("ticket", ticketRes);
+      }
+      toast.success(refundRes.message || "Refund initiated successfully");
       onClose();
       onRefundSuccess();
       setRefundComment("");

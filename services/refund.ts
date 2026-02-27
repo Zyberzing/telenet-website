@@ -1,8 +1,12 @@
 import { authFetcher } from "@/lib/authFetcher";
-import { Refund } from "@/lib/types";
+import { Refund, RefundResponseData } from "@/lib/types";
 
 export const createRefund = async (body: Refund): Promise<any> => {
-  const response = await authFetcher<{ status: string; message: string }>(
+  const response = await authFetcher<{
+    status: string;
+    message: string;
+    data?: RefundResponseData;
+  }>(
     "/refund/request-refund",
     {
       method: "POST",

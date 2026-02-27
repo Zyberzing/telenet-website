@@ -77,7 +77,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
               variant={tab === "active" ? "default" : "outline"}
               onClick={() => setTab("active")}
               className={cn(
-                tab === "active" && "bg-primary text-white hover:bg-primary"
+                tab === "active" && "bg-primary text-white hover:bg-primary",
               )}
             >
               {t("active")}
@@ -86,7 +86,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
               variant={tab === "expired" ? "default" : "outline"}
               onClick={() => setTab("expired")}
               className={cn(
-                tab === "expired" && "bg-primary text-white hover:bg-primary"
+                tab === "expired" && "bg-primary text-white hover:bg-primary",
               )}
             >
               {t("expired")}
@@ -133,7 +133,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                         <p>
                           {plan.package_data >= 1024
                             ? `${parseFloat(
-                                (plan.package_data / 1024).toFixed(2)
+                                (plan.package_data / 1024).toFixed(2),
                               )} GB`
                             : `${plan.package_data} MB`}{" "}
                           {t("dataLeft")}
@@ -141,7 +141,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                         <p>
                           {plan.package_data >= 1024
                             ? `${parseFloat(
-                                (plan.package_data / 1024).toFixed(2)
+                                (plan.package_data / 1024).toFixed(2),
                               )} GB`
                             : `${plan.package_data} MB`}
                         </p>

@@ -42,10 +42,47 @@ export interface Ticket {
   document?: string | null;
 }
 
+export type TicketConversationMessage = {
+  _id: string;
+  id?: string;
+  message?: string;
+  text?: string;
+  content?: string;
+  role?: string;
+  senderType?: string;
+  senderRole?: string;
+  isAdmin?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type TicketConversationListResponse = {
+  status: string;
+  message?: string;
+  data?:
+    | {
+        result?: TicketConversationMessage[];
+      }
+    | TicketConversationMessage[];
+};
+
+export type TicketConversationSendResponse = {
+  status: string;
+  message?: string;
+  data?: TicketConversationMessage;
+};
+
 export type CreateTicketInput = Omit<
   Ticket,
   "id" | "ticketId" | "createdAt" | "updatedAt" | "status"
 >;
+
+export type RefundTicketInput = {
+  subject: string;
+  description: string;
+  document?: string | null;
+  category: string;
+};
 
 export type UpdateTicketInput = Omit<
   Ticket,
@@ -67,7 +104,14 @@ export type ProfilePictureUpdate = {
 
 export interface Refund {
   orderId: string;
-  reason: string;
+  reason?: string;
+}
+
+export interface RefundResponseData {
+  subject?: string;
+  description?: string;
+  document?: string | null;
+  category?: string;
 }
 
 // services/order.ts
