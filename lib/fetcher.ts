@@ -1,3 +1,5 @@
+import { handleBlockedUserResponse } from "./blockedUser";
+import { clearSession } from "./session";
 import { hasSession } from "./session";
 
 type FetchOptions = {
@@ -39,6 +41,11 @@ export async function fetcher<T = unknown>(
   });
 
   const data = await res.json().catch(() => null);
+
+  const isBlocked = await handleBlockedUserResponse(res.status, data, clearSession);
+  if (isBlocked) {
+    return data as T;
+  }
 
   if (!res.ok) throw new Error(data?.message || "Request failed");
 

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/Button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
 import {
   Popover,
   PopoverContent,
@@ -15,22 +16,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Order } from "@/lib/types";
+import { Order, Pagination } from "@/lib/types";
 import { getOrderList } from "@/services/order";
 import { format } from "date-fns";
-import {
-  CalendarDays,
-  ChevronLeft,
-  ChevronRight,
-  DollarSign,
-  LifeBuoy,
-  RotateCw,
-  XCircle,
-} from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, XCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { DateRange } from "react-day-picker";
 import { FaRegFilePdf } from "react-icons/fa";
+
+type ExtendedOrder = Order & {
+  customerName?: string;
+  name?: string;
+  customerEmail?: string;
+  email?: string;
+  customerAddress?: string;
+  address?: string;
+  customerCountry?: string;
+  country?: string;
+  coverage?: string;
+  data?: string | number;
+  validity?: string | number;
+  perioddays?: string | number;
+  iccid?: string;
+  validUntil?: string;
+  paymentMethod?: string;
+  amount?: string | number;
+  totalAmount?: string | number;
+  unit_price_gross_amount?: string | number;
+};
 
 export default function OrderBilling({
   initialOrders,
@@ -38,7 +53,7 @@ export default function OrderBilling({
   limit,
 }: {
   initialOrders: Order[];
-  initialPagination: any;
+  initialPagination: Pagination | null | undefined;
   limit: number;
 }) {
   const t = useTranslations("OrderBilling");
@@ -46,17 +61,40 @@ export default function OrderBilling({
   const [pagination, setPagination] = useState(initialPagination);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [selectedDateRange, setSelectedDateRange] = useState<
+    DateRange | undefined
+  >();
   const [statusFilter, setStatusFilter] = useState("");
   const [providerFilter, setProviderFilter] = useState("");
+  const [search, setSearch] = useState("");
   // const itemsPerPage = 5;
   const totalPages = pagination?.totalPages || 1;
+  const providerOptions = useMemo(() => {
+    const values = new Set<string>();
+    initialOrders.forEach((order) => {
+      if (order.providerName) values.add(order.providerName);
+      if (order.network) values.add(order.network);
+    });
+    return Array.from(values);
+  }, [initialOrders]);
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const res = await getOrderList(currentPage, limit);
+        const res = await getOrderList(currentPage, limit, {
+          startDate: selectedDateRange?.from
+            ? format(selectedDateRange.from, "yyyy-MM-dd")
+            : undefined,
+          endDate: selectedDateRange?.to
+            ? format(selectedDateRange.to, "yyyy-MM-dd")
+            : selectedDateRange?.from
+              ? format(selectedDateRange.from, "yyyy-MM-dd")
+              : undefined,
+          search,
+          status: statusFilter,
+          provider: providerFilter,
+        });
         if (res) {
           setOrders(res.result || []);
           setPagination(res.pagination);
@@ -69,7 +107,18 @@ export default function OrderBilling({
     };
 
     fetchOrders();
-  }, [currentPage, limit]);
+  }, [
+    currentPage,
+    limit,
+    search,
+    statusFilter,
+    providerFilter,
+    selectedDateRange,
+  ]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter, providerFilter, selectedDateRange]);
 
   // const filteredOrders = useMemo(() => {
   //   return orders.filter((order) => {
@@ -87,10 +136,178 @@ export default function OrderBilling({
   // }, [filteredOrders, currentPage, itemsPerPage]);
 
   const resetFilters = () => {
-    setSelectedDate(undefined);
+    setSelectedDateRange(undefined);
     setStatusFilter("");
     setProviderFilter("");
+    setSearch("");
     setCurrentPage(1);
+  };
+
+  const escapePdfText = (value: unknown) =>
+    String(value ?? "")
+      .replace(/\\/g, "\\\\")
+      .replace(/\(/g, "\\(")
+      .replace(/\)/g, "\\)");
+
+  const buildPdfBlob = (drawCommands: string[]) => {
+    const content = drawCommands.join("\n");
+
+    const objects: string[] = [];
+    objects[1] = "<< /Type /Catalog /Pages 2 0 R >>";
+    objects[2] = "<< /Type /Pages /Kids [3 0 R] /Count 1 >>";
+    objects[3] =
+      "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>";
+    objects[4] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+    objects[5] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>";
+    objects[6] = `<< /Length ${content.length} >>\nstream\n${content}\nendstream`;
+
+    let pdf = "%PDF-1.4\n";
+    const offsets: number[] = [];
+
+    for (let i = 1; i <= 6; i++) {
+      offsets[i] = pdf.length;
+      pdf += `${i} 0 obj\n${objects[i]}\nendobj\n`;
+    }
+
+    const xrefPos = pdf.length;
+    pdf += `xref\n0 7\n0000000000 65535 f \n`;
+
+    for (let i = 1; i <= 6; i++)
+      pdf += `${String(offsets[i]).padStart(10, "0")} 00000 n \n`;
+
+    pdf += `trailer\n<< /Size 7 /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF`;
+
+    return new Blob([new TextEncoder().encode(pdf)], {
+      type: "application/pdf",
+    });
+  };
+
+  const handleInvoiceDownload = (rawOrder: Order) => {
+    const order = rawOrder as ExtendedOrder;
+
+    const invoiceDate = order.createdAt
+      ? format(new Date(order.createdAt), "dd/MM/yyyy")
+      : format(new Date(), "dd/MM/yyyy");
+
+    const amount =
+      order.totalAmount ?? order.amount ?? order.unit_price_gross_amount ?? "-";
+
+    let y = 800;
+    const left = 60;
+    const right = 535;
+
+    const line = (yy: number) => `0.7 w ${left} ${yy} m ${right} ${yy} l S`;
+
+    const text = (
+      x: number,
+      y: number,
+      size: number,
+      value: string,
+      bold = false,
+    ) =>
+      `BT /F${bold ? 2 : 1} ${size} Tf ${x} ${y} Td (${escapePdfText(value)}) Tj ET`;
+
+    const draw: string[] = [];
+
+    /* HEADER */
+    draw.push(text(left, y, 18, "YOUR COMPANY NAME", true));
+    draw.push(text(420, y, 18, "INVOICE", true));
+
+    y -= 20;
+    draw.push(text(left, y, 9, "123 Business Street, City, State 12345"));
+    y -= 12;
+    draw.push(
+      text(
+        left,
+        y,
+        9,
+        "Email: contact@yourcompany.com | Phone: +1 (555) 123-4567",
+      ),
+    );
+    y -= 12;
+    draw.push(text(left, y, 9, "Tax ID: XX-XXXXXXX"));
+
+    draw.push(text(360, y + 24, 9, `Invoice #: ${order._id}`));
+    draw.push(text(360, y + 10, 9, `Order #: ${order._id}`));
+    draw.push(text(360, y - 4, 9, `Date: ${invoiceDate}`));
+
+    y -= 25;
+    draw.push(line(y));
+
+    /* BILL TO */
+    y -= 30;
+    draw.push(text(left, y, 12, "BILL TO:", true));
+
+    y -= 18;
+    draw.push(
+      text(left, y, 10, order.customerName || order.name || "Customer", true),
+    );
+    y -= 14;
+    draw.push(text(left, y, 10, order.customerEmail || "-"));
+    y -= 14;
+    draw.push(text(left, y, 10, order.customerAddress || "-"));
+    y -= 14;
+    draw.push(
+      text(
+        left,
+        y,
+        10,
+        `Country: ${order.customerCountry || order.country || "-"}`,
+      ),
+    );
+
+    /* ORDER DETAILS */
+    y -= 30;
+    draw.push(text(left, y, 12, "ORDER DETAILS:", true));
+
+    y -= 18;
+
+    const rows = [
+      ["Package Name", order.package_name],
+      ["Provider", order.providerName || order.network],
+      ["Network", order.network],
+      ["Coverage", order.coverage],
+      ["Data", order.data ?? order.package_data],
+      ["Duration", order.validity ?? order.perioddays],
+      ["ICCID", order.iccid],
+      ["Valid Until", order.validUntil],
+      ["Payment Method", order.paymentMethod || order.paymentIntentId],
+      ["Order Status", order.status?.toUpperCase()],
+    ];
+
+    rows.forEach(([label, value]) => {
+      draw.push(text(left, y, 10, String(label || "-")));
+      draw.push(text(left + 170, y, 10, String(value ?? "-")));
+      y -= 18;
+    });
+
+    /* PAYMENT SUMMARY */
+    y -= 20;
+    draw.push(text(left, y, 12, "PAYMENT SUMMARY:", true));
+
+    y -= 20;
+    draw.push(text(left, y, 10, "Total Amount"));
+    draw.push(text(left + 170, y, 10, String(amount)));
+
+    y -= 18;
+    draw.push(text(left, y, 10, "Payment Status"));
+    draw.push(text(left + 170, y, 10, (order.status || "-").toUpperCase()));
+
+    /* FOOTER */
+    draw.push(line(100));
+    draw.push(text(220, 80, 9, "Thank you for your business!", true));
+    draw.push(
+      text(180, 65, 8, "For any queries, please contact our support team."),
+    );
+
+    const blob = buildPdfBlob(draw);
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `invoice-${order._id}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   // const handlePageChange = (page: number) => {
@@ -126,16 +343,21 @@ export default function OrderBilling({
                 className="rounded-md text-sm flex items-center gap-2 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700"
               >
                 <CalendarDays size={14} />
-                {selectedDate
-                  ? format(selectedDate, "dd MMM yyyy")
+                {selectedDateRange?.from
+                  ? selectedDateRange.to
+                    ? `${format(selectedDateRange.from, "dd MMM yyyy")} - ${format(
+                        selectedDateRange.to,
+                        "dd MMM yyyy",
+                      )}`
+                    : format(selectedDateRange.from, "dd MMM yyyy")
                   : t("dateRange")}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-2 bg-white dark:bg-gray-800 dark:border-gray-700">
               <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
+                mode="range"
+                selected={selectedDateRange}
+                onSelect={setSelectedDateRange}
                 className="p-0 dark:text-gray-200"
               />
             </PopoverContent>
@@ -147,23 +369,14 @@ export default function OrderBilling({
               <SelectValue placeholder={t("status")} />
             </SelectTrigger>
             <SelectContent className="dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 cursor-pointer">
-              <SelectItem className="cursor-pointer" value="processing">
-                {t("processing")}
+              <SelectItem className="cursor-pointer" value="failed">
+                {t("failed")}
               </SelectItem>
               <SelectItem className="cursor-pointer" value="cancelled">
                 {t("cancelled")}
               </SelectItem>
-              <SelectItem className="cursor-pointer" value="inReview">
-                {t("inReview")}
-              </SelectItem>
-              <SelectItem className="cursor-pointer" value="refunded">
-                {t("refunded")}
-              </SelectItem>
-              <SelectItem className="cursor-pointer" value="active">
-                {t("active")}
-              </SelectItem>
-              <SelectItem className="cursor-pointer" value="expired">
-                {t("expired")}
+              <SelectItem className="cursor-pointer" value="completed">
+                {t("completed")}
               </SelectItem>
             </SelectContent>
           </Select>
@@ -174,20 +387,30 @@ export default function OrderBilling({
               <SelectValue placeholder={t("provider")} />
             </SelectTrigger>
             <SelectContent className="dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 cursor-pointer">
-              <SelectItem className="cursor-pointer" value="Verizon">
-                Verizon
-              </SelectItem>
-              <SelectItem className="cursor-pointer" value="Vodafone">
-                Vodafone
-              </SelectItem>
-              <SelectItem className="cursor-pointer" value="NTT Docomo">
-                NTT Docomo
-              </SelectItem>
-              <SelectItem className="cursor-pointer" value="Telstra">
-                Telstra
-              </SelectItem>
+              {providerOptions.length > 0 ? (
+                providerOptions.map((provider) => (
+                  <SelectItem
+                    key={provider}
+                    className="cursor-pointer"
+                    value={provider}
+                  >
+                    {provider}
+                  </SelectItem>
+                ))
+              ) : (
+                <SelectItem className="cursor-pointer" value="Zetexa">
+                  Zetexa
+                </SelectItem>
+              )}
             </SelectContent>
           </Select>
+
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search order id, plan, provider..."
+            className="w-[240px] rounded-md text-sm dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700"
+          />
 
           {/* Reset Filters */}
           <button
@@ -222,9 +445,6 @@ export default function OrderBilling({
                 <th className="py-3 px-4 text-left font-medium">
                   {t("invoice")}
                 </th>
-                <th className="py-3 px-4 text-left font-medium">
-                  {t("action")}
-                </th>
               </tr>
             </thead>
             <tbody>
@@ -248,47 +468,34 @@ export default function OrderBilling({
                       <span
                         className={`px-3 py-1 rounded text-xs font-medium capitalize
                         ${
-                          order.status === "processing"
+                          order.status.toLowerCase() === "completed"
                             ? "border border-[#00B625] text-[#00B625]"
-                            : order.status === "cancelled"
+                            : order.status.toLowerCase() === "failed"
                               ? "border border-[#FF6262] text-[#FF6262]"
-                              : order.status === "inReview"
-                                ? "border border-primary text-primary dark:border-blue-400 dark:text-blue-400"
-                                : order.status === "refunded"
-                                  ? "border border-[#B69B00] text-[#B69B00]"
-                                  : order.status === "Completed"
-                                    ? "border border-[#00B625] text-[#00B625]"
-                                    : "border border-[#929292] text-[#929292] dark:border-gray-500 dark:text-gray-400"
+                              : order.status.toLowerCase() === "cancelled"
+                                ? "border border-[#FFA500] text-[#FFA500]"
+                                : "border border-[#929292] text-[#929292] dark:border-gray-500 dark:text-gray-400"
                         }`}
                       >
                         {order?.status}
                       </span>
                     </td>
                     <td className="py-3 px-4">
-                      <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleInvoiceDownload(order)}
+                        className="flex items-center gap-1 cursor-pointer hover:text-primary"
+                      >
                         <FaRegFilePdf color="#F25463" size={14} />
                         <span>{t("download")}</span>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex gap-2">
-                        <button className="text-primary hover:text-primary dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer">
-                          <RotateCw size={16} />
-                        </button>
-                        <button className="text-[#EE3D4A] hover:text-primary dark:text-red-400 dark:hover:text-red-300 cursor-pointer">
-                          <DollarSign size={16} />
-                        </button>
-                        <button className="text-primary hover:text-primary dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer">
-                          <LifeBuoy size={16} />
-                        </button>
-                      </div>
+                      </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={6}
                     className="py-3 px-4 text-center dark:text-gray-300"
                   >
                     No Order Available

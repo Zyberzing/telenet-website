@@ -10,9 +10,9 @@ export interface TicketFilters {
   page?: number;
   limit?: number;
   search?: string;
-  date: string;
-  priority: "low" | "medium" | "high";
-  status: "open" | "pending" | "closed";
+  date?: string;
+  priority?: "low" | "medium" | "high";
+  status?: "open" | "pending" | "closed";
 }
 
 export const crateTicket = async (
@@ -34,7 +34,12 @@ export const crateTicket = async (
 };
 
 export const getTickets = async (params: TicketFilters) => {
-  const searchParams = new URLSearchParams(params as any);
+  const searchParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === "") return;
+    searchParams.set(key, String(value));
+  });
 
   const response = await authFetcher<{
     status: string;

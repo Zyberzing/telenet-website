@@ -303,7 +303,7 @@ export default function Plans({
                           </div>
                         </div>
 
-                        <Button className="mt-6 text-sm rounded-full w-full transition-all duration-300 group-hover:[background:#E49B2C] group-hover:text-black hover:[background:#E49B2C_!important] hover:text-black bg-gradient">
+                        <Button className="text-white mt-6 text-sm rounded-full w-full transition-all duration-300 group-hover:[background:#E49B2C] group-hover:text-black dark:group-hover:text-white hover:[background:#E49B2C_!important] hover:text-black dark:hover:text-white bg-gradient">
                           {t("buy")}
                         </Button>
                       </div>

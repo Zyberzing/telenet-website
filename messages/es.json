@@ -519,12 +519,9 @@
     "paymentOption": "Método de pago",
     "invoice": "Factura",
     "action": "Acción",
-    "processing": "Procesando",
-    "cancelled": "Cancelado",
-    "inReview": "En revisión",
-    "refunded": "Reembolsado",
-    "active": "Activo",
-    "expired": "Expirado",
+    "failed": "Fallido",
+    "pending": "Pendiente",
+    "completed": "Completado",
     "download": "Descargar"
   },
   "MyPlans": {

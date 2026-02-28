@@ -37,7 +37,7 @@ export default function Support({ initialTickets }: SupportProps) {
   const t = useTranslations("Support");
   const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
   const [loading, setLoading] = useState(false);
-  const [tab, setTab] = useState<"open" | "pending" | "closed">("pending");
+  const [tab, setTab] = useState<"open" | "pending" | "closed" | null>(null);
   const [search, setSearch] = useState("");
   const [priority, setPriority] = useState<"low" | "medium" | "high">("low");
   const [date, setDate] = useState<Date>(new Date());
@@ -54,7 +54,7 @@ export default function Support({ initialTickets }: SupportProps) {
       const data = await getTickets({
         page: 1,
         limit: 20,
-        status: tab,
+        ...(tab ? { status: tab } : {}),
         priority,
         search,
         date: format(date, "yyyy-MM-dd"),
@@ -92,7 +92,13 @@ export default function Support({ initialTickets }: SupportProps) {
               <Button
                 key={status}
                 variant={tab === status ? "default" : "outline"}
-                onClick={() => setTab(status as "open" | "pending" | "closed")}
+                onClick={() =>
+                  setTab((prev) =>
+                    prev === status
+                      ? null
+                      : (status as "open" | "pending" | "closed"),
+                  )
+                }
                 className={cn(
                   "capitalize",
                   tab === status
@@ -193,7 +199,7 @@ export default function Support({ initialTickets }: SupportProps) {
             <thead className="bg-primary text-white">
               <tr>
                 <th className="p-3">{t("ticketID")}</th>
-                <th className="p-3">{t("priority")}</th>
+                {/* <th className="p-3">{t("priority")}</th> */}
                 <th className="p-3">{t("subject")}</th>
                 <th className="p-3">{t("createdOn")}</th>
                 <th className="p-3">{t("lastUpdate")}</th>
@@ -240,7 +246,7 @@ export default function Support({ initialTickets }: SupportProps) {
                     className="border-b dark:border-gray-700 hover:bg-purple-50 dark:hover:bg-gray-700 cursor-pointer bg-white dark:bg-gray-800"
                   >
                     <td className="p-3">{ticket.ticketId}</td>
-                    <td className="p-3 capitalize">{ticket.priority}</td>
+                    {/* <td className="p-3 capitalize">{ticket.priority}</td> */}
                     <td className="p-3">{ticket.subject}</td>
                     <td className="p-3">
                       {format(new Date(ticket.createdAt), "dd MMM yyyy")}

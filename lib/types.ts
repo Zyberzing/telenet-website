@@ -298,6 +298,9 @@ export type PromotionItem = {
   _id: string;
   promotionName: string;
   promoCode: string;
+  discountValue?: string | number;
+  discountType?: "percentage" | "fixed";
+  status?: string;
 };
 
 export type PromotionListResponse = {

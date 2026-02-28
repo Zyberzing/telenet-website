@@ -190,41 +190,37 @@ export default function KYC() {
     registrationState?.countryIso,
   ]);
 
-  useEffect(() => {
-    if (method !== "sumsub" || token) return;
+  const fetchSumsubToken = async () => {
+    if (loadingToken || token) return;
 
-    const fetchSumsubToken = async () => {
-      if (!registrationState?.otpAccessToken) {
-        setLoadingToken(false);
-        return;
-      }
+    if (!registrationState?.otpAccessToken) {
+      setLoadingToken(false);
+      return;
+    }
 
-      try {
-        setLoadingToken(true);
-        const kycRes = (await getKYC({
-          accessToken: registrationState.otpAccessToken,
-          refreshToken: registrationState.otpRefreshToken,
-        })) as { data?: { token?: string } } | null;
-        const fetchedToken = kycRes?.data?.token || null;
+    try {
+      setLoadingToken(true);
+      const kycRes = (await getKYC({
+        accessToken: registrationState.otpAccessToken,
+        refreshToken: registrationState.otpRefreshToken,
+      })) as { data?: { token?: string } } | null;
+      const fetchedToken = kycRes?.data?.token || null;
 
-        if (!fetchedToken) return;
+      if (!fetchedToken) return;
 
-        setToken(fetchedToken);
-        sessionStorage.setItem("sumsub_kyc_token", fetchedToken);
-      } catch {
-        // Token can fail for users without an auth session; keep UI visible.
-      } finally {
-        setLoadingToken(false);
-      }
-    };
+      setToken(fetchedToken);
+      sessionStorage.setItem("sumsub_kyc_token", fetchedToken);
+    } catch {
+      // Token can fail for users without an auth session; keep UI visible.
+    } finally {
+      setLoadingToken(false);
+    }
+  };
 
-    fetchSumsubToken();
-  }, [
-    method,
-    token,
-    registrationState?.otpAccessToken,
-    registrationState?.otpRefreshToken,
-  ]);
+  const handleSumsubClick = async () => {
+    setMethod("sumsub");
+    await fetchSumsubToken();
+  };
 
   useEffect(() => {
     if (method !== "sumsub" || !token) return;
@@ -511,7 +507,7 @@ export default function KYC() {
               <button
                 type="button"
                 className="text-left border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:border-primary transition cursor-pointer bg-white dark:bg-gray-800"
-                onClick={() => setMethod("sumsub")}
+                onClick={() => void handleSumsubClick()}
               >
                 <p className="text-lg font-medium text-gray-900 dark:text-white">
                   Use Sumsub

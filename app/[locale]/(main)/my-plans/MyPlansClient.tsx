@@ -29,7 +29,7 @@ export interface Plan {
   expiredOn?: string;
   lastPlan?: string;
   price: string;
-  status: "active" | "expired";
+  status: "active" | "expired" | string;
   package_sms: number;
   package_call: number;
   qrcode?: string;

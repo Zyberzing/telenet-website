@@ -38,6 +38,8 @@ const DEFAULT_LOCALE = "en";
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-pathname", pathname);
 
   const cookieName =
     process.env.NEXT_PUBLIC_SESSION_COOKIE_NAME || "APP_SESSION";
@@ -54,32 +56,33 @@ export function middleware(req: NextRequest) {
 
   const isPublic = publicRoutes.some(
     (route) =>
-      pathWithoutLocale === route || pathWithoutLocale.startsWith(`${route}/`)
+      pathWithoutLocale === route || pathWithoutLocale.startsWith(`${route}/`),
   );
 
   const isAuthRoute = authRoutes.some((route) => pathWithoutLocale === route);
 
   const isProtected = protectedRoutes.some((route) =>
-    pathWithoutLocale.startsWith(route)
+    pathWithoutLocale.startsWith(route),
   );
 
-  /** 🔐 Logged-in user trying to access login/register */
-  if (session && isAuthRoute) {
-    return NextResponse.redirect(new URL(`/${locale}/dashboard`, req.url));
-  }
-
-  /** 🚫 Not logged-in user trying to access protected routes */
+  // Keep auth pages reachable even when a stale session cookie exists.
   if (!session && isProtected) {
     return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
   }
 
-  /** ✅ Public pages always allowed */
   if (isPublic || isAuthRoute) {
-    return NextResponse.next();
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
   }
 
-  /** 🧭 Fallback */
-  return NextResponse.next();
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
 
 export const config = {

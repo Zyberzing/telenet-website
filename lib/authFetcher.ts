@@ -1,5 +1,6 @@
 "use server";
 
+import { handleBlockedUserResponse } from "./blockedUser";
 import { clearSession, hasSession } from "./session";
 
 type FetchOptions = {
@@ -62,6 +63,15 @@ export async function authFetcher<T = unknown>(
     }
 
     const data = await res.json().catch(() => null);
+
+    const isBlocked = await handleBlockedUserResponse(
+      res.status,
+      data,
+      clearSession,
+    );
+    if (isBlocked) {
+      return data as T;
+    }
 
     if (!res.ok) {
       throw {

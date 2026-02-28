@@ -519,12 +519,9 @@
     "paymentOption": "Payment Option",
     "invoice": "Invoice",
     "action": "Action",
-    "processing": "Processing",
-    "cancelled": "Cancelled",
-    "inReview": "In Review",
-    "refunded": "Refunded",
-    "active": "Active",
-    "expired": "Expired",
+    "failed": "Failed",
+    "pending": "Pending",
+    "completed": "Completed",
     "download": "Download"
   },
   "MyPlans": {

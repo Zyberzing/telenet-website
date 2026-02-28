@@ -3,18 +3,13 @@ import {
   Dialog,
   DialogContent,
   DialogFooter,
-  DialogHeader, // Import DialogHeader
+  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Ticket } from "@/lib/types";
-import { updateTicket } from "@/services/ticket";
-import { uploadMedia } from "@/services/upload";
 import { format } from "date-fns";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { FaSpinner } from "react-icons/fa";
-import { toast } from "sonner";
+import { useMemo } from "react";
 
 export default function TicketDetailModal({
   selectedTicket,
@@ -24,54 +19,10 @@ export default function TicketDetailModal({
   setSelectedTicket: (ticket: Ticket | null) => void;
 }) {
   const t = useTranslations("Support");
-  const [description, setDescription] = useState(
-    selectedTicket?.description || ""
+  const description = useMemo(
+    () => selectedTicket?.description || "-",
+    [selectedTicket],
   );
-  const [loading, setLoading] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
-  console.log("selectedTicket", selectedTicket);
-  useEffect(() => {
-    setDescription(selectedTicket?.description || "");
-  }, [selectedTicket]);
-
-  const handleSave = async () => {
-    if (!selectedTicket) return;
-
-    setLoading(true); // start loading
-
-    try {
-      let documentUrl = selectedTicket.document || null;
-
-      if (file) {
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const uploadRes = await uploadMedia(formData);
-        documentUrl = uploadRes?.data?.httpsUrl ?? null;
-      }
-
-      const ticketId = selectedTicket._id ?? selectedTicket.id;
-
-      const updateBody = {
-        ticketId,
-        description,
-        document: documentUrl,
-      };
-
-      const res = await updateTicket(updateBody);
-
-      toast.success(res.message || "Updated successfully");
-
-      setSelectedTicket(null); // close modal
-    } catch (err: unknown) {
-      console.error("Update error:", err);
-      const errorMessage =
-        err instanceof Error ? err.message : "Something went wrong";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false); // stop loading
-    }
-  };
 
   return (
     <Dialog
@@ -101,16 +52,90 @@ export default function TicketDetailModal({
             </DialogHeader>
 
             <div className="flex-1 overflow-y-auto">
-              <div className="space-y-3 mb-1">
-                <textarea
-                  className="w-full mt-1 border rounded-md p-2"
-                  rows={3}
-                  placeholder={t("writeDescription")}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                ></textarea>
+              <div className="space-y-3 mb-1 text-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className="border rounded-md p-3 bg-gray-50 dark:bg-gray-800">
+                    <p className="text-xs text-gray-500 mb-1">
+                      {t("ticketID")}
+                    </p>
+                    <p className="break-words">
+                      {selectedTicket.ticketId || "-"}
+                    </p>
+                  </div>
+                  <div className="border rounded-md p-3 bg-gray-50 dark:bg-gray-800">
+                    <p className="text-xs text-gray-500 mb-1">{t("status")}</p>
+                    <p className="capitalize break-words">
+                      {selectedTicket.status || "-"}
+                    </p>
+                  </div>
+                  <div className="border rounded-md p-3 bg-gray-50 dark:bg-gray-800">
+                    <p className="text-xs text-gray-500 mb-1">
+                      {t("priority")}
+                    </p>
+                    <p className="capitalize break-words">
+                      {selectedTicket.priority || "-"}
+                    </p>
+                  </div>
+                  <div className="border rounded-md p-3 bg-gray-50 dark:bg-gray-800">
+                    <p className="text-xs text-gray-500 mb-1">{t("subject")}</p>
+                    <p className="break-words">
+                      {selectedTicket.subject || "-"}
+                    </p>
+                  </div>
+                  <div className="border rounded-md p-3 bg-gray-50 dark:bg-gray-800">
+                    <p className="text-xs text-gray-500 mb-1">
+                      {t("createdOn")}
+                    </p>
+                    <p>
+                      {selectedTicket.createdAt
+                        ? format(
+                            new Date(selectedTicket.createdAt),
+                            "dd MMM yyyy",
+                          )
+                        : "-"}
+                    </p>
+                  </div>
+                  <div className="border rounded-md p-3 bg-gray-50 dark:bg-gray-800">
+                    <p className="text-xs text-gray-500 mb-1">
+                      {t("lastUpdate")}
+                    </p>
+                    <p>
+                      {selectedTicket.updatedAt
+                        ? format(
+                            new Date(selectedTicket.updatedAt),
+                            "dd MMM yyyy",
+                          )
+                        : "-"}
+                    </p>
+                  </div>
+                  <div className="border rounded-md p-3 bg-gray-50 dark:bg-gray-800">
+                    <p className="text-xs text-gray-500 mb-1">{t("name")}</p>
+                    <p className="break-words">{selectedTicket.name || "-"}</p>
+                  </div>
+                  <div className="border rounded-md p-3 bg-gray-50 dark:bg-gray-800">
+                    <p className="text-xs text-gray-500 mb-1">{t("email")}</p>
+                    <p className="break-words">{selectedTicket.email || "-"}</p>
+                  </div>
+                  <div className="border rounded-md p-3 bg-gray-50 dark:bg-gray-800">
+                    <p className="text-xs text-gray-500 mb-1">{t("phone")}</p>
+                    <p className="break-words">
+                      {[selectedTicket.countryCode, selectedTicket.phoneNumber]
+                        .filter(Boolean)
+                        .join(" ") || "-"}
+                    </p>
+                  </div>
+                </div>
 
-                <label className="me-1">{t("attachFile")}</label>
+                <div className="w-full border rounded-md p-3 bg-gray-50 dark:bg-gray-800">
+                  <p className="text-xs text-gray-500 mb-1">
+                    {t("description")}
+                  </p>
+                  <p className="text-sm whitespace-pre-wrap break-words">
+                    {description}
+                  </p>
+                </div>
+
+                {/* <label className="me-1">{t("attachFile")}</label>
                 <div className="flex gap-2">
                   <Button
                     onClick={() =>
@@ -120,7 +145,6 @@ export default function TicketDetailModal({
                     {file ? file?.name : t("upload")}
                   </Button>
 
-                  {/* REQUIRED HIDDEN INPUT */}
                   <input
                     id="detail-file-upload"
                     type="file"
@@ -145,7 +169,7 @@ export default function TicketDetailModal({
                       className="object-contain"
                     />
                   ) : null}
-                </div>
+                </div> */}
               </div>
             </div>
           </>
@@ -153,19 +177,7 @@ export default function TicketDetailModal({
 
         <DialogFooter className="justify-center gap-2 pt-4">
           <Button
-            className="py-6 bg-primary text-white dark:text-black w-1/2 rounded-full"
-            onClick={handleSave}
-          >
-            {loading ? (
-              <>
-                <FaSpinner className="animate-spin mx-auto" /> Loading...
-              </>
-            ) : (
-              t("saveChanges")
-            )}
-          </Button>
-          <Button
-            className="py-6 w-1/2 rounded-full bg-black dark:bg-white dark:text-black"
+            className="py-6 w-full rounded-full bg-black dark:bg-white dark:text-black"
             onClick={() => setSelectedTicket(null)}
           >
             {t("cancel")}

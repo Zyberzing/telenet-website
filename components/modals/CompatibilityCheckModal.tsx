@@ -141,7 +141,7 @@ export default function CompatibilityCheckModal({
             onClick={onClose}
             className="text-gray-500 dark:text-gray-400 hover:text-red-500 text-3xl -mt-2 font-[400px] cursor-pointer self-start"
           >
-            x
+            &times;
           </button>
         </div>
 

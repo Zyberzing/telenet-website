@@ -72,7 +72,7 @@ export default function PlanDetailsModal({
               onClick={handleCloseAll}
               className="text-gray-500 dark:text-gray-400 hover:text-red-500 text-3xl -mt-2 font-[400px] cursor-pointer self-start"
             >
-              x
+              &times;
             </button>
           </div>
 
@@ -170,7 +170,7 @@ export default function PlanDetailsModal({
           </div>
 
           <DialogFooter className="p-4 rounded-b-2xl flex justify-between items-center sticky bottom-0 z-10">
-            <Heart className="w-5 h-5 text-gray-400 dark:text-gray-500 cursor-pointer hover:text-red-500" />
+            {/* <Heart className="w-5 h-5 text-gray-400 dark:text-gray-500 cursor-pointer hover:text-red-500" /> */}
             <div className="flex gap-2 flex-1">
               <Button
                 onClick={() => {
@@ -185,7 +185,7 @@ export default function PlanDetailsModal({
                 Compatibility Check
               </Button>
               <Button className="bg-black dark:bg-zinc-700 flex-1 text-white hover:bg-gradient rounded-full px-4 py-2 text-sm">
-                Add to Wallet
+                Add to Favorites
               </Button>
             </div>
           </DialogFooter>

@@ -1,6 +1,7 @@
 "use server";
 
 import { jwtDecode } from "jwt-decode";
+import { handleBlockedUserResponse } from "./blockedUser";
 import { clearSession, getSession, saveSession } from "./session";
 import { UserSession } from "./types";
 
@@ -165,6 +166,15 @@ export async function enhancedAuthFetcher<T = unknown>(
 
     const data = await response.json().catch(() => null);
 
+    const isBlocked = await handleBlockedUserResponse(
+      response.status,
+      data,
+      clearSession,
+    );
+    if (isBlocked) {
+      return data as T;
+    }
+
     // Handle 401 Unauthorized - token might be expired
     if (response.status === 401 && retryOnTokenExpiry) {
       console.log("🔄 Received 401, attempting token refresh...");
@@ -231,6 +241,11 @@ export async function enhancedFetcher<T = unknown>(
     });
 
     const data = await response.json().catch(() => null);
+
+    const isBlocked = await handleBlockedUserResponse(response.status, data);
+    if (isBlocked) {
+      return data as T;
+    }
 
     if (!response.ok) {
       throw {

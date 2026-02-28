@@ -4,20 +4,19 @@ import { saveSession } from "@/lib/session";
 import { ROUTES } from "@/routes";
 import { loginUser, socialLoginUser } from "@/services/auth";
 import { setCredentials } from "@/store/slices/authSlice";
-import { useGoogleLogin } from "@react-oauth/google";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Chrome, Eye, EyeOff } from "lucide-react";
+import { useGoogleLogin } from "@react-oauth/google";
+import { Eye, EyeOff } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { FaGoogle, FaSpinner } from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "./ui/Button";
-import { FcGoogle } from "react-icons/fc";
-
 import { Input } from "./ui/Input";
 import {
   Form,
@@ -45,6 +44,17 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState(false);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const blocked = params.get("blocked");
+    const blockedMessage = params.get("message");
+
+    if (blocked === "1") {
+      toast.error(blockedMessage || "User is blocked");
+    }
+  }, []);
+
   const form = useForm<LoginFormSchemaType>({
     resolver: zodResolver(formSchema as any),
     defaultValues: { email: "", password: "" },
@@ -53,6 +63,54 @@ export default function LoginForm() {
   const completeSignin = async (res: any) => {
     const user =
       typeof res?.user === "object" && res?.user !== null ? res.user : null;
+
+    const responseRole =
+      (user as { role?: string } | null)?.role ??
+      (res as { role?: string } | null)?.role;
+
+    const normalizedRole = (responseRole || "").toLowerCase();
+    if (normalizedRole === "admin") {
+      toast.error("This user are not authorized to login.");
+      return;
+    }
+
+    const isManualKyc =
+      (user as { isManualKyc?: boolean } | null)?.isManualKyc ??
+      (res as { isManualKyc?: boolean } | null)?.isManualKyc;
+
+    const isSumsubKyc =
+      (user as { isSumsubKyc?: boolean } | null)?.isSumsubKyc ??
+      (res as { isSumsubKyc?: boolean } | null)?.isSumsubKyc;
+
+    const accessTokenRaw = res.accessToken || res.access;
+    const refreshTokenRaw = res.refreshToken || res.refresh;
+    if (!accessTokenRaw) throw new Error("Access token missing");
+    const accessToken = accessTokenRaw?.replace(/^Bearer\s+/i, "");
+    const refreshToken = refreshTokenRaw?.replace(/^Bearer\s+/i, "");
+
+    if (isManualKyc === false && isSumsubKyc === false) {
+      sessionStorage.setItem(
+        "registrationState",
+
+        JSON.stringify({
+          email:
+            (user as { email?: string } | null)?.email ||
+            form.getValues("email") ||
+            "",
+          name: (user as { name?: string } | null)?.name || "",
+          country: (user as { country?: string } | null)?.country || "",
+          countryCode:
+            (user as { countryCode?: string } | null)?.countryCode || "",
+          otpAccessToken: accessToken || "",
+          otpRefreshToken: refreshToken || "",
+        }),
+      );
+
+      toast.info("Please complete your KYC verification to continue.");
+      router.push(ROUTES.KYC(locale));
+      return;
+    }
+
     const rawKycStatus =
       (user as { kycStatus?: string } | null)?.kycStatus ??
       (res as { kycStatus?: string } | null)?.kycStatus;
@@ -65,14 +123,6 @@ export default function LoginForm() {
       );
       return;
     }
-
-    const accessTokenRaw = res.accessToken || res.access;
-    const refreshTokenRaw = res.refreshToken || res.refresh;
-
-    if (!accessTokenRaw) throw new Error("Access token missing");
-
-    const accessToken = accessTokenRaw.replace(/^Bearer\s+/i, "");
-    const refreshToken = refreshTokenRaw?.replace(/^Bearer\s+/i, "");
 
     if (!accessToken) throw new Error("Access token missing");
 

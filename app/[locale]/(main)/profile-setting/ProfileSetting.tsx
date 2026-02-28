@@ -61,7 +61,7 @@ export default function ProfileSetting({ user }: { user: User }) {
   );
   const [smsAlertEnabled, setSmsAlertEnabled] = useState(user?.smsAlertEnabled);
   const [pushNotificationEnabled, setPushNotificationEnabled] = useState(
-    user.pushNotificationEnabled
+    user?.pushNotificationEnabled
   );
 
   // Handle password change

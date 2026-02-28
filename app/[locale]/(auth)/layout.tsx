@@ -1,15 +1,14 @@
 import Footer from "@/components/layout/Footer";
 import HeaderAuth from "@/components/layout/HeaderAuth";
-import { use } from "react";
 
-export default function AuthLayout({
+export default async function AuthLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = use(params);
+  const { locale } = await params;
   return (
     <div className="flex flex-col min-h-screen">
       <HeaderAuth />

@@ -2,6 +2,14 @@ import { Plan } from "@/app/[locale]/(main)/my-plans/MyPlansClient";
 import { authFetcher } from "@/lib/authFetcher";
 import { GetOrderListApiResponse, orderDetails } from "@/lib/types";
 
+export interface OrderListFilters {
+  startDate?: string;
+  endDate?: string;
+  search?: string;
+  status?: string;
+  provider?: string;
+}
+
 export const createOrder = async (body: orderDetails): Promise<any> => {
   const response = await authFetcher<{ status: string; message: string }>(
     "/order/create-order",
@@ -21,12 +29,22 @@ export const createOrder = async (body: orderDetails): Promise<any> => {
 export const getOrderList = async (
   page = 1,
   limit = 5,
+  filters: OrderListFilters = {},
 ): Promise<GetOrderListApiResponse["data"] | null> => {
   try {
+    const searchParams = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value === undefined || value === null || value === "") return;
+      searchParams.set(key, String(value));
+    });
+
     const response = await authFetcher<GetOrderListApiResponse>(
-      `/order/list?page=${page}&limit=${limit}`,
+      `/order/list?${searchParams.toString()}`,
     );
-    console.log("API PAGE:", page, response.data.pagination); // 👈 ADD THIS
 
     return response?.data || null;
   } catch (error) {

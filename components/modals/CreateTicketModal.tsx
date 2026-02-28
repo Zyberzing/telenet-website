@@ -2,14 +2,6 @@
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
 import {
   Dialog,
   DialogContent,
@@ -25,39 +17,30 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
 import { crateTicket } from "@/services/ticket";
 import { uploadMedia } from "@/services/upload";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getCountries, getCountryCallingCode } from "libphonenumber-js";
-import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { useEffect, useState } from "react";
-import ReactCountryFlag from "react-country-flag";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 const schema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-  phoneNumber: z.string().min(5),
-  countryCode: z.string().min(1),
+  // name: z.string().min(1),
+  // email: z.string().email(),
+  // phoneNumber: z.string().min(5),
+  // countryCode: z.string().min(1),
   subject: z.string().min(1),
   category: z.string().min(1),
-  priority: z.string().min(1),
+  // priority: z.string().min(1),
   description: z.string().min(1),
 });
 
@@ -71,22 +54,22 @@ export default function CreateTicketModal({
   setIsNewTicketOpen,
 }: CreateTicketModalProps) {
   const t = useTranslations("Support");
-  const [openCountry, setOpenCountry] = useState(false);
-  const countryCodes = getCountries().map((country) => ({
-    code: `+${getCountryCallingCode(country)}`,
-    country,
-  }));
+  // const [openCountry, setOpenCountry] = useState(false);
+  // const countryCodes = getCountries().map((country) => ({
+  //   code: `+${getCountryCallingCode(country)}`,
+  //   country,
+  // }));
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema as any),
     defaultValues: {
-      name: "",
-      email: "",
-      phoneNumber: "",
-      countryCode: "",
+      // name: "",
+      // email: "",
+      // phoneNumber: "",
+      // countryCode: "",
       subject: "",
       category: "",
-      priority: "",
+      // priority: "",
       description: "",
     },
   });
@@ -116,14 +99,15 @@ export default function CreateTicketModal({
       }
 
       const payload = {
-        name: values.name,
-        email: values.email,
-        countryCode: values.countryCode,
-        phoneNumber: values.phoneNumber,
+        // name: values.name,
+        // email: values.email,
+        // countryCode: values.countryCode,
+        // phoneNumber: values.phoneNumber,
         subject: values.subject,
         description: values.description,
-        priority: values.priority,
-        document: fileUrl,
+        category: values.category,
+        // priority: values.priority,
+        // document: fileUrl,
       };
       const response = await crateTicket(payload);
       toast.success(response.message || "Ticket created successfully");
@@ -157,7 +141,7 @@ export default function CreateTicketModal({
             className="space-y-4 overflow-y-auto px-2"
           >
             {/* NAME */}
-            <FormField
+            {/* <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
@@ -169,10 +153,10 @@ export default function CreateTicketModal({
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             {/* EMAIL */}
-            <FormField
+            {/* <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
@@ -184,11 +168,10 @@ export default function CreateTicketModal({
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             {/* PHONE + COUNTRY CODE */}
-            <div className="flex gap-3">
-              {/* COUNTRY CODE SEARCHABLE */}
+            {/* <div className="flex gap-3">
               <FormField
                 control={form.control}
                 name="countryCode"
@@ -207,14 +190,14 @@ export default function CreateTicketModal({
                             role="combobox"
                             className={cn(
                               "w-full justify-between",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             {field.value ? (
                               <span>
                                 {
                                   countryCodes.find(
-                                    (item) => item.code === field.value
+                                    (item) => item.code === field.value,
                                   )?.country
                                 }{" "}
                                 {field.value}
@@ -253,7 +236,7 @@ export default function CreateTicketModal({
                                     "ml-auto h-4 w-4",
                                     field.value === code
                                       ? "opacity-100"
-                                      : "opacity-0"
+                                      : "opacity-0",
                                   )}
                                 />
                               </CommandItem>
@@ -267,7 +250,6 @@ export default function CreateTicketModal({
                 )}
               />
 
-              {/* PHONE */}
               <FormField
                 control={form.control}
                 name="phoneNumber"
@@ -281,7 +263,7 @@ export default function CreateTicketModal({
                   </FormItem>
                 )}
               />
-            </div>
+            </div> */}
 
             {/* SUBJECT */}
             <FormField
@@ -328,8 +310,7 @@ export default function CreateTicketModal({
                   )}
                 />
               </div>
-              <div className="flex-1">
-                {/* PRIORITY */}
+              {/* <div className="flex-1">
                 <FormField
                   control={form.control}
                   name="priority"
@@ -352,7 +333,7 @@ export default function CreateTicketModal({
                     </FormItem>
                   )}
                 />
-              </div>
+              </div> */}
             </div>
 
             {/* DESCRIPTION */}
@@ -375,11 +356,10 @@ export default function CreateTicketModal({
             />
 
             {/* FILE UPLOAD */}
-            <div>
+            {/* <div>
               <Label className="block mb-1">{t("attachFile")}</Label>
 
               <div className="flex gap-3">
-                {/* Upload button */}
                 <div>
                   <input
                     key={file ? file.name : "empty"}
@@ -398,10 +378,8 @@ export default function CreateTicketModal({
                   </Button>
                 </div>
 
-                {/* FILE PREVIEW + REMOVE */}
                 {file && (
                   <div className="relative border rounded-md p-2 max-w-[50%] max-h-[50%] overflow-hidden">
-                    {/* REMOVE BUTTON */}
                     <button
                       onClick={() => setFile(null)}
                       className="absolute top-0.5 right-0.5 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs shadow cursor-pointer z-10"
@@ -409,7 +387,6 @@ export default function CreateTicketModal({
                       ✕
                     </button>
 
-                    {/* IMAGE PREVIEW */}
                     {file.type.startsWith("image/") ? (
                       <Image
                         src={URL.createObjectURL(file)}
@@ -420,7 +397,6 @@ export default function CreateTicketModal({
                         className="w-full h-full object-cover rounded"
                       />
                     ) : (
-                      /* NON-IMAGE PREVIEW */
                       <div className="text-xs text-center break-words">
                         <p className="font-semibold">{file.name}</p>
                         <p className="text-gray-500">{file.type}</p>
@@ -429,7 +405,7 @@ export default function CreateTicketModal({
                   </div>
                 )}
               </div>
-            </div>
+            </div> */}
 
             <DialogFooter className="mt-4 justify-center">
               <Button
