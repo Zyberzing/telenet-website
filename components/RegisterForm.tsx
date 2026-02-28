@@ -19,17 +19,25 @@ import {
   passwordSchema,
   phoneNumberSchema,
 } from "@/lib/formSchemaFunctions";
+import { saveSession } from "@/lib/session";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/routes";
-import { createUser } from "@/services/auth";
+import { createUser, socialSignup } from "@/services/auth";
+import { setCredentials } from "@/store/slices/authSlice";
+import SocialSignupModal, {
+  SocialSignupFormValues,
+} from "@/components/SocialSignupModal";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getCountries, getCountryCallingCode } from "libphonenumber-js";
+import { jwtDecode } from "jwt-decode";
 import { Check, ChevronsUpDown, Eye, EyeOff } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import z from "zod";
 import { Button } from "./ui/Button";
@@ -39,7 +47,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "./ui/form";
 import { LoadingButton } from "./ui/loading-button";
@@ -53,14 +60,31 @@ const formSchema = z.object({
 });
 export type RegistrationFormSchemaType = z.infer<typeof formSchema>;
 
+type GoogleCredentialPayload = {
+  email?: string;
+  name?: string;
+  sub?: string;
+};
+
 export default function RegisterForm() {
   const t = useTranslations("RegisterForm");
   const router = useRouter();
   const locale = useLocale();
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [socialDialogOpen, setSocialDialogOpen] = useState(false);
+  const [socialSubmitting, setSocialSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedCountryIso, setSelectedCountryIso] = useState("");
+  const [socialInitialData, setSocialInitialData] = useState({
+    email: "",
+    name: "",
+    phone: "",
+    countryCode: "+1",
+    firebaseUserId: "",
+  });
 
   // const countryCodes = getCountries().map((country) => ({
   //   code: `+${getCountryCallingCode(country)}`,
@@ -142,12 +166,110 @@ export default function RegisterForm() {
     }
   };
 
+  const handleGoogleSignup = async (response: CredentialResponse) => {
+    try {
+      if (!response.credential) {
+        toast.error("Google signup failed. Missing credential.");
+        return;
+      }
+
+      setGoogleLoading(true);
+      const decoded = jwtDecode<GoogleCredentialPayload>(response.credential);
+
+      setSocialInitialData((prev) => ({
+        ...prev,
+        email: decoded.email || "",
+        name: decoded.name || "",
+        firebaseUserId: decoded.sub || "",
+      }));
+      setSocialDialogOpen(true);
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Google signup is unavailable.";
+      toast.error(message);
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleSocialSignupSubmit = async (socialForm: SocialSignupFormValues) => {
+    if (
+      !socialForm.email.trim() ||
+      !socialForm.name.trim() ||
+      !socialForm.phone.trim() ||
+      !socialForm.countryCode.trim() ||
+      !socialForm.firebaseUserId.trim()
+    ) {
+      toast.error("Please fill all required fields.");
+      return;
+    }
+
+    try {
+      setSocialSubmitting(true);
+      const res = await socialSignup({
+        email: socialForm.email.trim(),
+        name: socialForm.name.trim(),
+        phone: socialForm.phone.trim(),
+        countryCode: socialForm.countryCode.trim(),
+        firebaseUserId: socialForm.firebaseUserId.trim(),
+        socialMediaPlatform: "GOOGLE",
+      });
+
+      const data = res?.data ?? res;
+      const user =
+        typeof data?.user === "object" && data?.user !== null ? data.user : null;
+      const accessTokenRaw = data?.accessToken || data?.access || data?.token;
+      const refreshTokenRaw = data?.refreshToken || data?.refresh;
+
+      if (!accessTokenRaw) {
+        toast.success(res?.message || "Google signup successful. Please login.");
+        setSocialDialogOpen(false);
+        router.push(ROUTES.LOGIN(locale));
+        return;
+      }
+
+      const accessToken = String(accessTokenRaw).replace(/^Bearer\s+/i, "");
+      const refreshToken = String(refreshTokenRaw || "").replace(
+        /^Bearer\s+/i,
+        "",
+      );
+
+      await saveSession({
+        user,
+        token: accessToken,
+        refreshToken,
+        accessToken,
+        access: accessToken,
+        refresh: refreshToken,
+      });
+
+      dispatch(
+        setCredentials({
+          token: accessToken,
+          refreshToken,
+          user,
+        }),
+      );
+
+      toast.success(res?.message || "Signed up with Google successfully.");
+      setSocialDialogOpen(false);
+      router.push(ROUTES.DASHBOARD(locale));
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Social signup is unavailable.";
+      toast.error(message);
+    } finally {
+      setSocialSubmitting(false);
+    }
+  };
+
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full max-w-md space-y-6 mx-6"
-      >
+    <>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-full max-w-md space-y-6 mx-6"
+        >
         <div className="text-start">
           <p className="text-gray-500">{t("welcomeText")}</p>
           <h2 className="text-2xl font-[400]">{t("registerTitle")}</h2>
@@ -159,7 +281,7 @@ export default function RegisterForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("fields.name")}</FormLabel>
+              <label className="text-sm font-medium">{t("fields.name")}</label>
               <FormControl>
                 <Input placeholder={t("placeholders.name")} {...field} />
               </FormControl>
@@ -174,7 +296,7 @@ export default function RegisterForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("fields.email")}</FormLabel>
+              <label className="text-sm font-medium">{t("fields.email")}</label>
               <FormControl>
                 <Input placeholder={t("placeholders.email")} {...field} />
               </FormControl>
@@ -189,7 +311,9 @@ export default function RegisterForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("fields.password")}</FormLabel>
+              <label className="text-sm font-medium">
+                {t("fields.password")}
+              </label>
               <FormControl>
                 <div className="relative w-full">
                   <Input
@@ -218,7 +342,7 @@ export default function RegisterForm() {
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("fields.phone")}</FormLabel>
+              <label className="text-sm font-medium">{t("fields.phone")}</label>
               <FormControl>
                 <Input
                   type="tel"
@@ -237,7 +361,9 @@ export default function RegisterForm() {
           name="countryCode"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("fields.countryCode")}</FormLabel>
+              <label className="text-sm font-medium">
+                {t("fields.countryCode")}
+              </label>
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -315,6 +441,31 @@ export default function RegisterForm() {
           className="w-full bg-gradient from-primary to-indigo-600 text-white cursor-pointer"
         />
 
+        <div className="flex items-center justify-center gap-2 text-gray-400 text-sm">
+          <span className="h-px w-16 bg-gray-200"></span>
+          {t("or")}
+          <span className="h-px w-16 bg-gray-200"></span>
+        </div>
+
+        {googleLoading ? (
+          <LoadingButton
+            type="button"
+            loading
+            disabled
+            label={t("loading")}
+            className="w-full"
+          />
+        ) : (
+          <div className="w-full flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleSignup}
+              onError={() => toast.error("Google signup failed.")}
+              text="signup_with"
+              width="320"
+            />
+          </div>
+        )}
+
         <div className="text-center text-sm flex gap-2 justify-center">
           Already log-in?{" "}
           <p
@@ -324,7 +475,16 @@ export default function RegisterForm() {
             LogIn
           </p>
         </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
+
+      <SocialSignupModal
+        open={socialDialogOpen}
+        submitting={socialSubmitting}
+        initialData={socialInitialData}
+        onOpenChange={setSocialDialogOpen}
+        onSubmit={handleSocialSignupSubmit}
+      />
+    </>
   );
 }

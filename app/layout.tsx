@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
+import GoogleProvider from "./providers/GoogleProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 
 const outfit = Outfit({
@@ -24,7 +25,9 @@ export default function RootLayout({
     <html lang="en" className={outfit.variable}>
       <body className="antialiased">
         <StoreProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <GoogleProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </GoogleProvider>
           <Toaster richColors />
         </StoreProvider>
       </body>

@@ -5,10 +5,7 @@ import {
 import { LoginFormSchemaType } from "@/components/LoginForm";
 import { RegistrationFormSchemaType } from "@/components/RegisterForm";
 import { authFetcher } from "@/lib/authFetcher";
-import {
-  enhancedAuthFetcher,
-  enhancedFetcher,
-} from "@/lib/enhancedAuthFetcher";
+import { enhancedAuthFetcher } from "@/lib/enhancedAuthFetcher";
 import { fetcher } from "@/lib/fetcher";
 import { clearSession, hasSession } from "@/lib/session";
 import { UserSession } from "@/lib/types";
@@ -16,7 +13,36 @@ import { UserSession } from "@/lib/types";
 export const createUser = async (
   body: RegistrationFormSchemaType,
 ): Promise<any> => {
-  const result = await enhancedFetcher("/auth/signup", {
+  const result = await fetcher("/auth/signup", {
+    method: "POST",
+    body,
+  });
+  return result;
+};
+
+const getGoogleSignupEndpoint = (): string => {
+  return process.env.NEXT_PUBLIC_GOOGLE_SIGNUP_ENDPOINT || "/auth/google";
+};
+
+export const signupWithGoogleCredential = async (
+  credential: string,
+): Promise<any> => {
+  const result = await fetcher(getGoogleSignupEndpoint(), {
+    method: "POST",
+    body: { credential },
+  });
+  return result;
+};
+
+export const socialSignup = async (body: {
+  email: string;
+  phone: string;
+  name: string;
+  countryCode: string;
+  firebaseUserId: string;
+  socialMediaPlatform: "GOOGLE";
+}): Promise<any> => {
+  const result = await fetcher("/auth/social-signup", {
     method: "POST",
     body,
   });
@@ -40,9 +66,30 @@ export async function loginUser(formData: LoginFormSchemaType) {
   return res.data;
 }
 
+export async function socialLoginUser(body: {
+  email: string;
+  firebaseUserId: string;
+  password?: string;
+}) {
+  const res = await fetcher<{
+    status: string;
+    message: string;
+    data: UserSession;
+  }>("/auth/signin", {
+    method: "POST",
+    body,
+  });
+
+  if (res.status !== "success") {
+    throw new Error(res.message || "Login failed");
+  }
+
+  return res.data;
+}
+
 export const verifyOtp = async (body: { email: string; otp: string }) => {
   try {
-    const res = await enhancedFetcher<{
+    const res = await fetcher<{
       status: string;
       message: string;
       data?: {
@@ -69,7 +116,7 @@ export const verifyOtp = async (body: { email: string; otp: string }) => {
 
 export const forgotPassword = async (body: { email: string }) => {
   try {
-    const res = await enhancedFetcher<{
+    const res = await fetcher<{
       status: string;
       message: string;
     }>("/auth/forgot-password", {
@@ -94,7 +141,7 @@ export const resetPassword = async (body: {
   otp: string;
 }) => {
   try {
-    const res = await enhancedFetcher<{
+    const res = await fetcher<{
       status: string;
       message: string;
     }>("/auth/reset-password", {

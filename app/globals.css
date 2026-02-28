@@ -180,3 +180,30 @@
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+
+/* react-phone-input-2 themed styles */
+.react-tel-input .flag-dropdown.open .selected-flag {
+  background-color: hsl(var(--accent)) !important;
+  border-color: hsl(var(--accent)) !important;
+}
+
+.react-tel-input .flag-dropdown .selected-flag:hover {
+  background-color: hsl(var(--accent)) !important;
+}
+
+.react-tel-input .flag-dropdown {
+  background-color: hsl(var(--background)) !important;
+  border-color: hsl(var(--input)) !important;
+}
+
+.react-tel-input .country-list {
+  background-color: hsl(var(--popover)) !important;
+  color: hsl(var(--popover-foreground)) !important;
+  border-color: hsl(var(--input)) !important;
+}
+
+.react-tel-input .country-list .country:hover,
+.react-tel-input .country-list .country.highlight {
+  background-color: hsl(var(--accent)) !important;
+  color: hsl(var(--accent-foreground)) !important;
+}

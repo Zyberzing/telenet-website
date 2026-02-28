@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 export const commonFieldSchema = () =>
   z
@@ -6,12 +7,25 @@ export const commonFieldSchema = () =>
     .trim()
     .min(1, { message: "This field is required" });
 
-export const phoneNumberSchema = () =>
-  z
-    .string()
-    .trim()
-    .min(1, { message: "This field is required" })
-    .regex(/^\+?[1-9]\d{7,14}$/, { message: "Invalid phone number" });
+export const phoneValidationSchema = z
+  .string()
+  .trim()
+  .min(1, { message: "Phone number is required" })
+  .refine(
+    (value) => {
+      try {
+        const phoneWithPlus = value.startsWith("+") ? value : `+${value}`;
+        return isValidPhoneNumber(phoneWithPlus);
+      } catch {
+        return false;
+      }
+    },
+    {
+      message: "Please enter a valid phone number",
+    },
+  );
+
+export const phoneNumberSchema = () => phoneValidationSchema;
 
 export const emailSchema = () =>
   z

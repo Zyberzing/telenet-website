@@ -2,19 +2,22 @@
 
 import { saveSession } from "@/lib/session";
 import { ROUTES } from "@/routes";
-import { loginUser } from "@/services/auth";
+import { loginUser, socialLoginUser } from "@/services/auth";
 import { setCredentials } from "@/store/slices/authSlice";
+import { useGoogleLogin } from "@react-oauth/google";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Apple, Chrome, Eye, EyeOff, Facebook } from "lucide-react";
+import { Chrome, Eye, EyeOff } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { FaSpinner } from "react-icons/fa";
+import { FaGoogle, FaSpinner } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "./ui/Button";
+import { FcGoogle } from "react-icons/fc";
+
 import { Input } from "./ui/Input";
 import {
   Form,
@@ -40,64 +43,66 @@ export default function LoginForm() {
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [socialLoading, setSocialLoading] = useState(false);
 
   const form = useForm<LoginFormSchemaType>({
     resolver: zodResolver(formSchema as any),
     defaultValues: { email: "", password: "" },
   });
 
+  const completeSignin = async (res: any) => {
+    const user =
+      typeof res?.user === "object" && res?.user !== null ? res.user : null;
+    const rawKycStatus =
+      (user as { kycStatus?: string } | null)?.kycStatus ??
+      (res as { kycStatus?: string } | null)?.kycStatus;
+    const normalizedKycStatus = (rawKycStatus || "").toLowerCase();
+
+    if (normalizedKycStatus !== "approved") {
+      const statusLabel = rawKycStatus || "pending";
+      toast.error(
+        `KYC status is ${statusLabel}. You can login only after approval.`,
+      );
+      return;
+    }
+
+    const accessTokenRaw = res.accessToken || res.access;
+    const refreshTokenRaw = res.refreshToken || res.refresh;
+
+    if (!accessTokenRaw) throw new Error("Access token missing");
+
+    const accessToken = accessTokenRaw.replace(/^Bearer\s+/i, "");
+    const refreshToken = refreshTokenRaw?.replace(/^Bearer\s+/i, "");
+
+    if (!accessToken) throw new Error("Access token missing");
+
+    await saveSession({
+      user,
+      token: accessToken,
+      refreshToken,
+      accessToken: accessToken,
+      access: accessToken,
+      refresh: refreshToken,
+    });
+
+    dispatch(
+      setCredentials({
+        token: accessToken,
+        refreshToken,
+        user,
+      }),
+    );
+
+    toast.success("Signed in successfully.");
+    router.push(ROUTES.DASHBOARD(locale));
+  };
+
   const onSubmit = async (values: LoginFormSchemaType) => {
     try {
       setLoading(true);
 
       const res = await loginUser(values);
-      const user =
-        typeof res?.user === "object" && res?.user !== null ? res.user : null;
-      const rawKycStatus =
-        (user as { kycStatus?: string } | null)?.kycStatus ??
-        (res as { kycStatus?: string } | null)?.kycStatus;
-      const normalizedKycStatus = (rawKycStatus || "").toLowerCase();
-
-      if (normalizedKycStatus !== "approved") {
-        const statusLabel = rawKycStatus || "pending";
-        toast.error(
-          `KYC status is ${statusLabel}. You can login only after approval.`,
-        );
-        return;
-        // return router.push(ROUTES.KYC(locale));
-      }
-
-      const accessTokenRaw = res.accessToken || res.access;
-      const refreshTokenRaw = res.refreshToken || res.refresh;
-
-      if (!accessTokenRaw) throw new Error("Access token missing");
-
-      const accessToken = accessTokenRaw.replace(/^Bearer\s+/i, "");
-      const refreshToken = refreshTokenRaw?.replace(/^Bearer\s+/i, "");
-
-      if (!accessToken) throw new Error("Access token missing");
-
-      // Save session (localStorage / cookie)
-      await saveSession({
-        user,
-        token: accessToken,
-        refreshToken,
-        accessToken: accessToken,
-        access: accessToken,
-        refresh: refreshToken,
-      });
-
-      // Save credentials to Redux
-      dispatch(
-        setCredentials({
-          token: accessToken,
-          refreshToken,
-          user,
-        }),
-      );
-
-      toast.success("Signed in successfully.");
-      router.push(ROUTES.DASHBOARD(locale));
+      await completeSignin(res);
     } catch (err: unknown) {
       console.error("Login failed:", err);
 
@@ -124,6 +129,59 @@ export default function LoginForm() {
       setLoading(false);
     }
   };
+
+  const googleSocialLogin = useGoogleLogin({
+    scope: "openid email profile",
+    onSuccess: async (tokenResponse) => {
+      try {
+        setSocialLoading(true);
+        const googleUser = await fetch(
+          "https://www.googleapis.com/oauth2/v3/userinfo",
+          {
+            headers: {
+              Authorization: `Bearer ${tokenResponse.access_token}`,
+            },
+          },
+        ).then((r) => r.json());
+
+        const email = String(googleUser?.email || "");
+        const firebaseUserId = String(googleUser?.sub || "");
+
+        if (!email || !firebaseUserId) {
+          throw new Error("Failed to fetch Google account details");
+        }
+
+        const passwordFromForm = form.getValues("password")?.trim();
+        const res = await socialLoginUser({
+          email,
+          firebaseUserId,
+          ...(passwordFromForm ? { password: passwordFromForm } : {}),
+        });
+        await completeSignin(res);
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "Google social login failed";
+        const normalized = message.toLowerCase();
+        const isUnregisteredSocialUser =
+          normalized.includes("invalid firebase user") ||
+          normalized.includes("firebase user") ||
+          normalized.includes("user not found");
+
+        if (isUnregisteredSocialUser) {
+          toast.error("Please register first.");
+          router.push(ROUTES.REGISTER(locale));
+          return;
+        }
+
+        toast.error(message);
+      } finally {
+        setSocialLoading(false);
+      }
+    },
+    onError: () => {
+      toast.error("Google social login failed");
+    },
+  });
 
   return (
     <Form {...form}>
@@ -222,26 +280,17 @@ export default function LoginForm() {
           <Button
             variant="outline"
             size="default"
+            type="button"
             aria-label={t("loginWithGoogle")}
+            onClick={() => googleSocialLogin()}
+            disabled={socialLoading || loading}
             className="dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700"
           >
-            <Chrome className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="outline"
-            size="default"
-            aria-label={t("loginWithApple")}
-            className="dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700"
-          >
-            <Apple className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="outline"
-            size="default"
-            aria-label={t("loginWithFacebook")}
-            className="dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700"
-          >
-            <Facebook className="h-5 w-5" />
+            {socialLoading ? (
+              <FaSpinner className="h-5 w-5 animate-spin" />
+            ) : (
+              <FcGoogle className="h-5 w-5" />
+            )}
           </Button>
         </div>
 

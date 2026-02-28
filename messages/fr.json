@@ -113,6 +113,8 @@
     },
     "searchCountry": "Rechercher un pays...",
     "noCountryFound": "Aucun pays trouvé",
+    "or": "ou",
+    "registerWithGoogle": "S'inscrire avec Google",
     "loading": "Chargement"
   },
   "AboutUs": {
