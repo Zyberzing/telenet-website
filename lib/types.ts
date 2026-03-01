@@ -218,6 +218,8 @@ export type RegistrationState = {
   countryIso?: string;
   otpAccessToken?: string;
   otpRefreshToken?: string;
+  kycStatus?: string;
+  kycReason?: string | null;
 };
 
 export type ManualFilePreview = {

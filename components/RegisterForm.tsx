@@ -19,11 +19,9 @@ import {
   passwordSchema,
   phoneNumberSchema,
 } from "@/lib/formSchemaFunctions";
-import { saveSession } from "@/lib/session";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/routes";
 import { createUser, socialSignup } from "@/services/auth";
-import { setCredentials } from "@/store/slices/authSlice";
 import SocialSignupModal, {
   SocialSignupFormValues,
 } from "@/components/SocialSignupModal";
@@ -37,7 +35,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import z from "zod";
 import { Button } from "./ui/Button";
@@ -70,7 +67,6 @@ export default function RegisterForm() {
   const t = useTranslations("RegisterForm");
   const router = useRouter();
   const locale = useLocale();
-  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -216,44 +212,35 @@ export default function RegisterForm() {
       });
 
       const data = res?.data ?? res;
-      const user =
-        typeof data?.user === "object" && data?.user !== null ? data.user : null;
       const accessTokenRaw = data?.accessToken || data?.access || data?.token;
       const refreshTokenRaw = data?.refreshToken || data?.refresh;
-
-      if (!accessTokenRaw) {
-        toast.success(res?.message || "Google signup successful. Please login.");
-        setSocialDialogOpen(false);
-        router.push(ROUTES.LOGIN(locale));
-        return;
-      }
-
-      const accessToken = String(accessTokenRaw).replace(/^Bearer\s+/i, "");
-      const refreshToken = String(refreshTokenRaw || "").replace(
-        /^Bearer\s+/i,
-        "",
+      const accessToken = accessTokenRaw
+        ? String(accessTokenRaw).replace(/^Bearer\s+/i, "")
+        : "";
+      const refreshToken = refreshTokenRaw
+        ? String(refreshTokenRaw).replace(/^Bearer\s+/i, "")
+        : "";
+      const selectedCountry = countryCodes.find(
+        (item) => item.code === socialForm.countryCode.trim(),
       );
 
-      await saveSession({
-        user,
-        token: accessToken,
-        refreshToken,
-        accessToken,
-        access: accessToken,
-        refresh: refreshToken,
-      });
-
-      dispatch(
-        setCredentials({
-          token: accessToken,
-          refreshToken,
-          user,
+      sessionStorage.setItem(
+        "registrationState",
+        JSON.stringify({
+          email: socialForm.email.trim(),
+          name: socialForm.name.trim(),
+          phone: socialForm.phone.trim(),
+          country: selectedCountry?.name || "",
+          countryCode: socialForm.countryCode.trim(),
+          countryIso: selectedCountry?.iso || "",
+          otpAccessToken: accessToken,
+          otpRefreshToken: refreshToken,
         }),
       );
 
       toast.success(res?.message || "Signed up with Google successfully.");
       setSocialDialogOpen(false);
-      router.push(ROUTES.DASHBOARD(locale));
+      router.push(accessToken ? ROUTES.KYC(locale) : ROUTES.OTP(locale));
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Social signup is unavailable.";

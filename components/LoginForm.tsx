@@ -34,6 +34,13 @@ export const formSchema = z.object({
 });
 
 export type LoginFormSchemaType = z.infer<typeof formSchema>;
+type KycPrefillFallback = {
+  email?: string;
+  name?: string;
+  phone?: string;
+  country?: string;
+  countryCode?: string;
+};
 
 export default function LoginForm() {
   const t = useTranslations("LoginForm");
@@ -60,9 +67,11 @@ export default function LoginForm() {
     defaultValues: { email: "", password: "" },
   });
 
-  const completeSignin = async (res: any) => {
+  const completeSignin = async (res: any, fallback: KycPrefillFallback = {}) => {
     const user =
       typeof res?.user === "object" && res?.user !== null ? res.user : null;
+    const responseData =
+      typeof res === "object" && res !== null ? (res as Record<string, any>) : {};
 
     const responseRole =
       (user as { role?: string } | null)?.role ??
@@ -87,34 +96,77 @@ export default function LoginForm() {
     if (!accessTokenRaw) throw new Error("Access token missing");
     const accessToken = accessTokenRaw?.replace(/^Bearer\s+/i, "");
     const refreshToken = refreshTokenRaw?.replace(/^Bearer\s+/i, "");
-
-    if (isManualKyc === false && isSumsubKyc === false) {
-      sessionStorage.setItem(
-        "registrationState",
-
-        JSON.stringify({
-          email:
-            (user as { email?: string } | null)?.email ||
-            form.getValues("email") ||
-            "",
-          name: (user as { name?: string } | null)?.name || "",
-          country: (user as { country?: string } | null)?.country || "",
-          countryCode:
-            (user as { countryCode?: string } | null)?.countryCode || "",
-          otpAccessToken: accessToken || "",
-          otpRefreshToken: refreshToken || "",
-        }),
-      );
-
-      toast.info("Please complete your KYC verification to continue.");
-      router.push(ROUTES.KYC(locale));
-      return;
-    }
-
     const rawKycStatus =
       (user as { kycStatus?: string } | null)?.kycStatus ??
       (res as { kycStatus?: string } | null)?.kycStatus;
+    const rawKycReason =
+      (user as { reason?: string | null } | null)?.reason ??
+      (res as { reason?: string | null } | null)?.reason ??
+      null;
     const normalizedKycStatus = (rawKycStatus || "").toLowerCase();
+    const shouldGoToKyc =
+      normalizedKycStatus === "notsubmitted" ||
+      normalizedKycStatus === "not_submitted";
+    const isPendingKyc =
+      normalizedKycStatus === "pending" ||
+      normalizedKycStatus === "inreview" ||
+      normalizedKycStatus === "in_review" ||
+      normalizedKycStatus === "underreview" ||
+      normalizedKycStatus === "under_review";
+
+    if (
+      shouldGoToKyc ||
+      isPendingKyc ||
+      (isManualKyc === false && isSumsubKyc === false)
+    ) {
+      sessionStorage.setItem(
+        "registrationState",
+        JSON.stringify({
+          email:
+            (user as { email?: string } | null)?.email ||
+            (typeof responseData.email === "string" ? responseData.email : "") ||
+            fallback.email ||
+            form.getValues("email") ||
+            "",
+          name:
+            (user as { name?: string } | null)?.name ||
+            (typeof responseData.name === "string" ? responseData.name : "") ||
+            fallback.name ||
+            "",
+          phone:
+            (user as { phone?: string } | null)?.phone ||
+            (typeof responseData.phone === "string" ? responseData.phone : "") ||
+            fallback.phone ||
+            "",
+          country:
+            (user as { country?: string } | null)?.country ||
+            (typeof responseData.country === "string"
+              ? responseData.country
+              : "") ||
+            fallback.country ||
+            "",
+          countryCode:
+            (user as { countryCode?: string } | null)?.countryCode ||
+            (typeof responseData.countryCode === "string"
+              ? responseData.countryCode
+              : "") ||
+            fallback.countryCode ||
+            "",
+          otpAccessToken: accessToken || "",
+          otpRefreshToken: refreshToken || "",
+          kycStatus: rawKycStatus || "",
+          kycReason: rawKycReason,
+        }),
+      );
+
+      toast.info(
+        isPendingKyc
+          ? "Your KYC verification is pending review."
+          : "Please complete your KYC verification to continue.",
+      );
+      router.push(ROUTES.KYC(locale));
+      return;
+    }
 
     if (normalizedKycStatus !== "approved") {
       const statusLabel = rawKycStatus || "pending";
@@ -207,7 +259,10 @@ export default function LoginForm() {
           firebaseUserId,
           ...(passwordFromForm ? { password: passwordFromForm } : {}),
         });
-        await completeSignin(res);
+        await completeSignin(res, {
+          email,
+          name: String(googleUser?.name || ""),
+        });
       } catch (error) {
         const message =
           error instanceof Error ? error.message : "Google social login failed";

@@ -35,7 +35,7 @@ import { getProfile } from "@/services/auth";
 import { getKYC, submitManualKycWithToken } from "@/services/kyc";
 import { uploadPublicMedia } from "@/services/upload";
 import { getCountries, getCountryCallingCode } from "libphonenumber-js";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Clock3 } from "lucide-react";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
@@ -107,6 +107,26 @@ export default function KYC() {
     if (method === "manual") return "Manual KYC Verification";
     return "Choose Verification Method";
   }, [method]);
+
+  const normalizedKycStatus = useMemo(
+    () => (registrationState?.kycStatus || "").toLowerCase(),
+    [registrationState?.kycStatus],
+  );
+  const isKycPending = useMemo(
+    () =>
+      normalizedKycStatus === "pending" ||
+      normalizedKycStatus === "inreview" ||
+      normalizedKycStatus === "in_review" ||
+      normalizedKycStatus === "underreview" ||
+      normalizedKycStatus === "under_review",
+    [normalizedKycStatus],
+  );
+  const statusLabel = useMemo(() => {
+    if (!registrationState?.kycStatus) return "Pending";
+    return registrationState.kycStatus
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  }, [registrationState?.kycStatus]);
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem("sumsub_kyc_token");
@@ -489,7 +509,83 @@ export default function KYC() {
           Register -> Verify OTP -> KYC -> Login (approved users only)
         </p> */}
 
-          {!method && (
+          {isKycPending && (
+            <div className="mt-6">
+              <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-6 dark:border-amber-900 dark:from-amber-950/50 dark:to-orange-950/40">
+                <div className="flex items-start gap-3">
+                  <div className="rounded-full bg-amber-100 p-2 text-amber-700 dark:bg-amber-900/60 dark:text-amber-200">
+                    <Clock3 className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                      KYC Verification In Progress
+                    </h2>
+                    <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
+                      Your documents are submitted and currently under review.
+                      We will notify you once verification is complete.
+                    </p>
+                    <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      <div className="rounded-lg border border-amber-200/80 bg-white/70 px-4 py-3 dark:border-amber-900/70 dark:bg-gray-900/40">
+                        <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                          Current Status
+                        </p>
+                        <p className="mt-1 text-sm font-medium text-amber-700 dark:text-amber-200">
+                          {statusLabel}
+                        </p>
+                      </div>
+                      <div className="rounded-lg border border-amber-200/80 bg-white/70 px-4 py-3 dark:border-amber-900/70 dark:bg-gray-900/40">
+                        <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                          Registered Email
+                        </p>
+                        <p className="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {registrationState?.email || "Not available"}
+                        </p>
+                      </div>
+                      <div className="rounded-lg border border-amber-200/80 bg-white/70 px-4 py-3 dark:border-amber-900/70 dark:bg-gray-900/40">
+                        <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                          Name
+                        </p>
+                        <p className="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {registrationState?.name || "Not available"}
+                        </p>
+                      </div>
+                      <div className="rounded-lg border border-amber-200/80 bg-white/70 px-4 py-3 dark:border-amber-900/70 dark:bg-gray-900/40">
+                        <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                          Mobile Number
+                        </p>
+                        <p className="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {registrationState?.phone
+                            ? `${registrationState.countryCode || ""} ${registrationState.phone}`.trim()
+                            : "Not available"}
+                        </p>
+                      </div>
+                    </div>
+                    {registrationState?.kycReason && (
+                      <div className="mt-4 rounded-lg border border-amber-300/80 bg-white/80 px-4 py-3 dark:border-amber-800 dark:bg-gray-900/50">
+                        <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                          Reviewer Note
+                        </p>
+                        <p className="mt-1 text-sm text-gray-800 dark:text-gray-200">
+                          {registrationState.kycReason}
+                        </p>
+                      </div>
+                    )}
+                    <div className="mt-5 flex flex-wrap gap-3">
+                      <Button
+                        type="button"
+                        className="bg-primary text-white cursor-pointer"
+                        onClick={() => router.push(ROUTES.LOGIN(locale))}
+                      >
+                        Back to Login
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!method && !isKycPending && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
               <button
                 type="button"
