@@ -520,7 +520,7 @@
     "invoice": "Facture",
     "action": "Action",
     "failed": "Échoué",
-    "pending": "En attente",
+    "cancelled": "Annulé",
     "completed": "Terminé",
     "download": "Télécharger"
   },

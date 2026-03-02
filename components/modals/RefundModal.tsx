@@ -11,6 +11,7 @@ import {
 import type { Refund } from "@/lib/types";
 import { createRefund } from "@/services/refund";
 import { crateTicket } from "@/services/ticket";
+import { sendTicketConversationMessage } from "@/services/ticketConversation";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -53,7 +54,12 @@ export default function RefundModal({
           // document: refundData.document ?? null,
           category: refundData.category ?? "",
         });
-        console.log("ticket", ticketRes);
+        const createChatForAdmin = await sendTicketConversationMessage(
+          ticketRes?.data?._id,
+          refundData?.description,
+        );
+
+        console.log("ticket", ticketRes, "chat create", createChatForAdmin);
       }
       toast.success(refundRes.message || "Refund initiated successfully");
       onClose();

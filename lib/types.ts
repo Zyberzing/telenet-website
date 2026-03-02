@@ -313,6 +313,13 @@ export type PromotionListResponse = {
   };
 };
 
+export type VerifyPromotionResponse = {
+  status: "success" | "error";
+  message?: string;
+  data?: PromotionItem;
+  statusCode?: number;
+};
+
 export type OTPVerificationProps = {
   prefilledEmail?: string;
 };

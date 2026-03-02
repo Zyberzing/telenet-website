@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/dialog";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { PromotionItem, PromotionSelectionModalProps } from "@/lib/types";
-import { getPromotionList } from "@/services/promotion";
+import { getPromotionList, verifyPromotion } from "@/services/promotion";
 import { useEffect, useMemo, useState } from "react";
-import { FaSpinner } from "react-icons/fa";
+import { FaCheckCircle, FaSpinner } from "react-icons/fa";
 import { toast } from "sonner";
 
 export default function PromotionSelectionModal({
@@ -29,6 +29,9 @@ export default function PromotionSelectionModal({
   const [selectedPromotionId, setSelectedPromotionId] = useState<string | null>(
     null,
   );
+  const [verifyingPromotionId, setVerifyingPromotionId] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     if (!open) {
@@ -92,6 +95,36 @@ export default function PromotionSelectionModal({
   }, [basePrice, selectedPromotion]);
 
   const selectedPayable = Math.max(basePrice - selectedDiscount, 0);
+
+  const handleApplyPromotion = async (
+    promotion: PromotionItem,
+  ): Promise<void> => {
+    if (verifyingPromotionId || selectedPromotionId === promotion._id) return;
+
+    try {
+      setVerifyingPromotionId(promotion._id);
+      const verifiedPromotion = await verifyPromotion(promotion.promoCode);
+      console.log("Verified Promotion:", verifiedPromotion);
+      setSelectedPromotionId(verifiedPromotion._id || promotion._id);
+      toast.success("Promotion applied successfully.");
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to verify promotion code.";
+      toast.error(
+        message === "Token missing" || message === "Token expired"
+          ? "Please login first."
+          : message,
+      );
+    } finally {
+      setVerifyingPromotionId(null);
+    }
+  };
+
+  const handleRemovePromotion = () => {
+    setSelectedPromotionId(null);
+  };
 
   const getPromotionDiscountLabel = (promotion: PromotionItem) => {
     const rawValue = Number(promotion.discountValue ?? 0);
@@ -169,29 +202,60 @@ export default function PromotionSelectionModal({
           ) : (
             filteredPromotions.map((promotion) => {
               const isSelected = selectedPromotionId === promotion._id;
+              const isVerifying = verifyingPromotionId === promotion._id;
 
               return (
-                <button
+                <div
                   key={promotion._id}
-                  type="button"
-                  onClick={() =>
-                    setSelectedPromotionId((prev) =>
-                      prev === promotion._id ? null : promotion._id,
-                    )
-                  }
                   className={`w-full flex justify-between text-left rounded-lg border px-3 py-2 transition-colors ${
                     isSelected
                       ? "border-primary bg-primary/10"
                       : "border-gray-200 dark:border-zinc-700 bg-[#F1F8FE] dark:bg-zinc-800"
                   }`}
                 >
-                  <p className="text-sm font-medium truncate">
-                    {promotion.promotionName} - {promotion.promoCode}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
-                    {getPromotionDiscountLabel(promotion)}
-                  </p>
-                </button>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="pt-1">
+                      {isSelected ? (
+                        <FaCheckCircle className="text-[#00B625]" size={14} />
+                      ) : (
+                        <span className="inline-block w-[14px]" />
+                      )}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        {promotion.promotionName} - {promotion.promoCode}
+                      </p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">
+                        {getPromotionDiscountLabel(promotion)}
+                      </p>
+                    </div>
+                  </div>
+                  {isSelected ? (
+                    <button
+                      type="button"
+                      onClick={handleRemovePromotion}
+                      className="text-xs text-red-500 hover:text-red-600 cursor-pointer shrink-0"
+                    >
+                      Remove
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => void handleApplyPromotion(promotion)}
+                      disabled={!!verifyingPromotionId}
+                      className="text-xs text-primary hover:text-primary/80 cursor-pointer shrink-0 disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      {isVerifying ? (
+                        <span className="inline-flex items-center gap-1">
+                          <FaSpinner className="animate-spin" size={10} />
+                          Verifying
+                        </span>
+                      ) : (
+                        "Apply"
+                      )}
+                    </button>
+                  )}
+                </div>
               );
             })
           )}

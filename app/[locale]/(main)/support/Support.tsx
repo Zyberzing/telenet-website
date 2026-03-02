@@ -162,7 +162,7 @@ export default function Support({ initialTickets }: SupportProps) {
             </Popover>
 
             {/* Priority */}
-            <Select
+            {/* <Select
               value={priority}
               onValueChange={(v) => setPriority(v as "low" | "medium" | "high")}
             >
@@ -189,7 +189,7 @@ export default function Support({ initialTickets }: SupportProps) {
                   {t("high")}
                 </SelectItem>
               </SelectContent>
-            </Select>
+            </Select> */}
           </div>
         </div>
 

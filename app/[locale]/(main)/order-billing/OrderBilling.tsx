@@ -73,7 +73,6 @@ export default function OrderBilling({
     const values = new Set<string>();
     initialOrders.forEach((order) => {
       if (order.providerName) values.add(order.providerName);
-      if (order.network) values.add(order.network);
     });
     return Array.from(values);
   }, [initialOrders]);

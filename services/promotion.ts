@@ -1,5 +1,9 @@
 import { authFetcher } from "@/lib/authFetcher";
-import { PromotionItem, PromotionListResponse } from "@/lib/types";
+import {
+  PromotionItem,
+  PromotionListResponse,
+  VerifyPromotionResponse,
+} from "@/lib/types";
 
 export const getPromotionList = async (): Promise<PromotionItem[]> => {
   try {
@@ -11,4 +15,22 @@ export const getPromotionList = async (): Promise<PromotionItem[]> => {
     console.error("Error fetching promotions:", error);
     throw error;
   }
+};
+
+export const verifyPromotion = async (
+  promoCode: string,
+): Promise<PromotionItem> => {
+  const response = await authFetcher<VerifyPromotionResponse>(
+    "/promotion/verify",
+    {
+      method: "POST",
+      body: { promoCode },
+    },
+  );
+
+  if (response?.status !== "success" || !response?.data) {
+    throw new Error(response?.message || "Failed to verify promotion.");
+  }
+
+  return response.data;
 };
