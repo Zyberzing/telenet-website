@@ -6,10 +6,11 @@ import BillingModal from "@/components/modals/ViewBillingModal";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/routes";
+import { getOrderList } from "@/services/order";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 
 export interface Plan {
@@ -50,10 +51,44 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
   const [showRefund, setShowRefund] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const [showBilling, setShowBilling] = useState(false);
+  const [refundRequestedOrderIds, setRefundRequestedOrderIds] = useState<
+    Set<string>
+  >(new Set());
+  const [refundNoteTargetId, setRefundNoteTargetId] = useState<string | null>(
+    null,
+  );
+
+  useEffect(() => {
+    const loadRefundRequestedOrders = async () => {
+      const pageSize = 50;
+      let currentPage = 1;
+      const requestedOrderIds = new Set<string>();
+
+      while (true) {
+        const orderData = await getOrderList(currentPage, pageSize);
+        if (!orderData) break;
+
+        orderData.result.forEach((order) => {
+          if (order.isRefundRequested) {
+            requestedOrderIds.add(order._id);
+          }
+        });
+
+        const totalPages = orderData.pagination?.totalPages ?? currentPage;
+        if (currentPage >= totalPages) break;
+        currentPage += 1;
+      }
+
+      setRefundRequestedOrderIds(requestedOrderIds);
+    };
+
+    void loadRefundRequestedOrders();
+  }, []);
 
   const handleRefundSuccess = () => {
     setShowRefund(false);
     setSelectedPlan(null);
+    setRefundNoteTargetId(null);
     router.refresh();
   };
 
@@ -110,114 +145,138 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                 No active plan available
               </p>
             ) : (
-              activePlans.map((plan) => (
-                <div
-                  key={plan.id}
-                  className="bg-[#F1F8FE] dark:bg-gray-800 flex rounded-2xl p-4 space-y-4 shadow-sm"
-                >
-                  <div className="flex-1">
-                    <div className="flex flex-col gap-2 w-1/2">
-                      <div className="flex gap-4">
-                        <Image
-                          src={plan?.flag || "/flags/usa.svg"}
-                          alt="flag"
-                          width={30}
-                          height={50}
-                          className="rounded"
-                        />
-                        <p className="font-medium text-lg dark:text-white">
-                          {plan.package_name}
-                        </p>
-                      </div>
-                      <div className="text-sm flex justify-between text-gray-500 dark:text-gray-400">
-                        <p>
-                          {plan.package_data >= 1024
-                            ? `${parseFloat(
-                                (plan.package_data / 1024).toFixed(2),
-                              )} GB`
-                            : `${plan.package_data} MB`}{" "}
-                          {t("dataLeft")}
-                        </p>
-                        <p>
-                          {plan.package_data >= 1024
-                            ? `${parseFloat(
-                                (plan.package_data / 1024).toFixed(2),
-                              )} GB`
-                            : `${plan.package_data} MB`}
+              activePlans.map((plan) => {
+                const planTargetId = plan.orderId || plan.id;
+                const hasRefundRequested = refundRequestedOrderIds.has(
+                  plan.orderId,
+                );
+
+                return (
+                  <div
+                    key={plan.id}
+                    className="bg-[#F1F8FE] dark:bg-gray-800 flex rounded-2xl p-4 space-y-4 shadow-sm"
+                  >
+                    <div className="flex-1">
+                      <div className="flex flex-col gap-2 w-1/2">
+                        <div className="flex gap-4">
+                          <Image
+                            src={plan?.flag || "/flags/usa.svg"}
+                            alt="flag"
+                            width={30}
+                            height={50}
+                            className="rounded"
+                          />
+                          <p className="font-medium text-lg dark:text-white">
+                            {plan.package_name}
+                          </p>
+                        </div>
+                        <div className="text-sm flex justify-between text-gray-500 dark:text-gray-400">
+                          <p>
+                            {plan.package_data >= 1024
+                              ? `${parseFloat(
+                                  (plan.package_data / 1024).toFixed(2),
+                                )} GB`
+                              : `${plan.package_data} MB`}{" "}
+                            {t("dataLeft")}
+                          </p>
+                          <p>
+                            {plan.package_data >= 1024
+                              ? `${parseFloat(
+                                  (plan.package_data / 1024).toFixed(2),
+                                )} GB`
+                              : `${plan.package_data} MB`}
+                          </p>
+                        </div>
+
+                        <div className="bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                          <div
+                            className="bg-[#FF7623] h-1.5"
+                            style={{
+                              width: `${
+                                (parseFloat(plan.dataLeft || "0") /
+                                  parseFloat(plan.totalData)) *
+                                100
+                              }%`,
+                            }}
+                          />
+                        </div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {t("validUntil")} {plan.perioddays} days
                         </p>
                       </div>
 
-                      <div className="bg-gray-200 h-1.5 rounded-full overflow-hidden">
-                        <div
-                          className="bg-[#FF7623] h-1.5"
-                          style={{
-                            width: `${
-                              (parseFloat(plan.dataLeft || "0") /
-                                parseFloat(plan.totalData)) *
-                              100
-                            }%`,
+                      <div className="flex flex-col sm:flex-row gap-3 mt-3">
+                        <Button
+                          onClick={() => router.push(ROUTES.PLANS(locale))}
+                          className="bg-primary dark:text-white hover:bg-primary px-10 rounded-full"
+                        >
+                          {t("renew")}
+                        </Button>
+                        <Button
+                          onClick={() => router.push(ROUTES.TOP_UP(locale))}
+                          className="bg-black dark:text-white dark:hover:text-black dark:hover:bg-purple-50 hover:bg-gray-800 px-10 rounded-full"
+                        >
+                          {t("topUp")}
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setSelectedPlan(plan);
+                            setShowQR(true);
                           }}
-                        />
-                      </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {t("validUntil")} {plan.perioddays} days
-                      </p>
-                    </div>
+                          className="px-10 bg-black dark:text-white dark:hover:text-black dark:hover:bg-purple-50 hover:bg-gray-800 rounded-full"
+                        >
+                          {t("viewQR")}
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            if (hasRefundRequested) {
+                              setRefundNoteTargetId(planTargetId);
+                              return;
+                            }
 
-                    <div className="flex flex-col sm:flex-row gap-3 mt-3">
-                      <Button
-                        onClick={() => router.push(ROUTES.PLANS(locale))}
-                        className="bg-primary dark:text-white hover:bg-primary px-10 rounded-full"
-                      >
-                        {t("renew")}
-                      </Button>
-                      <Button
-                        onClick={() => router.push(ROUTES.TOP_UP(locale))}
-                        className="bg-black dark:text-white dark:hover:text-black dark:hover:bg-purple-50 hover:bg-gray-800 px-10 rounded-full"
-                      >
-                        {t("topUp")}
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setSelectedPlan(plan);
-                          setShowQR(true);
-                        }}
-                        className="px-10 bg-black dark:text-white dark:hover:text-black dark:hover:bg-purple-50 hover:bg-gray-800 rounded-full"
-                      >
-                        {t("viewQR")}
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setSelectedPlan(plan);
-                          setShowRefund(true);
-                        }}
-                        className="px-10 bg-black dark:text-white dark:hover:text-black dark:hover:bg-purple-50 hover:bg-gray-800 rounded-full"
-                      >
-                        {t("refund")}
-                      </Button>
+                            setRefundNoteTargetId(null);
+                            setSelectedPlan(plan);
+                            setShowRefund(true);
+                          }}
+                          className="px-10 bg-black dark:text-white dark:hover:text-black dark:hover:bg-purple-50 hover:bg-gray-800 rounded-full"
+                        >
+                          {t("refund")}
+                        </Button>
+                        <p
+                          onClick={() =>
+                            router.push(ROUTES.INSTALLATION_GUIDE(locale))
+                          }
+                          className="border-b border-primary text-primary h-fit place-self-center cursor-pointer"
+                        >
+                          How to install
+                        </p>
+                      </div>
+
+                      {refundNoteTargetId === planTargetId && (
+                        <p className="text-sm text-red-600 dark:text-red-400 mt-2 text-center mb-0">
+                          Check refund status in support page of your profile
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
                       <p
-                        onClick={() =>
-                          router.push(ROUTES.INSTALLATION_GUIDE(locale))
-                        }
+                        onClick={() => {
+                          setSelectedPlan(plan);
+                          setShowBilling(true);
+                        }}
                         className="border-b border-primary text-primary h-fit place-self-center cursor-pointer"
                       >
-                        How to install
+                        View Billing
                       </p>
+                      {hasRefundRequested && (
+                        <p className="text-xs text-red-600 dark:text-red-400 mt-4">
+                          Refund Requested
+                        </p>
+                      )}
                     </div>
                   </div>
-                  <div>
-                    <p
-                      onClick={() => {
-                        setSelectedPlan(plan);
-                        setShowBilling(true);
-                      }}
-                      className="border-b border-primary text-primary h-fit place-self-center cursor-pointer"
-                    >
-                      View Billing
-                    </p>
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         )}
