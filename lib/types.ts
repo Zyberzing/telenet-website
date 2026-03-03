@@ -123,12 +123,15 @@ export interface Pagination {
 
 export interface Order {
   _id: string;
+  packageId?: string;
   package_name: string;
   package_data: string;
   network: string;
   providerName: string;
   paymentIntentId: string;
   status: string;
+  isRefundRequested?: boolean;
+  refundStatus?: string | null;
   createdAt: string;
 }
 

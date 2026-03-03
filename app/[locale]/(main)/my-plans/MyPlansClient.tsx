@@ -126,7 +126,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                           className="rounded"
                         />
                         <p className="font-medium text-lg dark:text-white">
-                          {plan.package_name} – {plan.provider}
+                          {plan.package_name}
                         </p>
                       </div>
                       <div className="text-sm flex justify-between text-gray-500 dark:text-gray-400">

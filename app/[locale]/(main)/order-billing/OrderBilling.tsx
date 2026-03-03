@@ -263,8 +263,7 @@ export default function OrderBilling({
 
     const rows = [
       ["Package Name", order.package_name],
-      ["Provider", order.providerName || order.network],
-      ["Network", order.network],
+      ["Provider", order.providerName || "-"],
       ["Coverage", order.coverage],
       ["Data", order.data ?? order.package_data],
       ["Duration", order.validity ?? order.perioddays],
@@ -458,7 +457,7 @@ export default function OrderBilling({
                       {order?.package_name}
                     </td>
                     <td className="py-3 px-4 whitespace-nowrap">
-                      {order?.network || "-"}
+                      {order?.providerName || "-"}
                     </td>
                     <td className="py-3 px-4">
                       {order?.paymentIntentId || "-"}

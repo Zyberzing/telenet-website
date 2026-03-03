@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Plan } from "@/lib/types";
-import { Heart } from "lucide-react";
+import { getOrderList } from "@/services/order";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -31,15 +31,79 @@ export default function PlanDetailsModal({
 }: PlanDetailsModalProps) {
   const [openCompatibilityModal, setOpenCompatibilityModal] = useState(false);
   const [openPromotionModal, setOpenPromotionModal] = useState(false);
+  const [refundCheckLoading, setRefundCheckLoading] = useState(false);
+  const [refundNote, setRefundNote] = useState("");
 
   useEffect(() => {
     if (!selectedPlan) {
       setOpenCompatibilityModal(false);
       setOpenPromotionModal(false);
+      setRefundNote("");
     }
   }, [selectedPlan]);
 
   if (!selectedPlan) return null;
+
+  const shouldBlockPlanPurchase = async () => {
+    const pageSize = 50;
+    let currentPage = 1;
+
+    while (true) {
+      const orderData = await getOrderList(currentPage, pageSize);
+
+      if (!orderData) {
+        toast.error(
+          "Unable to verify refund status right now. Please try again.",
+        );
+        return true;
+      }
+
+      const alreadyRefundRequested = orderData.result.some(
+        (order) =>
+          order.packageId === selectedPlan.package_id &&
+          order.isRefundRequested,
+      );
+      if (alreadyRefundRequested) {
+        setRefundNote(
+          "Refund already requested for this plan. Check the refund status in support page of your profile menu.",
+        );
+        return true;
+      }
+
+      const totalPages = orderData.pagination?.totalPages ?? currentPage;
+      if (currentPage >= totalPages) {
+        break;
+      }
+
+      currentPage += 1;
+    }
+
+    return false;
+  };
+
+  const handleOpenCompatibilityCheck = async () => {
+    if (!isLoggedIn) {
+      toast.error("Please login first.");
+      return;
+    }
+
+    if (refundCheckLoading) {
+      return;
+    }
+
+    setRefundCheckLoading(true);
+    try {
+      setRefundNote("");
+      const shouldBlock = await shouldBlockPlanPurchase();
+      if (shouldBlock) {
+        return;
+      }
+
+      setOpenCompatibilityModal(true);
+    } finally {
+      setRefundCheckLoading(false);
+    }
+  };
 
   const handleCloseAll = () => {
     setOpenCompatibilityModal(false);
@@ -169,24 +233,29 @@ export default function PlanDetailsModal({
             )}
           </div>
 
-          <DialogFooter className="p-4 rounded-b-2xl flex justify-between items-center sticky bottom-0 z-10">
-            {/* <Heart className="w-5 h-5 text-gray-400 dark:text-gray-500 cursor-pointer hover:text-red-500" /> */}
-            <div className="flex gap-2 flex-1">
-              <Button
-                onClick={() => {
-                  if (!isLoggedIn) {
-                    toast.error("Please login first.");
-                    return;
-                  }
-                  setOpenCompatibilityModal(true);
-                }}
-                className="bg-gradient flex-1 text-white rounded-full px-4 py-2 text-sm"
-              >
-                Compatibility Check
-              </Button>
-              <Button className="bg-black dark:bg-zinc-700 flex-1 text-white hover:bg-gradient rounded-full px-4 py-2 text-sm">
-                Add to Favorites
-              </Button>
+          <DialogFooter className="px-4 py-1 rounded-b-2xl flex flex-col gap-2 sticky bottom-0 z-10">
+            {/* Buttons Row */}
+            <div className="w-full text-start text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex gap-2 w-full">
+                <Button
+                  onClick={handleOpenCompatibilityCheck}
+                  disabled={refundCheckLoading}
+                  className="bg-gradient flex-1 text-white rounded-full px-4 py-2 text-sm"
+                >
+                  Compatibility Check
+                </Button>
+
+                <Button className="bg-black dark:bg-zinc-700 flex-1 text-white hover:bg-gradient rounded-full px-4 py-2 text-sm">
+                  Add to Favorites
+                </Button>
+              </div>
+
+              {/* Refund Note Row */}
+              {refundNote && (
+                <p className="w-full text-xs text-red-600 dark:text-red-400 mt-2 px-1 mb-0">
+                  {refundNote}
+                </p>
+              )}
             </div>
           </DialogFooter>
         </DialogContent>
