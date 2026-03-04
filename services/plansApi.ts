@@ -1,6 +1,7 @@
 "use server";
 import { countryItems, regionItems } from "@/app/[locale]/(main)/plans/page";
 import { fetcher } from "@/lib/fetcher";
+import { hasSession } from "@/lib/session";
 import { Plan, PlansProps } from "@/lib/types";
 
 export const getCountries = async (): Promise<countryItems[]> => {
@@ -46,6 +47,8 @@ export const getPlans = async ({
   plan_name?: number;
 }): Promise<GetPlansResponse> => {
   try {
+    const session = await hasSession();
+    const shouldSendAuth = Boolean(session?.accessToken);
     const params = new URLSearchParams();
 
     if (filterby) params.set("filterby", filterby);
@@ -66,7 +69,9 @@ export const getPlans = async ({
 
     const apiUrl = `/plan/package-list?${params.toString()}`;
 
-    const response = await fetcher<{ data: PlansProps }>(apiUrl);
+    const response = await fetcher<{ data: PlansProps }>(apiUrl, {
+      auth: shouldSendAuth,
+    });
     const data = response?.data || {};
 
     return {

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Plan } from "@/lib/types";
 import { getOrderList } from "@/services/order";
+import { upsertWishlist } from "@/services/wishlist";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -20,6 +21,7 @@ interface PlanDetailsModalProps {
   onBuy: (promotionId?: string) => void;
   orderLoading: boolean;
   isLoggedIn: boolean;
+  onFavoriteChange?: (isFavorite: boolean, plan: Plan) => void;
 }
 
 export default function PlanDetailsModal({
@@ -28,18 +30,25 @@ export default function PlanDetailsModal({
   onBuy,
   orderLoading,
   isLoggedIn,
+  onFavoriteChange,
 }: PlanDetailsModalProps) {
   const [openCompatibilityModal, setOpenCompatibilityModal] = useState(false);
   const [openPromotionModal, setOpenPromotionModal] = useState(false);
   const [refundCheckLoading, setRefundCheckLoading] = useState(false);
   const [refundNote, setRefundNote] = useState("");
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     if (!selectedPlan) {
       setOpenCompatibilityModal(false);
       setOpenPromotionModal(false);
       setRefundNote("");
+      setIsFavorite(false);
+      return;
     }
+
+    setIsFavorite(Boolean(selectedPlan.wishlisted));
   }, [selectedPlan]);
 
   if (!selectedPlan) return null;
@@ -102,6 +111,41 @@ export default function PlanDetailsModal({
       setOpenCompatibilityModal(true);
     } finally {
       setRefundCheckLoading(false);
+    }
+  };
+
+  const handleFavoriteToggle = async () => {
+    if (!selectedPlan) return;
+    if (!isLoggedIn) {
+      toast.error("Please login first.");
+      return;
+    }
+    if (wishlistLoading) return;
+
+    const action = isFavorite ? "REMOVE" : "ADD";
+    setWishlistLoading(true);
+    try {
+      const response = await upsertWishlist({
+        planId: selectedPlan._id,
+        action,
+      });
+      const nextFavoriteState = action === "ADD";
+      setIsFavorite(nextFavoriteState);
+      onFavoriteChange?.(nextFavoriteState, selectedPlan);
+      toast.success(
+        response?.message ||
+          (nextFavoriteState
+            ? "Plan added to favorites."
+            : "Plan removed from favorites."),
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to update wishlist.");
+      }
+    } finally {
+      setWishlistLoading(false);
     }
   };
 
@@ -245,8 +289,12 @@ export default function PlanDetailsModal({
                   Compatibility Check
                 </Button>
 
-                <Button className="bg-black dark:bg-zinc-700 flex-1 text-white hover:bg-gradient rounded-full px-4 py-2 text-sm">
-                  Add to Favorites
+                <Button
+                  onClick={handleFavoriteToggle}
+                  disabled={wishlistLoading}
+                  className="bg-black dark:bg-zinc-700 flex-1 text-white hover:bg-gradient rounded-full px-4 py-2 text-sm"
+                >
+                  {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
                 </Button>
               </div>
 

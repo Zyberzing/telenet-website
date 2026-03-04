@@ -65,7 +65,7 @@ const PartnerWithUsPage = () => {
         phone: form.phone,
         message: form.message,
       };
-      console.log("payload", payload);
+
       await partnerWithUs(payload);
       setSuccess("Message sent successfully!");
       setForm({ name: "", email: "", phone: "", countryCode: "", message: "" });

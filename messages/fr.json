@@ -8,6 +8,7 @@
     "signIn": "Se connecter",
     "dashboard": "Tableau de bord",
     "myPlans": "Mes projets",
+    "favorites": "Favoris",
     "wallet": "Portefeuille",
     "ordersBilling": "Commandes et facturation",
     "profileSettings": "Profil et paramètres",
@@ -21,6 +22,7 @@
     "toggleTheme": "Changer le thème",
     "dashboard": "Tableau de bord",
     "myPlans": "Mes projets",
+    "favorites": "Favoris",
     "wallet": "Portefeuille",
     "ordersBilling": "Commandes et facturation",
     "profileSettings": "Profil et paramètres",
@@ -539,6 +541,14 @@
     "lastPlan": "Dernier plan",
     "viewSimilar": "Voir un plan similaire",
     "repurchase": "Racheter"
+  },
+  "Favorites": {
+    "bannerAlt": "Bannière des favoris",
+    "title": "Mes forfaits favoris",
+    "remove": "Supprimer",
+    "buy": "Acheter",
+    "days": "jours",
+    "empty": "Aucun forfait favori pour le moment. Ajoutez-en depuis la page des forfaits."
   },
   "Support": {
     "title": "Support",

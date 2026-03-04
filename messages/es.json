@@ -8,6 +8,7 @@
     "signIn": "Iniciar sesión",
     "dashboard": "Panel",
     "myPlans": "Mis planes",
+    "favorites": "Favoritos",
     "wallet": "Billetera",
     "ordersBilling": "Pedidos y facturación",
     "profileSettings": "Perfil y configuración",
@@ -21,6 +22,7 @@
     "toggleTheme": "Cambiar tema",
     "dashboard": "Panel",
     "myPlans": "Mis planes",
+    "favorites": "Favoritos",
     "wallet": "Billetera",
     "ordersBilling": "Pedidos y facturación",
     "profileSettings": "Perfil y configuración",
@@ -539,6 +541,14 @@
     "lastPlan": "Último plan",
     "viewSimilar": "Ver plan similar",
     "repurchase": "Recomprar"
+  },
+  "Favorites": {
+    "bannerAlt": "Banner de favoritos",
+    "title": "Mis planes favoritos",
+    "remove": "Eliminar",
+    "buy": "Comprar",
+    "days": "días",
+    "empty": "Aún no tienes planes favoritos. Agrégalos desde la página de planes."
   },
   "Support": {
     "title": "Soporte",

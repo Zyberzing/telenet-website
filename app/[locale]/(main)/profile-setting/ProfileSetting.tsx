@@ -47,7 +47,6 @@ export default function ProfileSetting({ user }: { user: User }) {
 
   // MAIN USER STATE (Auto updates UI)
   const [userData, setUserData] = useState(user);
-  console.log("userdar", userData);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
 

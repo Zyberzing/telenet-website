@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 
 export interface Plan {
-  id: string;
+  _id: string;
   orderId: string;
   package_name: string;
   package_data: number;
@@ -23,7 +23,7 @@ export interface Plan {
   unit_price_gross_amount: string;
   country: string;
   provider: string;
-  flag: string;
+  countryFlag: string;
   dataLeft?: string;
   totalData: string;
   validUntil?: string;
@@ -146,21 +146,21 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
               </p>
             ) : (
               activePlans.map((plan) => {
-                const planTargetId = plan.orderId || plan.id;
+                const planTargetId = plan.orderId || plan._id;
                 const hasRefundRequested = refundRequestedOrderIds.has(
                   plan.orderId,
                 );
 
                 return (
                   <div
-                    key={plan.id}
+                    key={plan._id}
                     className="bg-[#F1F8FE] dark:bg-gray-800 flex rounded-2xl p-4 space-y-4 shadow-sm"
                   >
                     <div className="flex-1">
                       <div className="flex flex-col gap-2 w-1/2">
                         <div className="flex gap-4">
                           <Image
-                            src={plan?.flag || "/flags/usa.svg"}
+                            src={plan?.countryFlag || "/flags/usa.svg"}
                             alt="flag"
                             width={30}
                             height={50}
@@ -228,17 +228,14 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                           {t("viewQR")}
                         </Button>
                         <Button
+                          disabled={hasRefundRequested}
                           onClick={() => {
-                            if (hasRefundRequested) {
-                              setRefundNoteTargetId(planTargetId);
-                              return;
-                            }
+                            if (hasRefundRequested) return;
 
-                            setRefundNoteTargetId(null);
                             setSelectedPlan(plan);
                             setShowRefund(true);
                           }}
-                          className="px-10 bg-black dark:text-white dark:hover:text-black dark:hover:bg-purple-50 hover:bg-gray-800 rounded-full"
+                          className="px-10 bg-black disabled:opacity-50 disabled:cursor-not-allowed dark:text-white dark:hover:text-black dark:hover:bg-purple-50 hover:bg-gray-800 rounded-full"
                         >
                           {t("refund")}
                         </Button>
@@ -252,7 +249,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                         </p>
                       </div>
 
-                      {refundNoteTargetId === planTargetId && (
+                      {hasRefundRequested && (
                         <p className="text-sm text-red-600 dark:text-red-400 mt-2 text-center mb-0">
                           Check refund status in support page of your profile
                         </p>
@@ -287,13 +284,13 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
             {expiredPlans.length > 0 ? (
               expiredPlans.map((plan) => (
                 <div
-                  key={plan.id}
+                  key={plan._id}
                   className="bg-[#F1F8FE] dark:bg-gray-800 rounded-2xl p-4 flex flex-col md:flex-row justify-between items-center shadow-sm"
                 >
                   <div>
                     <div className="flex gap-4">
                       <Image
-                        src={plan.flag}
+                        src={plan.countryFlag}
                         alt="flag"
                         width={30}
                         height={50}

@@ -30,6 +30,7 @@ export default async function MainLayout({
   const protectedRoutes = [
     "/dashboard",
     "/my-plans",
+    "/favorites",
     "/wallet",
     "/order-billing",
     "/profile-setting",

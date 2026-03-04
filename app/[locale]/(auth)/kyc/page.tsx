@@ -479,7 +479,7 @@ export default function KYC() {
           documentUrl: url,
         })),
       };
-      console.log("Submitting manual KYC with payload:", payload);
+
       const response = await submitManualKycWithToken(payload, {
         accessToken: registrationState.otpAccessToken,
         refreshToken: registrationState.otpRefreshToken,

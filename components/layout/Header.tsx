@@ -7,6 +7,7 @@ import { RootState } from "@/store/Store";
 import {
   ChevronDown,
   FileText,
+  Heart,
   Headphones,
   LayoutGrid,
   LogOut,
@@ -50,6 +51,7 @@ const NAV_ITEMS = [
 const MENU_ITEMS = [
   { href: "dashboard", icon: LayoutGrid, label: "dashboard" },
   { href: "my-plans", icon: FileText, label: "myPlans" },
+  { href: "favorites", icon: Heart, label: "favorites" },
   { href: "wallet", icon: Wallet, label: "wallet" },
   { href: "order-billing", icon: Receipt, label: "ordersBilling" },
   { href: "profile-setting", icon: Settings, label: "profileSettings" },

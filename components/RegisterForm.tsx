@@ -121,7 +121,7 @@ export default function RegisterForm() {
       const res = await createUser(payload);
 
       if (res.status !== "success") {
-        console.log("Registration failed:", res);
+        console.error("Registration failed:", res);
         toast.error(res.message || "Registration failed");
         return; // STOP here, do not continue
       }

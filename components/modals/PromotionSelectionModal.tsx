@@ -104,7 +104,6 @@ export default function PromotionSelectionModal({
     try {
       setVerifyingPromotionId(promotion._id);
       const verifiedPromotion = await verifyPromotion(promotion.promoCode);
-      console.log("Verified Promotion:", verifiedPromotion);
       setSelectedPromotionId(verifiedPromotion._id || promotion._id);
       toast.success("Promotion applied successfully.");
     } catch (error) {

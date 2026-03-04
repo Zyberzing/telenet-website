@@ -13,7 +13,6 @@ export const createRefund = async (body: Refund): Promise<any> => {
       body,
     }
   );
-  console.log("Refund response:", response);
   if (response?.status !== "success") {
     console.error("Refund error:", response?.message);
     throw new Error(response?.message || "Failed to create refund.");

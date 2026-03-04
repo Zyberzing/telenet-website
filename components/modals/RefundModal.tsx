@@ -46,7 +46,6 @@ export default function RefundModal({
     try {
       const refundRes = await createRefund(payload);
       const refundData = refundRes?.data?.createTicketPayload;
-      console.log("refund", refundRes, refundData);
       if (refundData) {
         const ticketRes = await crateTicket({
           subject: refundData.subject ?? "",
@@ -58,8 +57,6 @@ export default function RefundModal({
           ticketRes?.data?._id,
           refundData?.description,
         );
-
-        console.log("ticket", ticketRes, "chat create", createChatForAdmin);
       }
       toast.success(refundRes.message || "Refund initiated successfully");
       onClose();

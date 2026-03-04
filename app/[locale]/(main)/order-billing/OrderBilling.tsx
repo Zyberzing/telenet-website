@@ -269,7 +269,7 @@ export default function OrderBilling({
       ["Duration", order.validity ?? order.perioddays],
       ["ICCID", order.iccid],
       ["Valid Until", order.validUntil],
-      ["Payment Method", order.paymentMethod || order.paymentIntentId],
+      ["Payment Method", order?.paymentMethodType || "Card"],
       ["Order Status", order.status?.toUpperCase()],
     ];
 
@@ -459,8 +459,8 @@ export default function OrderBilling({
                     <td className="py-3 px-4 whitespace-nowrap">
                       {order?.providerName || "-"}
                     </td>
-                    <td className="py-3 px-4">
-                      {order?.paymentIntentId || "-"}
+                    <td className="py-3 px-4 capitalize">
+                      {order?.paymentMethodType || "Card"}
                     </td>
                     <td className="py-3 px-4">
                       <span

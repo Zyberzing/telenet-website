@@ -128,7 +128,7 @@ export interface Order {
   package_data: string;
   network: string;
   providerName: string;
-  paymentIntentId: string;
+  paymentMethodType: string;
   status: string;
   isRefundRequested?: boolean;
   refundStatus?: string | null;
@@ -155,6 +155,9 @@ export interface Currency {
 export type Plan = {
   _id: string;
   package_id: string;
+  wishlisted?: boolean;
+  country?: string;
+  country_code?: string;
   package_name: string;
   data: string;
   validity: number;
@@ -170,6 +173,7 @@ export type Plan = {
   network: string;
   fup_policy: string | null;
   // providerName: string;
+  countryIso2: string;
   countries: { countryname: string; countryiso2: string }[];
   actionType: "increase" | "decrease";
   markupType: "percentage" | "fixed";

@@ -17,6 +17,7 @@ export const ROUTES = {
   WALLET: (locale: string) => `/${locale}/wallet`,
   ORDER_BILLING: (locale: string) => `/${locale}/order-billing`,
   MY_PLANS: (locale: string) => `/${locale}/my-plans`,
+  FAVORITES: (locale: string) => `/${locale}/favorites`,
   SUPPORT: (locale: string) => `/${locale}/support`,
   SUCCESS: (locale: string) => `/${locale}/success`,
   CANCLE: (locale: string) => `/${locale}/cancle`,

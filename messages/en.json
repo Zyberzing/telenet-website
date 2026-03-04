@@ -8,6 +8,7 @@
     "signIn": "Sign In",
     "dashboard": "Dashboard",
     "myPlans": "My Plans",
+    "favorites": "Favorites",
     "wallet": "Wallet",
     "ordersBilling": "Orders & Billing",
     "profileSettings": "Profile & Settings",
@@ -21,6 +22,7 @@
     "toggleTheme": "Toggle Theme",
     "dashboard": "Dashboard",
     "myPlans": "My Plans",
+    "favorites": "Favorites",
     "wallet": "Wallet",
     "ordersBilling": "Orders & Billing",
     "profileSettings": "Profile & Settings",
@@ -539,6 +541,14 @@
     "lastPlan": "Last Plan",
     "viewSimilar": "View similar plan",
     "repurchase": "Re-Purchase"
+  },
+  "Favorites": {
+    "bannerAlt": "Favorites banner",
+    "title": "My Favorite Plans",
+    "remove": "Remove",
+    "buy": "Buy",
+    "days": "Days",
+    "empty": "No favorite plans yet. Add plans from the plans page."
   },
   "Support": {
     "title": "Support",

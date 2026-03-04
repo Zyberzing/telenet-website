@@ -40,11 +40,9 @@ export const submitManualKyc = async (body: ManualKycSubmitPayload) => {
         body,
       },
     );
-    console.log("Manual KYC submission response:", response);
     if (response?.status !== "success") {
       throw new Error(response?.message || "Failed to submit manual KYC.");
     }
-    console.log("Manual KYC submission response:", response);
     return response;
   } catch (error: any) {
     console.error("Error submitting manual KYC:", error);
