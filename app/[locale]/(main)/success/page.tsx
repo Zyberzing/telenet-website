@@ -10,7 +10,7 @@ export default function SuccessPage() {
   const router = useRouter();
   const locale = useLocale();
   const searchParams = useSearchParams();
-  const sessionId = searchParams.get("session_id");
+  // const sessionId = searchParams.get("session_id");
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-green-50 dark:bg-gray-900 p-4">
@@ -20,11 +20,11 @@ export default function SuccessPage() {
       <p className="text-green-700 dark:text-green-300 mb-2">
         Your order has been processed successfully.
       </p>
-      {sessionId && (
+      {/* {sessionId && (
         <p className="text-green-700 dark:text-green-300 text-sm">
           Session ID: <span className="font-mono">{sessionId}</span>
         </p>
-      )}
+      )} */}
       <Button
         className="px-6 py-3 bg-primary text-white rounded-lg cursor-pointer mt-8"
         onClick={() => router.push(ROUTES.HOME(locale))}
