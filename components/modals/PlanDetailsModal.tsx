@@ -67,17 +67,17 @@ export default function PlanDetailsModal({
         return true;
       }
 
-      const alreadyRefundRequested = orderData.result.some(
-        (order) =>
-          order.packageId === selectedPlan.package_id &&
-          order.isRefundRequested,
-      );
-      if (alreadyRefundRequested) {
-        setRefundNote(
-          "Refund already requested for this plan. Check the refund status in support page of your profile menu.",
-        );
-        return true;
-      }
+      // const alreadyRefundRequested = orderData.result.some(
+      //   (order) =>
+      //     order.packageId === selectedPlan.package_id &&
+      //     order.isRefundRequested,
+      // );
+      // if (alreadyRefundRequested) {
+      //   setRefundNote(
+      //     "Refund already requested for this plan. Check the refund status in support page of your profile menu.",
+      //   );
+      //   return true;
+      // }
 
       const totalPages = orderData.pagination?.totalPages ?? currentPage;
       if (currentPage >= totalPages) {

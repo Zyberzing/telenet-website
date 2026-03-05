@@ -1,9 +1,9 @@
 "use client";
 
-import { saveSession } from "@/lib/session";
+import { clearSession, saveSession } from "@/lib/session";
 import { ROUTES } from "@/routes";
 import { loginUser, socialLoginUser } from "@/services/auth";
-import { setCredentials } from "@/store/slices/authSlice";
+import { logout, setCredentials } from "@/store/slices/authSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGoogleLogin } from "@react-oauth/google";
 import { Eye, EyeOff } from "lucide-react";
@@ -67,11 +67,16 @@ export default function LoginForm() {
     defaultValues: { email: "", password: "" },
   });
 
-  const completeSignin = async (res: any, fallback: KycPrefillFallback = {}) => {
+  const completeSignin = async (
+    res: any,
+    fallback: KycPrefillFallback = {},
+  ) => {
     const user =
       typeof res?.user === "object" && res?.user !== null ? res.user : null;
     const responseData =
-      typeof res === "object" && res !== null ? (res as Record<string, any>) : {};
+      typeof res === "object" && res !== null
+        ? (res as Record<string, any>)
+        : {};
 
     const responseRole =
       (user as { role?: string } | null)?.role ??
@@ -113,18 +118,31 @@ export default function LoginForm() {
       normalizedKycStatus === "in_review" ||
       normalizedKycStatus === "underreview" ||
       normalizedKycStatus === "under_review";
+    const isRejectedKyc = normalizedKycStatus === "rejected";
 
     if (
       shouldGoToKyc ||
+      isRejectedKyc ||
       isPendingKyc ||
       (isManualKyc === false && isSumsubKyc === false)
     ) {
+      // Rejected/non-approved users should only keep temporary KYC tokens.
+      dispatch(logout());
+      sessionStorage.removeItem("sumsub_kyc_token");
+      try {
+        await clearSession();
+      } catch {
+        // Keep KYC flow usable even if cookie clearing fails.
+      }
+
       sessionStorage.setItem(
         "registrationState",
         JSON.stringify({
           email:
             (user as { email?: string } | null)?.email ||
-            (typeof responseData.email === "string" ? responseData.email : "") ||
+            (typeof responseData.email === "string"
+              ? responseData.email
+              : "") ||
             fallback.email ||
             form.getValues("email") ||
             "",
@@ -135,7 +153,9 @@ export default function LoginForm() {
             "",
           phone:
             (user as { phone?: string } | null)?.phone ||
-            (typeof responseData.phone === "string" ? responseData.phone : "") ||
+            (typeof responseData.phone === "string"
+              ? responseData.phone
+              : "") ||
             fallback.phone ||
             "",
           country:
@@ -162,7 +182,10 @@ export default function LoginForm() {
       toast.info(
         isPendingKyc
           ? "Your KYC verification is pending review."
-          : "Please complete your KYC verification to continue.",
+          : isRejectedKyc
+            ? rawKycReason ||
+              "Your KYC was rejected. Please review and submit again."
+            : "Please complete your KYC verification to continue.",
       );
       router.push(ROUTES.KYC(locale));
       return;

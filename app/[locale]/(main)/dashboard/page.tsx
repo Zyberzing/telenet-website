@@ -1,4 +1,5 @@
 import { getProfile } from "@/services/auth";
+import { getOrderDashboardSummary } from "@/services/order";
 import { User } from "../profile-setting/ProfileSetting";
 import Dashboard from "./Dashboard";
 
@@ -10,12 +11,33 @@ export default async function Page() {
   ];
 
   let user: User | null = null;
+  let summary: Awaited<ReturnType<typeof getOrderDashboardSummary>> = null;
 
   try {
-    user = await getProfile();
+    const [profileRes, summaryRes] = await Promise.all([
+      getProfile(),
+      getOrderDashboardSummary(),
+    ]);
+    user = profileRes;
+    summary = summaryRes;
   } catch (err) {
-    console.error("Failed to fetch profile:", err);
+    console.error("Failed to fetch dashboard data:", err);
   }
+
+  const transactionDateRaw = summary?.lastTransaction?.date;
+  const transactionDate = transactionDateRaw
+    ? new Date(transactionDateRaw).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+      })
+    : "N/A";
+
+  const validityDays = summary?.lastTransaction?.validity;
+  const validityLabel =
+    typeof validityDays === "number"
+      ? `${validityDays} ${validityDays === 1 ? "day" : "days"}`
+      : "N/A";
 
   const userData = {
     name: user?.name ?? "",
@@ -24,13 +46,13 @@ export default async function Page() {
     phone: user?.phone ?? "",
     country: user?.countryCode ?? "",
     location: user?.location ?? "",
-    activePlans: 0,
-    walletBalance: 0,
+    activePlans: summary?.activePlans ?? 0,
+    walletBalance: summary?.walletBalance ?? 0,
     lastTransaction: {
-      amount: 0,
-      date: "N/A",
-      validity: "N/A",
-      data: "N/A",
+      amount: summary?.lastTransaction?.amount ?? 0,
+      date: transactionDate,
+      validity: validityLabel,
+      data: summary?.lastTransaction?.data || "N/A",
     },
   };
 

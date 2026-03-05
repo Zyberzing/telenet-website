@@ -1,6 +1,10 @@
 import { Plan } from "@/app/[locale]/(main)/my-plans/MyPlansClient";
 import { authFetcher } from "@/lib/authFetcher";
-import { GetOrderListApiResponse, orderDetails } from "@/lib/types";
+import {
+  DashboardSummaryResponse,
+  GetOrderListApiResponse,
+  orderDetails,
+} from "@/lib/types";
 
 export interface OrderListFilters {
   startDate?: string;
@@ -67,6 +71,18 @@ export const getMyPlans = async ({
     return response?.data || null;
   } catch (error) {
     console.error("Error fetching my plans:", error);
+    return null;
+  }
+};
+
+export const getOrderDashboardSummary = async () => {
+  try {
+    const response = await authFetcher<DashboardSummaryResponse>(
+      "/order-dashboard/summary",
+    );
+    return response?.data || null;
+  } catch (error) {
+    console.error("Error fetching dashboard summary:", error);
     return null;
   }
 };

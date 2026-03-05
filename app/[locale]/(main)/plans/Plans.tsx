@@ -46,6 +46,7 @@ export default function Plans({
   const urlMaxValidity = Number(search.get("max_validity"));
   const urlPlanType = Number(search.get("plan_name") ?? 1);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [plansList, setPlansList] = useState<Plan[]>(result);
   const [orderLoading, setOrderLoading] = useState(false);
   const [filterType, setFilterType] = useState<"country" | "region">(
     filterby === "Region" ? "region" : "country",
@@ -64,6 +65,10 @@ export default function Plans({
   const [planType, setPlanType] = useState(
     Number(searchParams.get("plan_name")) || 1,
   );
+
+  useEffect(() => {
+    setPlansList(result);
+  }, [result]);
 
   useEffect(() => {
     setFilterType(urlFilterBy);
@@ -246,9 +251,9 @@ export default function Plans({
                     <PlanCardSkeleton key={i} />
                   ))}
                 </div>
-              ) : result.length > 0 ? (
+              ) : plansList.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {result.map((plan) => (
+                  {plansList.map((plan) => (
                     <div key={plan.package_id}>
                       <div className="flex justify-between items-center mb-1">
                         {plan.network && (
@@ -325,6 +330,20 @@ export default function Plans({
         onBuy={handleBuy}
         orderLoading={orderLoading}
         isLoggedIn={!!userProfile}
+        onFavoriteChange={(isFavorite, plan) => {
+          setPlansList((prev) =>
+            prev.map((item) =>
+              item._id === plan._id
+                ? { ...item, wishlisted: isFavorite }
+                : item,
+            ),
+          );
+          setSelectedPlan((prev) =>
+            prev && prev._id === plan._id
+              ? { ...prev, wishlisted: isFavorite }
+              : prev,
+          );
+        }}
       />
     </section>
   );

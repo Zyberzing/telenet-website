@@ -121,6 +121,10 @@ export default function KYC() {
       normalizedKycStatus === "under_review",
     [normalizedKycStatus],
   );
+  const isKycRejected = useMemo(
+    () => normalizedKycStatus === "rejected",
+    [normalizedKycStatus],
+  );
   const statusLabel = useMemo(() => {
     if (!registrationState?.kycStatus) return "Pending";
     return registrationState.kycStatus
@@ -586,32 +590,45 @@ export default function KYC() {
           )}
 
           {!method && !isKycPending && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-              <button
-                type="button"
-                className="text-left border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:border-primary transition cursor-pointer bg-white dark:bg-gray-800"
-                onClick={() => setMethod("manual")}
-              >
-                <p className="text-lg font-medium text-gray-900 dark:text-white">
-                  Manual KYC
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
-                  Upload your document and submit details for review.
-                </p>
-              </button>
+            <div className="mt-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button
+                  type="button"
+                  className="text-left border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:border-primary transition cursor-pointer bg-white dark:bg-gray-800"
+                  onClick={() => setMethod("manual")}
+                >
+                  <p className="text-lg font-medium text-gray-900 dark:text-white">
+                    Manual KYC
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
+                    Upload your document and submit details for review.
+                  </p>
+                </button>
 
-              <button
-                type="button"
-                className="text-left border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:border-primary transition cursor-pointer bg-white dark:bg-gray-800"
-                onClick={() => void handleSumsubClick()}
-              >
-                <p className="text-lg font-medium text-gray-900 dark:text-white">
-                  Use Sumsub
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
-                  Continue with the existing Sumsub verification flow.
-                </p>
-              </button>
+                <button
+                  type="button"
+                  className="text-left border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:border-primary transition cursor-pointer bg-white dark:bg-gray-800"
+                  onClick={() => void handleSumsubClick()}
+                >
+                  <p className="text-lg font-medium text-gray-900 dark:text-white">
+                    Use Sumsub
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
+                    Continue with the existing Sumsub verification flow.
+                  </p>
+                </button>
+              </div>
+
+              {isKycRejected && registrationState?.kycReason && (
+                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 dark:border-red-900 dark:bg-red-950/30">
+                  <p className="text-xs uppercase tracking-wide text-red-700 dark:text-red-300">
+                    Rejection Reason
+                  </p>
+                  <p className="mt-1 text-sm text-red-800 dark:text-red-200">
+                    {registrationState.kycReason}
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

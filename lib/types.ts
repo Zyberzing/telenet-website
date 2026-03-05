@@ -330,3 +330,18 @@ export type VerifyPromotionResponse = {
 export type OTPVerificationProps = {
   prefilledEmail?: string;
 };
+
+export type DashboardSummaryResponse = {
+  status?: string;
+  message?: string;
+  data?: {
+    activePlans?: number;
+    walletBalance?: number;
+    lastTransaction?: {
+      amount?: number;
+      date?: string;
+      validity?: number;
+      data?: string;
+    } | null;
+  };
+};
