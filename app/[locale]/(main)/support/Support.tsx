@@ -32,6 +32,11 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 interface SupportProps {
   initialTickets: Ticket[];
 }
+enum TicketStatus {
+  OPEN = "open",
+  PENDING = "pending",
+  CLOSED = "closed",
+}
 
 export default function Support({ initialTickets }: SupportProps) {
   const t = useTranslations("Support");
@@ -258,30 +263,35 @@ export default function Support({ initialTickets }: SupportProps) {
                       <span
                         className={cn(
                           "px-3 py-1 rounded text-xs capitalize",
-                          ticket.status === "open" &&
-                            "border border-[#00B625] text-[#00B625]",
-                          ticket.status === "pending" &&
-                            "border border-[#B69B00] text-[#B69B00]",
-                          ticket.status === "closed" &&
-                            "border border-primary text-primary",
+                          ticket.status === TicketStatus.OPEN &&
+                          "border border-[#00B625] text-[#00B625]",
+                          ticket.status === TicketStatus.PENDING &&
+                          "border border-[#B69B00] text-[#B69B00]",
+                          ticket.status === TicketStatus.CLOSED &&
+                          "border border-primary text-primary",
                         )}
                       >
                         {t(ticket.status.toLowerCase())}
                       </span>
                     </td>
                     <td className="p-3">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setChatTicket(ticket);
-                          setChatOpen(true);
-                        }}
-                        className="text-primary hover:bg-primary/10 cursor-pointer"
-                        aria-label="Open chat"
-                      >
-                        <MessageSquare className="w-4 h-4" />
-                      </button>
+                      <td className="p-3">
+                        {ticket.status !== TicketStatus.CLOSED ? (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setChatTicket(ticket);
+                              setChatOpen(true);
+                            }}
+                            className="text-primary hover:bg-primary/10 cursor-pointer"
+                          >
+                            <MessageSquare className="w-4 h-4" />
+                          </button>
+                        ) : (
+                          <span className="text-gray-400">-</span>
+                        )}
+                      </td>
                     </td>
                   </tr>
                 ))}

@@ -68,9 +68,9 @@ export const getMyPlans = async ({
     const response = await authFetcher<{ data: Plan }>(
       `/order/my-plans?page=${page}&limit=${limit}`,
     );
+    console.log("My Plans Response:", response.data);
     return response?.data || null;
   } catch (error) {
-    console.error("Error fetching my plans:", error);
     return null;
   }
 };

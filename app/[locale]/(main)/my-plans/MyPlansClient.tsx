@@ -34,12 +34,18 @@ export interface Plan {
   package_sms: number;
   package_call: number;
   qrcode?: string;
+  refundStatus?: "processing" | "refunded" | "rejected" | "failed";
 }
-
 interface MyPlansClientProps {
   plans: Plan[];
 }
 
+enum RefundStatusEnum {
+  PROCESSING = "processing",
+  REFUNDED = "refunded",
+  REJECTED = "rejected",
+  FAILED = "failed",
+}
 export default function MyPlans({ plans }: MyPlansClientProps) {
   const t = useTranslations("MyPlans");
   const [tab, setTab] = useState<"active" | "expired">("active");
@@ -57,7 +63,22 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
   const [refundNoteTargetId, setRefundNoteTargetId] = useState<string | null>(
     null,
   );
+  const getRefundStatus = (plan: any): RefundStatusEnum | null => {
+    try {
+      if (plan?.refundStatus) {
+        return plan.refundStatus as RefundStatusEnum;
+      }
 
+      if (Array.isArray(plan?.refund) && plan.refund.length > 0) {
+        return plan.refund[0]?.status as RefundStatusEnum;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Refund status error:", error);
+      return null;
+    }
+  };
   useEffect(() => {
     const loadRefundRequestedOrders = async () => {
       const pageSize = 50;
@@ -66,6 +87,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
 
       while (true) {
         const orderData = await getOrderList(currentPage, pageSize);
+        console.log(orderData, "orderData")
         if (!orderData) break;
 
         orderData.result.forEach((order) => {
@@ -145,12 +167,14 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                 No active plan available
               </p>
             ) : (
-              activePlans.map((plan) => {
+              activePlans.map((plan, i) => {
                 const planTargetId = plan.orderId || plan._id;
+                const refundStatus = getRefundStatus(plan);
                 const hasRefundRequested = refundRequestedOrderIds.has(
                   plan.orderId,
                 );
 
+                console.log('Index:', i, 'Plan:', plan);
                 return (
                   <div
                     key={plan._id}
@@ -174,16 +198,16 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                           <p>
                             {plan.package_data >= 1024
                               ? `${parseFloat(
-                                  (plan.package_data / 1024).toFixed(2),
-                                )} GB`
+                                (plan.package_data / 1024).toFixed(2),
+                              )} GB`
                               : `${plan.package_data} MB`}{" "}
                             {t("dataLeft")}
                           </p>
                           <p>
                             {plan.package_data >= 1024
                               ? `${parseFloat(
-                                  (plan.package_data / 1024).toFixed(2),
-                                )} GB`
+                                (plan.package_data / 1024).toFixed(2),
+                              )} GB`
                               : `${plan.package_data} MB`}
                           </p>
                         </div>
@@ -192,11 +216,10 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                           <div
                             className="bg-[#FF7623] h-1.5"
                             style={{
-                              width: `${
-                                (parseFloat(plan.dataLeft || "0") /
-                                  parseFloat(plan.totalData)) *
+                              width: `${(parseFloat(plan.dataLeft || "0") /
+                                parseFloat(plan.totalData)) *
                                 100
-                              }%`,
+                                }%`,
                             }}
                           />
                         </div>
@@ -265,9 +288,24 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                       >
                         View Billing
                       </p>
-                      {hasRefundRequested && (
-                        <p className="text-xs text-red-600 dark:text-red-400 mt-4">
-                          Refund Requested
+
+                      {hasRefundRequested && refundStatus && (
+                        <p className="text-sm font-medium mt-2">
+                          <span
+                            className={cn(
+                              refundStatus === RefundStatusEnum.PROCESSING && "text-yellow-600",
+                              refundStatus === RefundStatusEnum.REFUNDED && "text-green-600",
+                              refundStatus === RefundStatusEnum.REJECTED && "text-red-600",
+                              refundStatus === RefundStatusEnum.FAILED && "text-red-500"
+                            )}
+                          >
+                            {{
+                              [RefundStatusEnum.PROCESSING]: "Refund Requested",
+                              [RefundStatusEnum.REFUNDED]: "Refund Approved",
+                              [RefundStatusEnum.REJECTED]: "Refund Rejected",
+                              [RefundStatusEnum.FAILED]: "Refund Failed",
+                            }[refundStatus]}
+                          </span>
                         </p>
                       )}
                     </div>

@@ -30,7 +30,7 @@ export async function authFetcher<T = unknown>(
     if (!accessToken || !refreshToken) {
       console.warn("⚠️ No valid tokens found — clearing session.");
       await clearSession();
-      throw new Error("Token missing");
+      throw new Error("Authentication token missing");
     }
 
     const isFormData = body instanceof FormData;
@@ -49,17 +49,15 @@ export async function authFetcher<T = unknown>(
       next: revalidate ? { revalidate } : undefined,
     });
 
-    // If token expired (common pattern: 401 Unauthorized)
     if (res.status === 401) {
       console.warn("🔒 Token expired — clearing session.");
       await clearSession();
 
-      // If client-side (not SSR), redirect to login
       if (typeof window !== "undefined") {
         window.location.href = "/en";
       }
 
-      throw new Error("Token expired");
+      throw new Error("Session expired. Please login again.");
     }
 
     const data = await res.json().catch(() => null);
@@ -69,11 +67,14 @@ export async function authFetcher<T = unknown>(
       data,
       clearSession,
     );
+
     if (isBlocked) {
       return data as T;
     }
 
     if (!res.ok) {
+      
+
       throw {
         message: data?.message || "Request failed",
         status: res.status,
@@ -82,9 +83,12 @@ export async function authFetcher<T = unknown>(
     }
 
     return data as T;
-  } catch (err) {
-    console.error("🔴 [authFetcher] Error caught:", err);
-    // throw err;
-    throw new Error((err as any)?.message || "Something went wrong");
+  } catch (err: any) {
+    // console?.error("🔴 [authFetcher] Error caught:", err);
+
+    return {
+      error: true,
+      message: err?.message || "Internal server error",
+    } as T;
   }
 }

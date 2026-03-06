@@ -296,8 +296,8 @@ export default function LoginForm() {
           normalized.includes("user not found");
 
         if (isUnregisteredSocialUser) {
-          toast.error("Please register first.");
-          router.push(ROUTES.REGISTER(locale));
+          toast.error("User not registered.");
+          // router.push(ROUTES.REGISTER(locale));
           return;
         }
 
