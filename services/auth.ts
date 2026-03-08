@@ -245,3 +245,23 @@ export const deleteAccount = async (): Promise<any> => {
 
   return response;
 };
+export const resendOtp = async (email: string) => {
+  try {
+    const res = await fetcher<{
+      status: string;
+      message: string;
+    }>("/auth/resend-otp", {
+      method: "POST",
+      body: { email },
+    });
+
+    if (res.status !== "success") {
+      throw new Error(res.message || "Failed to resend OTP");
+    }
+
+    return res;
+  } catch (err: any) {
+    console.error("Resend OTP error:", err);
+    throw new Error(err.message || "Failed to resend OTP");
+  }
+};

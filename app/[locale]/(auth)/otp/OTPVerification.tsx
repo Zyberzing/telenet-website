@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/Input";
 import { OTPVerificationProps } from "@/lib/types";
 import { ROUTES } from "@/routes";
-import { verifyOtp } from "@/services/auth";
+import { verifyOtp, resendOtp } from "@/services/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -35,6 +35,7 @@ export default function OTPVerification({
   const router = useRouter();
   const locale = useLocale();
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
 
   const form = useForm<z.infer<typeof otpSchema>>({
     resolver: zodResolver(otpSchema as any),
@@ -96,7 +97,7 @@ export default function OTPVerification({
     const pastedData = e.clipboardData.getData("text").trim();
     if (!/^\d+$/.test(pastedData)) return;
 
-    const digits = pastedData.slice(0, 6).split(""); // max 6 digits
+    const digits = pastedData.slice(0, 6).split("");
     const otpArray = Array(6).fill("");
 
     digits.forEach((digit, index) => {
@@ -108,7 +109,6 @@ export default function OTPVerification({
 
     form.setValue("otp", otpArray.join(""));
 
-    // focus last filled or last box
     const focusIndex = digits.length >= 6 ? 5 : digits.length;
     otpRefs.current[focusIndex]?.focus();
   };
@@ -119,7 +119,6 @@ export default function OTPVerification({
       const res = await verifyOtp(values);
       toast.success(res.message || "OTP verified successfully!");
 
-      // Keep registrationState for KYC auto-fill + temporary KYC auth tokens.
       try {
         const regRaw =
           sessionStorage.getItem("registrationState") ||
@@ -137,11 +136,8 @@ export default function OTPVerification({
           "registrationState",
           JSON.stringify(nextRegistrationState),
         );
-      } catch {
-        // ignore storage parse failures and continue navigation
-      }
+      } catch {}
 
-      // Redirect to KYC step after OTP verification
       router.push(ROUTES.KYC(locale));
     } catch (err: unknown) {
       const message =
@@ -151,6 +147,30 @@ export default function OTPVerification({
       setLoading(false);
     }
   }
+
+  // Resend OTP
+  const handleResendOtp = async () => {
+    try {
+      const email = form.getValues("email");
+
+      if (!email) {
+        toast.error("Email not found");
+        return;
+      }
+
+      setResendLoading(true);
+
+      await resendOtp(email);
+
+      toast.success("OTP resent successfully");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to resend OTP";
+      toast.error(message);
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full flex flex-col p-3">
@@ -211,11 +231,23 @@ export default function OTPVerification({
                             className="w-12 h-12 text-center text-lg font-semibold border rounded-md focus:border-primary focus:ring-1 focus:ring-primary bg-white dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                             onChange={(e) => handleOtpChange(i, e.target.value)}
                             onKeyDown={(e) => handleKeyDown(i, e)}
-                            onPaste={handleOtpPaste} // ✨ THIS is the key line
+                            onPaste={handleOtpPaste}
                           />
                         ))}
                       </div>
                     </FormControl>
+
+                    {/* Resend OTP */}
+                    <div className="text-right mt-2">
+                      <button
+                        type="button"
+                        onClick={handleResendOtp}
+                        className="text-sm text-primary hover:underline"
+                      >
+                        {resendLoading ? "Sending..." : "Resend OTP"}
+                      </button>
+                    </div>
+
                     <FormMessage />
                   </FormItem>
                 )}

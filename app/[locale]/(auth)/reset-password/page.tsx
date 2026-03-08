@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/Input";
 import { ROUTES } from "@/routes";
-import { resetPassword } from "@/services/auth";
+import { resetPassword, resendOtp } from "@/services/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -36,6 +36,8 @@ export default function ResetPassword() {
   const searchParams = useSearchParams();
 
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const form = useForm<z.infer<typeof resetSchema>>({
@@ -91,7 +93,7 @@ export default function ResetPassword() {
   async function onSubmit(values: z.infer<typeof resetSchema>) {
     setLoading(true);
     try {
-      const res = await resetPassword(values); // <-- call your API here
+      const res = await resetPassword(values);
       toast.success(res.message || "Password reset successful!");
 
       // Clear saved email info
@@ -107,6 +109,30 @@ export default function ResetPassword() {
       setLoading(false);
     }
   }
+
+  // ✅ Resend OTP
+  const handleResendOtp = async () => {
+    try {
+      const email = form.getValues("email");
+
+      if (!email) {
+        toast.error("Email not found");
+        return;
+      }
+
+      setResendLoading(true);
+
+      await resendOtp(email);
+
+      toast.success("OTP resent successfully");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to resend OTP";
+      toast.error(message);
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full flex flex-col p-3">
@@ -185,6 +211,18 @@ export default function ResetPassword() {
                         ))}
                       </div>
                     </FormControl>
+
+                    {/* Resend OTP */}
+                    <div className="text-right mt-2">
+                      <button
+                        type="button"
+                        onClick={handleResendOtp}
+                        className="text-sm text-primary hover:underline"
+                      >
+                        {resendLoading ? "Sending..." : "Resend OTP"}
+                      </button>
+                    </div>
+
                     <FormMessage />
                   </FormItem>
                 )}
