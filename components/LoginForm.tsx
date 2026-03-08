@@ -2,7 +2,7 @@
 
 import { clearSession, saveSession } from "@/lib/session";
 import { ROUTES } from "@/routes";
-import { loginUser, socialLoginUser } from "@/services/auth";
+import { loginUser, resendOtp, socialLoginUser } from "@/services/auth";
 import { logout, setCredentials } from "@/store/slices/authSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -50,6 +50,7 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false); // ✅ ADD THIS
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -184,7 +185,7 @@ export default function LoginForm() {
           ? "Your KYC verification is pending review."
           : isRejectedKyc
             ? rawKycReason ||
-              "Your KYC was rejected. Please review and submit again."
+            "Your KYC was rejected. Please review and submit again."
             : "Please complete your KYC verification to continue.",
       );
       router.push(ROUTES.KYC(locale));
@@ -222,6 +223,30 @@ export default function LoginForm() {
     router.push(ROUTES.DASHBOARD(locale));
   };
 
+
+  const handleResendOtp = async () => {
+    try {
+      const email = form.getValues("email");
+
+      if (!email) {
+        toast.error("Email not found");
+        return;
+      }
+
+      setResendLoading(true);
+
+      await resendOtp(email);
+
+      toast.success("OTP resent successfully");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to resend OTP";
+      toast.error(message);
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
   const onSubmit = async (values: LoginFormSchemaType) => {
     try {
       setLoading(true);
@@ -234,13 +259,15 @@ export default function LoginForm() {
       const errorMessage = err instanceof Error ? err.message : "Login failed";
 
       if (errorMessage.includes("User is not verified")) {
-        toast.info(
-          "Please verify your account with the OTP sent to your email.",
-        );
-
+        
         sessionStorage.setItem(
           "registrationState",
           JSON.stringify({ email: form.getValues("email") }),
+        );
+        // Resend OTP before navigating to OTP page, in case user needs a new one. This also ensures that the OTP is valid and reduces the chance of user facing issues with expired OTPs.
+        await handleResendOtp()
+        toast.info(
+          "Please verify your account with the OTP sent to your email.",
         );
 
         router.push(ROUTES.OTP(locale));
