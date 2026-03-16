@@ -1,15 +1,11 @@
 import { getRequestConfig } from "next-intl/server";
 
+import { routing } from "./routing";
+import { getI18nMessages } from "./getMessages";
+
 export default getRequestConfig(async ({ requestLocale }) => {
-  const locale = (await requestLocale) || "en"; // fallback
+  const locale = ((await requestLocale) || routing.defaultLocale).toLowerCase();
+  const messages = await getI18nMessages(locale);
 
-  try {
-    const messages = (await import(`../messages/${locale}.json`)).default;
-
-    if (!messages) throw new Error("No messages loaded");
-    return { locale, messages };
-  } catch (error) {
-    console.error(`❌ Missing messages for locale: ${locale}`, error);
-    throw new Error(`No messages found for locale: ${locale}`);
-  }
+  return { locale, messages };
 });

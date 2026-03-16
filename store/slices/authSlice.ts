@@ -13,7 +13,7 @@ const initialState: AuthState = {
   user:
     typeof window !== "undefined"
       ? JSON.parse(localStorage.getItem("user") || "null")
-      : null,
+      : null, 
 };
 
 const authSlice = createSlice({

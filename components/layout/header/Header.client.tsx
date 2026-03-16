@@ -9,7 +9,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { isLocaleSegment } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
+import {
+  FALLBACK_LANGUAGES,
+  getLanguageList,
+  type LanguageOption,
+} from "@/services/language";
 import {
   ChevronDown,
   FileText,
@@ -31,12 +37,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const LANGUAGE = [
-  { code: "en", name: "English" },
-  { code: "fr", name: "Français" },
-  { code: "es", name: "Español" },
-];
-
 const NAV_ITEMS = [
   { key: "plans", href: "/plans" },
   { key: "topUp", href: "/top-up" },
@@ -55,7 +55,7 @@ const MENU_ITEMS = [
   { href: "support", icon: Headphones, label: "support" },
 ];
 
-type Language = (typeof LANGUAGE)[number];
+const DEFAULT_LANGUAGE = FALLBACK_LANGUAGES[0]!;
 
 export default function Header(user: {
   name: string;
@@ -72,7 +72,12 @@ export default function Header(user: {
   const t = useTranslations("Header");
 
   const [open, setOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGE[0]);
+  const [languages, setLanguages] = useState<LanguageOption[]>(
+    FALLBACK_LANGUAGES,
+  );
+  const [selectedLanguage, setSelectedLanguage] = useState<LanguageOption>(
+    DEFAULT_LANGUAGE,
+  );
 
   // const [currencyList, setCurrencyList] = useState<Currency[]>([]);
   // const [currencyModalOpen, setCurrencyModalOpen] = useState(false);
@@ -101,12 +106,30 @@ export default function Header(user: {
   //   })();
   // }, []);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadLanguages = async () => {
+      const fetchedLanguages = await getLanguageList();
+
+      if (isMounted) {
+        setLanguages(fetchedLanguages);
+      }
+    };
+
+    loadLanguages();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   // Detect language from URL
   useEffect(() => {
     const parts = pathname.split("/").filter(Boolean);
-    const currentLocale = LANGUAGE.find((l) => l.code === parts[0]);
+    const currentLocale = languages.find((lang) => lang.code === parts[0]);
     if (currentLocale) setSelectedLanguage(currentLocale);
-  }, [pathname]);
+  }, [languages, pathname]);
 
   // Apply dark theme if system preference is dark on initial load (only once)
   useEffect(() => {
@@ -125,10 +148,10 @@ export default function Header(user: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run only once on mount
 
-  const handleLanguageChange = (lang: Language) => {
+  const handleLanguageChange = (lang: LanguageOption) => {
     setSelectedLanguage(lang);
     const parts = pathname.split("/").filter(Boolean);
-    if (LANGUAGE.some((l) => l.code === parts[0])) parts.shift();
+    if (isLocaleSegment(parts[0])) parts.shift();
     const newPath = `/${lang.code}/${parts.join("/")}`;
     router.push(newPath);
   };
@@ -168,7 +191,7 @@ export default function Header(user: {
               align="end"
               className="min-w-[6rem] text-sm cursor-pointer"
             >
-              {LANGUAGE.map((lang) => (
+              {languages.map((lang) => (
                 <DropdownMenuItem
                   key={lang.code}
                   onClick={() => handleLanguageChange(lang)}
@@ -310,7 +333,7 @@ export default function Header(user: {
                     align="start"
                     className="min-w-[6rem] text-sm cursor-pointer"
                   >
-                    {LANGUAGE.map((lang) => (
+                    {languages.map((lang) => (
                       <DropdownMenuItem
                         key={lang.code}
                         className={cn(

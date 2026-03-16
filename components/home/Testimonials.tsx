@@ -32,6 +32,7 @@ const testimonialsData = [
 
 const Testimonials = () => {
   const t = useTranslations("Testimonials");
+
   const [current, setCurrent] = useState(0);
   const startX = useRef<number | null>(null);
   const diffX = useRef(0);
@@ -113,7 +114,7 @@ const Testimonials = () => {
               {testimonialsData
                 .slice(
                   index * itemsPerSlide,
-                  index * itemsPerSlide + itemsPerSlide
+                  index * itemsPerSlide + itemsPerSlide,
                 )
                 .map((tData, i) => (
                   <div
@@ -132,9 +133,7 @@ const Testimonials = () => {
                     <p className="text-[25px] mb-8">“{t(tData.textKey)}”</p>
                     <div className="flex justify-between">
                       <div>
-                        <p className="text-gray-900 font-[400]">
-                          {tData.name}
-                        </p>
+                        <p className="text-gray-900 font-[400]">{tData.name}</p>
                         <p className="text-gray-600 text-xs">
                           {tData.location}
                         </p>

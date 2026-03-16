@@ -4,8 +4,8 @@ import { IoIosArrowForward } from "react-icons/io";
 import { getCmsBanners } from "@/services/cms";
 import { Button } from "../ui/Button";
 
-export default async function Features() {
-  const t = await getTranslations("Features");
+export default async function Features({ locale }: { locale: string }) {
+  const t = await getTranslations({ locale, namespace: "Features" });
   const banners = await getCmsBanners();
   const firstBanner = banners[0];
 
@@ -29,23 +29,23 @@ export default async function Features() {
   const whyChooseUs = [
     {
       img: "/instant-activation.svg",
-      title: t("whyChooseUs.instantActivation.title"),
-      desc: t("whyChooseUs.instantActivation.desc"),
+      titleKey: "whyChooseUs.instantActivation.title",
+      descKey: "whyChooseUs.instantActivation.desc",
     },
     {
       img: "/global-coverage.svg",
-      title: t("whyChooseUs.globalCoverage.title"),
-      desc: t("whyChooseUs.globalCoverage.desc"),
+      titleKey: "whyChooseUs.globalCoverage.title",
+      descKey: "whyChooseUs.globalCoverage.desc",
     },
     {
       img: "/secure-payments.svg",
-      title: t("whyChooseUs.securePayments.title"),
-      desc: t("whyChooseUs.securePayments.desc"),
+      titleKey: "whyChooseUs.securePayments.title",
+      descKey: "whyChooseUs.securePayments.desc",
     },
     {
       img: "/support.svg",
-      title: t("whyChooseUs.support.title"),
-      desc: t("whyChooseUs.support.desc"),
+      titleKey: "whyChooseUs.support.title",
+      descKey: "whyChooseUs.support.desc",
     },
   ];
 
@@ -256,10 +256,10 @@ export default async function Features() {
                 className="mb-8"
               />
               <h3 className="font-[400] text-[24px] md:text-2xl mb-10">
-                {item.title}
+                {t(item.titleKey)}
               </h3>
               <p className="text-[14px] leading-relaxed opacity-90">
-                {item.desc}
+                {t(item.descKey)}
               </p>
             </div>
           ))}

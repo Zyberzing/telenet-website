@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { isLocaleSegment, routing } from "@/i18n/routing";
 
 const publicRoutes = [
   "/",
@@ -33,8 +34,7 @@ const protectedRoutes = [
   "/support",
 ];
 
-const locales = ["en", "fr", "es"];
-const DEFAULT_LOCALE = "en";
+const DEFAULT_LOCALE = routing.defaultLocale;
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -46,11 +46,10 @@ export function middleware(req: NextRequest) {
   const session = req.cookies.get(cookieName)?.value;
 
   const segments = pathname.split("/").filter(Boolean);
-  const locale =
-    segments[0] && locales.includes(segments[0]) ? segments[0] : DEFAULT_LOCALE;
+  const locale = isLocaleSegment(segments[0]) ? segments[0]! : DEFAULT_LOCALE;
 
   const pathWithoutLocale =
-    segments[0] && locales.includes(segments[0])
+    isLocaleSegment(segments[0])
       ? `/${segments.slice(1).join("/")}`
       : pathname;
 
