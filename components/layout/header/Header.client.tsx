@@ -19,8 +19,8 @@ import {
 import {
   ChevronDown,
   FileText,
-  Heart,
   Headphones,
+  Heart,
   LayoutGrid,
   LogOut,
   Menu,
@@ -29,7 +29,6 @@ import {
   Settings,
   Sun,
   User,
-  Wallet,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
@@ -42,6 +41,7 @@ const NAV_ITEMS = [
   { key: "topUp", href: "/top-up" },
   { key: "about", href: "/about-us" },
   { key: "installGuide", href: "/installation-guide" },
+  { key: "blog", href: "/blog" },
   { key: "contact", href: "/contact-us" },
 ];
 
@@ -49,7 +49,7 @@ const MENU_ITEMS = [
   { href: "dashboard", icon: LayoutGrid, label: "dashboard" },
   { href: "my-plans", icon: FileText, label: "myPlans" },
   { href: "favorites", icon: Heart, label: "favorites" },
-  { href: "wallet", icon: Wallet, label: "wallet" },
+  // { href: "wallet", icon: Wallet, label: "wallet" },
   { href: "order-billing", icon: Receipt, label: "ordersBilling" },
   { href: "profile-setting", icon: Settings, label: "profileSettings" },
   { href: "support", icon: Headphones, label: "support" },
@@ -72,12 +72,10 @@ export default function Header(user: {
   const t = useTranslations("Header");
 
   const [open, setOpen] = useState(false);
-  const [languages, setLanguages] = useState<LanguageOption[]>(
-    FALLBACK_LANGUAGES,
-  );
-  const [selectedLanguage, setSelectedLanguage] = useState<LanguageOption>(
-    DEFAULT_LANGUAGE,
-  );
+  const [languages, setLanguages] =
+    useState<LanguageOption[]>(FALLBACK_LANGUAGES);
+  const [selectedLanguage, setSelectedLanguage] =
+    useState<LanguageOption>(DEFAULT_LANGUAGE);
 
   // const [currencyList, setCurrencyList] = useState<Currency[]>([]);
   // const [currencyModalOpen, setCurrencyModalOpen] = useState(false);

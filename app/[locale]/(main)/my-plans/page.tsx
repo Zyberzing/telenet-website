@@ -1,6 +1,5 @@
 import { getMyPlans } from "@/services/order";
-import MyPlans from "./MyPlansClient";
-import { Plan } from "./MyPlansClient";
+import MyPlans, { Plan } from "./MyPlansClient";
 
 interface GetMyPlansResponse {
   // status: string;
@@ -12,6 +11,7 @@ interface GetMyPlansResponse {
     limit: number;
     total: number;
     totalPages: number;
+    status?: string;
   };
   // };
   // statusCode: number;
@@ -29,9 +29,16 @@ const Page = async ({
     page,
     limit,
   })) as GetMyPlansResponse | null;
+  const expiredResponse = (await getMyPlans({
+    page,
+    limit,
+    status: "expired",
+  } as any)) as GetMyPlansResponse | null;
 
   const myPlans: Plan[] = response?.result || [];
-  return <MyPlans plans={myPlans} />;
+  const expiredPlans: Plan[] = expiredResponse?.result || [];
+
+  return <MyPlans plans={myPlans} expiredPlan={expiredPlans} />;
 };
 
 export default Page;

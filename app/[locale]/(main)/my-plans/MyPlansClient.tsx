@@ -35,9 +35,15 @@ export interface Plan {
   package_call: number;
   qrcode?: string;
   refundStatus?: "processing" | "refunded" | "rejected" | "failed";
+  order?: {
+    expiryDate: string;
+    finalPrice: string;
+    country: string;
+  };
 }
 interface MyPlansClientProps {
   plans: Plan[];
+  expiredPlan: Plan[];
 }
 
 enum RefundStatusEnum {
@@ -46,14 +52,14 @@ enum RefundStatusEnum {
   REJECTED = "rejected",
   FAILED = "failed",
 }
-export default function MyPlans({ plans }: MyPlansClientProps) {
+export default function MyPlans({ plans, expiredPlan }: MyPlansClientProps) {
   const t = useTranslations("MyPlans");
   const [tab, setTab] = useState<"active" | "expired">("active");
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const router = useRouter();
   const locale = useLocale();
   const activePlans = plans;
-  const expiredPlans = plans.filter((p) => p.status === "expired");
+  const expiredPlans = expiredPlan;
   const [showRefund, setShowRefund] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const [showBilling, setShowBilling] = useState(false);
@@ -87,7 +93,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
 
       while (true) {
         const orderData = await getOrderList(currentPage, pageSize);
-        console.log(orderData, "orderData")
+        console.log(orderData, "orderData");
         if (!orderData) break;
 
         orderData.result.forEach((order) => {
@@ -174,7 +180,7 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                   plan.orderId,
                 );
 
-                console.log('Index:', i, 'Plan:', plan);
+                console.log("Index:", i, "Plan:", plan);
                 return (
                   <div
                     key={plan._id}
@@ -198,16 +204,16 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                           <p>
                             {plan.package_data >= 1024
                               ? `${parseFloat(
-                                (plan.package_data / 1024).toFixed(2),
-                              )} GB`
+                                  (plan.package_data / 1024).toFixed(2),
+                                )} GB`
                               : `${plan.package_data} MB`}{" "}
                             {t("dataLeft")}
                           </p>
                           <p>
                             {plan.package_data >= 1024
                               ? `${parseFloat(
-                                (plan.package_data / 1024).toFixed(2),
-                              )} GB`
+                                  (plan.package_data / 1024).toFixed(2),
+                                )} GB`
                               : `${plan.package_data} MB`}
                           </p>
                         </div>
@@ -216,10 +222,11 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                           <div
                             className="bg-[#FF7623] h-1.5"
                             style={{
-                              width: `${(parseFloat(plan.dataLeft || "0") /
-                                parseFloat(plan.totalData)) *
+                              width: `${
+                                (parseFloat(plan.dataLeft || "0") /
+                                  parseFloat(plan.totalData)) *
                                 100
-                                }%`,
+                              }%`,
                             }}
                           />
                         </div>
@@ -293,18 +300,25 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                         <p className="text-sm font-medium mt-2">
                           <span
                             className={cn(
-                              refundStatus === RefundStatusEnum.PROCESSING && "text-yellow-600",
-                              refundStatus === RefundStatusEnum.REFUNDED && "text-green-600",
-                              refundStatus === RefundStatusEnum.REJECTED && "text-red-600",
-                              refundStatus === RefundStatusEnum.FAILED && "text-red-500"
+                              refundStatus === RefundStatusEnum.PROCESSING &&
+                                "text-yellow-600",
+                              refundStatus === RefundStatusEnum.REFUNDED &&
+                                "text-green-600",
+                              refundStatus === RefundStatusEnum.REJECTED &&
+                                "text-red-600",
+                              refundStatus === RefundStatusEnum.FAILED &&
+                                "text-red-500",
                             )}
                           >
-                            {{
-                              [RefundStatusEnum.PROCESSING]: "Refund Requested",
-                              [RefundStatusEnum.REFUNDED]: "Refund Approved",
-                              [RefundStatusEnum.REJECTED]: "Refund Rejected",
-                              [RefundStatusEnum.FAILED]: "Refund Failed",
-                            }[refundStatus]}
+                            {
+                              {
+                                [RefundStatusEnum.PROCESSING]:
+                                  "Refund Requested",
+                                [RefundStatusEnum.REFUNDED]: "Refund Approved",
+                                [RefundStatusEnum.REJECTED]: "Refund Rejected",
+                                [RefundStatusEnum.FAILED]: "Refund Failed",
+                              }[refundStatus]
+                            }
                           </span>
                         </p>
                       )}
@@ -335,22 +349,45 @@ export default function MyPlans({ plans }: MyPlansClientProps) {
                         className="rounded"
                       />
                       <p className="font-medium text-lg dark:text-white">
-                        {plan.country} – {plan.provider}
+                        {plan.package_name}
                       </p>
                     </div>
                     <p className="text-sm text-gray-500 mt-3 dark:text-gray-400">
-                      {t("expiredOn")} {plan.expiredOn}
+                      {t("expiredOn")}{" "}
+                      {new Date(
+                        plan?.order?.expiryDate || plan.expiredOn || "",
+                      ).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {t("lastPlan")}: {plan.lastPlan} • {plan.price}
+                      {t("lastPlan")}: {plan.lastPlan} •{" "}
+                      {plan.order?.finalPrice}
                     </p>
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-2 mt-3 md:mt-0">
-                    <Button className="bg-black hover:bg-gray-800 rounded-full">
+                    <Button
+                      className="bg-black hover:bg-gray-800 rounded-full"
+                      onClick={() =>
+                        router.push(
+                          `${ROUTES.PLANS(locale)}?filterby=Country&country_code=${plan.order?.country}`,
+                        )
+                      }
+                    >
                       {t("viewSimilar")}
                     </Button>
-                    <Button className="bg-primary hover:bg-primary rounded-full">
+                    <Button
+                      className="bg-primary hover:bg-primary rounded-full"
+                      onClick={() => {
+                        setSelectedPlan(plan);
+                        router.push(
+                          `${ROUTES.PLANS(locale)}?filterby=Country&country_code=${plan.order?.country}`,
+                        );
+                      }}
+                    >
                       {t("repurchase")}
                     </Button>
                   </div>

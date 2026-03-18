@@ -30,14 +30,15 @@ import {
 } from "../ui/dropdown-menu";
 
 type Language = {
+  id: string;
   code: string;
   name: string;
 };
 
 const LANGUAGES: Language[] = [
-  { code: "en", name: "English" },
-  { code: "fr", name: "Français" },
-  { code: "es", name: "Español" },
+  { id: "en", code: "en", name: "English" },
+  { id: "fr", code: "fr", name: "Français" },
+  { id: "es", code: "es", name: "Español" },
 ];
 
 const MENU_ITEMS = [
@@ -217,3 +218,4 @@ export default function HeaderAuth() {
     </header>
   );
 }
+

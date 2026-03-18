@@ -60,15 +60,16 @@ export const getOrderList = async (
 export const getMyPlans = async ({
   page,
   limit,
+  status
 }: {
   page: string;
   limit: string;
+  status?: string;
 }): Promise<Plan | null> => {
   try {
     const response = await authFetcher<{ data: Plan }>(
-      `/order/my-plans?page=${page}&limit=${limit}`,
+      `/order/my-plans?page=${page}&limit=${limit}&status=${status || ""}`,
     );
-    console.log("My Plans Response:", response.data);
     return response?.data || null;
   } catch (error) {
     return null;

@@ -298,6 +298,26 @@ export type CmsBannerListResponse = {
   statusCode: number;
 };
 
+export type CmsBlog = {
+  _id: string;
+  title: string;
+  description: string;
+  lang?: string;
+  category?: string;
+  image?: string;
+  status?: string;
+  isDeleted?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type CmsBlogListResponse = {
+  status: string;
+  message: string;
+  data: CmsBlog[];
+  statusCode: number;
+};
+
 export type UploadOtpTokens = {
   accessToken: string;
   refreshToken?: string;

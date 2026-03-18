@@ -35,9 +35,9 @@ import {
 } from "../ui/dropdown-menu";
 
 const LANGUAGE = [
-  { code: "en", name: "English" },
-  { code: "fr", name: "Français" },
-  { code: "es", name: "Español" },
+  { id: "en", code: "en", name: "English" },
+  { id: "fr", code: "fr", name: "Français" },
+  { id: "es", code: "es", name: "Español" },
 ];
 
 const NAV_ITEMS = [
@@ -45,6 +45,7 @@ const NAV_ITEMS = [
   { key: "topUp", href: "/top-up" },
   { key: "about", href: "/about-us" },
   { key: "installGuide", href: "/installation-guide" },
+  { key: "blog", href: "/blog" },
   { key: "contact", href: "/contact-us" },
 ];
 
@@ -52,7 +53,7 @@ const MENU_ITEMS = [
   { href: "dashboard", icon: LayoutGrid, label: "dashboard" },
   { href: "my-plans", icon: FileText, label: "myPlans" },
   { href: "favorites", icon: Heart, label: "favorites" },
-  { href: "wallet", icon: Wallet, label: "wallet" },
+  // { href: "wallet", icon: Wallet, label: "wallet" },
   { href: "order-billing", icon: Receipt, label: "ordersBilling" },
   { href: "profile-setting", icon: Settings, label: "profileSettings" },
   { href: "support", icon: Headphones, label: "support" },
@@ -89,7 +90,7 @@ export default function Header() {
       // Only apply system preference if no theme is saved
       if (!savedTheme) {
         const prefersDark = window.matchMedia(
-          "(prefers-color-scheme: dark)"
+          "(prefers-color-scheme: dark)",
         ).matches;
         if (prefersDark && theme !== "dark") {
           toggleTheme();
@@ -149,7 +150,7 @@ export default function Header() {
                   className={cn(
                     "cursor-pointer",
                     selectedLanguage?.code === lang.code &&
-                      "bg-gradient text-white"
+                      "bg-gradient text-white",
                   )}
                 >
                   {lang.name}
@@ -282,7 +283,7 @@ export default function Header() {
                         className={cn(
                           "cursor-pointer",
                           selectedLanguage?.code === lang.code &&
-                            "bg-gradient text-white"
+                            "bg-gradient text-white",
                         )}
                         onClick={() => {
                           handleLanguageChange(lang);
@@ -381,3 +382,4 @@ export default function Header() {
     </header>
   );
 }
+

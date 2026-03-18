@@ -1,4 +1,5 @@
 export type LanguageOption = {
+  id: string;
   code: string;
   name: string;
 };
@@ -7,6 +8,8 @@ type LanguageListApiResponse = {
   message?: string;
   data?: {
     result?: Array<{
+      _id?: string;
+      id?: string;
       code?: string;
       lang?: string;
     }>;
@@ -14,9 +17,9 @@ type LanguageListApiResponse = {
 };
 
 export const FALLBACK_LANGUAGES: LanguageOption[] = [
-  { code: "en", name: "English" },
-  { code: "fr", name: "Français" },
-  { code: "es", name: "Español" },
+  { id: "en", code: "en", name: "English" },
+  { id: "fr", code: "fr", name: "Français" },
+  { id: "es", code: "es", name: "Español" },
 ];
 
 export async function getLanguageList(): Promise<LanguageOption[]> {
@@ -32,8 +35,9 @@ export async function getLanguageList(): Promise<LanguageOption[]> {
       cache: "no-store",
     });
 
-    const payload =
-      (await response.json().catch(() => null)) as LanguageListApiResponse | null;
+    const payload = (await response
+      .json()
+      .catch(() => null)) as LanguageListApiResponse | null;
 
     if (!response.ok) {
       throw new Error(payload?.message || "Failed to fetch language list");
@@ -45,14 +49,17 @@ export async function getLanguageList(): Promise<LanguageOption[]> {
           (
             item,
           ): item is {
+            _id: any;
             code: string;
             lang: string;
           } => Boolean(item?.code && item?.lang),
         )
         .map((item) => {
           const code = item.code.toLowerCase();
+          const id = item._id || code;
 
           return {
+            id,
             code,
             name: item.lang,
           };
@@ -63,4 +70,11 @@ export async function getLanguageList(): Promise<LanguageOption[]> {
     console.error("Failed to fetch language list:", error);
     return FALLBACK_LANGUAGES;
   }
+}
+
+export async function getLanguageIdByCode(
+  code: string,
+): Promise<string | undefined> {
+  const languages = await getLanguageList();
+  return languages.find((item) => item.code === code.toLowerCase())?.id;
 }

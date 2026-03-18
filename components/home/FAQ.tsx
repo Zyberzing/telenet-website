@@ -7,7 +7,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { getFaq } from "@/services/faq";
-import { useTranslations } from "next-intl";
+import { getLanguageIdByCode } from "@/services/language";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 export type FaqItem = {
@@ -19,19 +20,21 @@ export type FaqItem = {
 
 export default function FAQ() {
   const t = useTranslations("FAQ");
+  const locale = useLocale();
   // const [getFaqs, { isLoading }] = useGetFaqMutation();
   const [faqList, setFaqList] = useState<FaqItem[]>([]);
 
   useEffect(() => {
     (async () => {
       try {
-        const data = await getFaq();
+        const langId = await getLanguageIdByCode(locale);
+        const data = await getFaq({ lang: langId });
         setFaqList(data);
       } catch (error) {
         console.error("Failed to fetch FAQs:", error);
       }
     })();
-  }, []);
+  }, [locale]);
 
   return (
     <section className="w-full py-16 px-2">

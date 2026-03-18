@@ -1,6 +1,12 @@
 import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/Card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/Card";
 import { CalendarIcon, Clock } from "lucide-react";
+import { useLocale } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -20,6 +26,7 @@ interface BlogCardProps {
 }
 
 export function BlogCard({ post }: BlogCardProps) {
+  const locale = useLocale();
   return (
     <Card className="overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow duration-300 pt-0">
       <div className="relative h-64 w-full">
@@ -45,9 +52,7 @@ export function BlogCard({ post }: BlogCardProps) {
           </div>
         </div>
         <h3 className="text-xl font-bold leading-tight line-clamp-2 hover:text-primary transition-colors">
-          <Link href={`/blog/${post.slug}`}>
-            {post.title}
-          </Link>
+          <Link href={`/${locale}/blog/${post.slug}`}>{post.title}</Link>
         </h3>
       </CardHeader>
       <CardContent className="flex-grow">
@@ -57,9 +62,7 @@ export function BlogCard({ post }: BlogCardProps) {
       </CardContent>
       <CardFooter>
         <Button asChild className="w-full bg-primary text-primary-foreground">
-          <Link href={`/blog/${post.slug}`}>
-            Read More
-          </Link>
+          <Link href={`/${locale}/blog/${post.slug}`}>Read More</Link>
         </Button>
       </CardFooter>
     </Card>

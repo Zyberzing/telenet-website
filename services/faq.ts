@@ -2,10 +2,17 @@
 import { FaqItem } from "@/components/home/FAQ";
 import { fetcher } from "@/lib/fetcher";
 
-export const getFaq = async (): Promise<FaqItem[]> => {
+export type FaqParams = {
+  lang?: string;
+};
+
+export const getFaq = async (params: FaqParams = {}): Promise<FaqItem[]> => {
   try {
+    const searchParams = new URLSearchParams();
+    if (params.lang) searchParams.set("lang", params.lang);
+    const query = searchParams.toString();
     const response = await fetcher<{ data: FaqItem }>(
-      "/cms-content/faq/get-list"
+      query ? `/cms-content/faq/get-list?${query}` : "/cms-content/faq/get-list",
     );
     const data = response?.data?.list || response?.data || [];
     return Array.isArray(data) ? data : [];
