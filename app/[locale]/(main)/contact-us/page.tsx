@@ -67,13 +67,13 @@ const ContactUs = () => {
         message: form.message,
       };
       await contactUS(payload);
-      setSuccess("Message sent successfully!");
+      setSuccess(t("messageSent"));
       setForm({ name: "", email: "", message: "" });
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Failed to send message");
+        setError(t("messageFailed"));
       }
     } finally {
       setLoading(false);
@@ -108,7 +108,7 @@ const ContactUs = () => {
             <div className="space-y-5">
               {/* Email */}
               <div className="flex items-center gap-4 border border-[#E1F2FE] p-4 rounded-b-3xl rounded-tl-3xl hover:shadow dark:border-gray-700">
-                <Image src="/mail.svg" alt="Mail" width={40} height={40} />
+                <Image src="/mail.svg" alt={t("mailAlt")} width={40} height={40} />
                 <div>
                   <p className="dark:text-white">{t("emailTitle")}</p>
                   <a
@@ -122,7 +122,7 @@ const ContactUs = () => {
 
               {/* Phone */}
               <div className="flex items-center gap-4 border border-[#E1F2FE] p-4 rounded-b-3xl rounded-tl-3xl hover:shadow dark:border-gray-700">
-                <Image src="/phone.png" alt="Phone" width={40} height={40} />
+                <Image src="/phone.png" alt={t("phoneAlt")} width={40} height={40} />
                 <div>
                   <p className="dark:text-white">{t("phoneTitle")}</p>
                   <p className="text-[#848484] text-sm dark:text-gray-400">
@@ -135,7 +135,7 @@ const ContactUs = () => {
               <div className="flex items-center gap-4 border border-[#E1F2FE] p-4 rounded-b-3xl rounded-tl-3xl hover:shadow dark:border-gray-700">
                 <Image
                   src="/live-chat.svg"
-                  alt="Live Chat"
+                  alt={t("chatAlt")}
                   width={40}
                   height={40}
                 />

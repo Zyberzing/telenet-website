@@ -52,6 +52,8 @@ const formSchema = z.object({
   name: commonFieldSchema(),
   email: emailSchema(),
   password: passwordSchema(),
+  passportNo: commonFieldSchema(),
+  dateOfBirth: commonFieldSchema(),
   phone: phoneNumberSchema(),
   countryCode: countryCodeSchema(),
 });
@@ -102,6 +104,8 @@ export default function RegisterForm() {
       name: "",
       email: "",
       password: "",
+      passportNo: "",
+      dateOfBirth: "",
       phone: "",
       countryCode: "",
     },
@@ -114,6 +118,8 @@ export default function RegisterForm() {
         name: data.name,
         email: data.email,
         password: data.password,
+        passportNo: data.passportNo,
+        dateOfBirth: data.dateOfBirth,
         phone: data.phone,
         countryCode: data.countryCode,
       };
@@ -317,6 +323,40 @@ export default function RegisterForm() {
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Passport No */}
+        <FormField
+          control={form.control}
+          name="passportNo"
+          render={({ field }) => (
+            <FormItem>
+              <label className="text-sm font-medium">
+                {t("fields.passportNo")}
+              </label>
+              <FormControl>
+                <Input placeholder={t("placeholders.passportNo")} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Date of Birth */}
+        <FormField
+          control={form.control}
+          name="dateOfBirth"
+          render={({ field }) => (
+            <FormItem>
+              <label className="text-sm font-medium">
+                {t("fields.dateOfBirth")}
+              </label>
+              <FormControl>
+                <Input type="date" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

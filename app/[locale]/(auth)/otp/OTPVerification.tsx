@@ -14,28 +14,29 @@ import { OTPVerificationProps } from "@/lib/types";
 import { ROUTES } from "@/routes";
 import { verifyOtp, resendOtp } from "@/services/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
-const otpSchema = z.object({
-  email: z.string().email("Invalid email"),
-  otp: z
-    .string()
-    .length(6, "OTP must be 6 digits")
-    .regex(/^\d+$/, "OTP must be numeric"),
-});
-
 export default function OTPVerification({
   prefilledEmail,
 }: OTPVerificationProps) {
   const router = useRouter();
   const locale = useLocale();
+  const t = useTranslations("OTPVerification");
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
+
+  const otpSchema = z.object({
+    email: z.string().email(t("invalidEmail")),
+    otp: z
+      .string()
+      .length(6, t("otpLength"))
+      .regex(/^\d+$/, t("otpNumeric")),
+  });
 
   const form = useForm<z.infer<typeof otpSchema>>({
     resolver: zodResolver(otpSchema as any),
@@ -117,7 +118,7 @@ export default function OTPVerification({
     setLoading(true);
     try {
       const res = await verifyOtp(values);
-      toast.success(res.message || "OTP verified successfully!");
+      toast.success(res.message || t("otpVerified"));
 
       try {
         const regRaw =
@@ -141,7 +142,7 @@ export default function OTPVerification({
       router.push(ROUTES.KYC(locale));
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "OTP verification failed!";
+        err instanceof Error ? err.message : t("otpVerifyFailed");
       toast.error(message);
     } finally {
       setLoading(false);
@@ -154,7 +155,7 @@ export default function OTPVerification({
       const email = form.getValues("email");
 
       if (!email) {
-        toast.error("Email not found");
+        toast.error(t("emailNotFound"));
         return;
       }
 
@@ -162,10 +163,10 @@ export default function OTPVerification({
 
       await resendOtp(email);
 
-      toast.success("OTP resent successfully");
+      toast.success(t("otpResent"));
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Failed to resend OTP";
+        err instanceof Error ? err.message : t("otpResendFailed");
       toast.error(message);
     } finally {
       setResendLoading(false);
@@ -177,7 +178,7 @@ export default function OTPVerification({
       <main className="flex flex-1 items-center justify-center bg-white dark:bg-gray-900 p-8">
         <div className="max-w-md w-full shadow-lg rounded-2xl overflow-hidden p-8 bg-white dark:bg-gray-800">
           <h2 className="text-2xl font-normal mb-6 text-center text-gray-900 dark:text-white">
-            Verify your email
+            {t("title")}
           </h2>
 
           <Form {...form}>
@@ -193,7 +194,7 @@ export default function OTPVerification({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-700 dark:text-gray-300">
-                      Email
+                      {t("emailLabel")}
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -215,7 +216,7 @@ export default function OTPVerification({
                 render={() => (
                   <FormItem>
                     <FormLabel className="text-gray-700 dark:text-gray-300">
-                      Enter OTP
+                      {t("otpLabel")}
                     </FormLabel>
                     <FormControl>
                       <div className="flex justify-between gap-2">
@@ -244,7 +245,7 @@ export default function OTPVerification({
                         onClick={handleResendOtp}
                         className="text-sm text-primary hover:underline"
                       >
-                        {resendLoading ? "Sending..." : "Resend OTP"}
+                        {resendLoading ? t("sending") : t("resendOtp")}
                       </button>
                     </div>
 
@@ -258,7 +259,7 @@ export default function OTPVerification({
                 disabled={loading}
                 className="w-full bg-gradient from-primary to-indigo-600 text-white"
               >
-                {loading ? "Verifying..." : "Verify & Go to Login"}
+                {loading ? t("verifying") : t("verifyAndLogin")}
               </Button>
             </form>
           </Form>

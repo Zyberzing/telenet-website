@@ -2,12 +2,21 @@ import { BlogCard } from "@/components/blog/BlogCard";
 import { getCmsBlogList } from "@/services/cms";
 import { getLanguageIdByCode } from "@/services/language";
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 
-export const metadata: Metadata = {
-  title: "Blog | Telenet",
-  description: "Latest news, updates, and insights from Telenet.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Blog" });
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 const slugify = (value: string) =>
   value
@@ -24,21 +33,28 @@ const stripHtml = (value: string) =>
     .replace(/\s+/g, " ")
     .trim();
 
-const formatDate = (value?: string) => {
-  if (!value) return "Unknown date";
+const formatDate = (
+  value: string | undefined,
+  locale: string,
+  t: (key: string) => string,
+) => {
+  if (!value) return t("unknownDate");
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "Unknown date";
-  return date.toLocaleDateString("en-US", {
+  if (Number.isNaN(date.getTime())) return t("unknownDate");
+  return date.toLocaleDateString(locale, {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 };
 
-const estimateReadTime = (value: string) => {
+const estimateReadTime = (
+  value: string,
+  t: (key: string, values?: Record<string, string | number | Date>) => string,
+) => {
   const words = stripHtml(value).split(" ").filter(Boolean).length;
   const minutes = Math.max(1, Math.ceil(words / 200));
-  return `${minutes} min read`;
+  return t("minRead", { minutes });
 };
 
 const BlogPage = async ({
@@ -47,6 +63,7 @@ const BlogPage = async ({
   params: Promise<{ locale: string }>;
 }) => {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Blog" });
   const langId = await getLanguageIdByCode(locale);
   const blogs = (await getCmsBlogList({ lang: langId })).filter(
     (item) => item.status !== "inactive" && !item.isDeleted,
@@ -55,10 +72,10 @@ const BlogPage = async ({
     id: blog._id,
     title: blog.title,
     description: stripHtml(blog.description),
-    date: formatDate(blog.createdAt || blog.updatedAt),
-    category: blog.category || "General",
+    date: formatDate(blog.createdAt || blog.updatedAt, locale, t),
+    category: blog.category || t("generalCategory"),
     imageUrl: blog.image || "/banner-blog.svg",
-    readTime: estimateReadTime(blog.description),
+    readTime: estimateReadTime(blog.description, t),
     slug: `${slugify(blog.title)}--${blog._id}`,
   }));
 
@@ -68,7 +85,7 @@ const BlogPage = async ({
       <div className="relative">
         <Image
           src="/banner-blog.svg"
-          alt="banner"
+          alt={t("bannerAlt")}
           width={1500}
           height={1000}
           className="w-full h-auto"

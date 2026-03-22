@@ -50,6 +50,7 @@ export default function RefundModal({
         const ticketRes = await crateTicket({
           subject: refundData.subject ?? "",
           description: refundData.description ?? "",
+          refundId: refundData?.refundId,
           // document: refundData.document ?? null,
           category: refundData.category ?? "",
         });

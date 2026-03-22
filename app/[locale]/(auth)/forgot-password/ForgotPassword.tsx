@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/Input";
 import { forgotPassword } from "@/services/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -20,10 +20,6 @@ import { toast } from "sonner";
 import * as z from "zod";
 
 // ✅ Validation schema
-const forgotSchema = z.object({
-  email: z.string().email("Invalid email"),
-});
-
 export type ForgotPasswordProps = {
   prefilledEmail?: string;
 };
@@ -33,7 +29,12 @@ export default function ForgotPassword({
 }: ForgotPasswordProps) {
   const router = useRouter();
   const locale = useLocale();
+  const t = useTranslations("ForgotPassword");
   const [loading, setLoading] = useState(false);
+
+  const forgotSchema = z.object({
+    email: z.string().email(t("invalidEmail")),
+  });
 
   const form = useForm<z.infer<typeof forgotSchema>>({
     resolver: zodResolver(forgotSchema as any),
@@ -67,7 +68,7 @@ export default function ForgotPassword({
     try {
       const res = await forgotPassword(values);
 
-      toast.success(res.message || "OTP sent to your email!");
+      toast.success(res.message || t("otpSent"));
 
       // Save email temporarily
       sessionStorage.setItem(
@@ -81,7 +82,7 @@ export default function ForgotPassword({
       );
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Failed to send reset email!";
+        err instanceof Error ? err.message : t("sendFailed");
       toast.error(message);
     } finally {
       setLoading(false);
@@ -93,7 +94,7 @@ export default function ForgotPassword({
       <main className="flex flex-1 items-center justify-center bg-white dark:bg-gray-950 p-8">
         <div className="max-w-md w-full shadow-lg dark:shadow-none dark:border dark:border-gray-700 rounded-2xl overflow-hidden p-8">
           <h2 className="text-2xl font-normal mb-6 text-center dark:text-white">
-            Forgot Password
+            {t("title")}
           </h2>
 
           <Form {...form}>
@@ -108,12 +109,14 @@ export default function ForgotPassword({
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="dark:text-gray-300">Email</FormLabel>
+                    <FormLabel className="dark:text-gray-300">
+                      {t("emailLabel")}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="email"
-                        placeholder="Enter your registered email"
+                        placeholder={t("emailPlaceholder")}
                         className="bg-gray-50 dark:bg-gray-800 dark:text-white dark:border-gray-700"
                       />
                     </FormControl>
@@ -127,7 +130,7 @@ export default function ForgotPassword({
                 disabled={loading}
                 className="w-full bg-gradient from-primary to-indigo-600 text-white"
               >
-                {loading ? "Sending..." : "Send OTP"}
+                {loading ? t("sending") : t("sendOtp")}
               </Button>
             </form>
           </Form>

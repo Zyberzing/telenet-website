@@ -52,7 +52,7 @@ export default function Dashboard({
         <div className="absolute bottom-0 left-0 sm:left-10 opacity-60 sm:opacity-100">
           <Image
             src="/banner-curve-down.svg"
-            alt="Decorative curve left"
+            alt={t("decorativeCurveLeft")}
             width={400}
             height={600}
             priority
@@ -63,7 +63,7 @@ export default function Dashboard({
         <div className="absolute right-0 top-0 sm:right-10 opacity-60 sm:opacity-100">
           <Image
             src="/banner-curve-up.svg"
-            alt="Decorative curve right"
+            alt={t("decorativeCurveRight")}
             width={400}
             height={600}
             priority
@@ -120,7 +120,7 @@ export default function Dashboard({
                   </p>
                   <div className="flex justify-between text-[12px]">
                     <div>
-                      <p className="text-[#545454]">Date</p>
+                      <p className="text-[#545454]">{t("date")}</p>
                       <p>{userData?.lastTransaction?.date || "-"}</p>
                     </div>
                     <div>

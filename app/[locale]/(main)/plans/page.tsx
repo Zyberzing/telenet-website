@@ -2,6 +2,7 @@ import { Plan } from "@/lib/types";
 import { getProfile } from "@/services/auth";
 import { getCountries, getPlans, getRegions } from "@/services/plansApi";
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Plans from "./Plans";
 
 export type countryItems = {
@@ -28,22 +29,25 @@ interface PageProps {
 }
 
 export async function generateMetadata({
+  params,
   searchParams,
-}: PageProps): Promise<Metadata> {
-  const params = await searchParams;
-  const filterby = params.filterby || "Country";
-  const country = params.country_code;
-  const region = params.region_name;
+}: PageProps & { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Plans" });
+  const query = await searchParams;
+  const filterby = query.filterby || "Country";
+  const country = query.country_code;
+  const region = query.region_name;
 
-  let title = "eSIM Plans - Telenet";
-  let description = "Browse and purchase eSIM plans for global connectivity.";
+  let title = t("metaTitleDefault");
+  let description = t("metaDescriptionDefault");
 
   if (filterby === "Region" && region) {
-    title = `eSIM Plans for ${region} Region | Telenet`;
-    description = `Find the best eSIM plans available in the ${region} region.`;
+    title = t("metaTitleRegion", { region });
+    description = t("metaDescriptionRegion", { region });
   } else if (filterby === "Country" && country) {
-    title = `eSIM Plans for ${country} | Telenet`;
-    description = `Discover eSIM plans for ${country}. Stay connected globally with instant activation.`;
+    title = t("metaTitleCountry", { country });
+    description = t("metaDescriptionCountry", { country });
   }
 
   return {

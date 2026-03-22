@@ -81,7 +81,10 @@
     "createAccount": "Crea una cuenta",
     "emailRequired": "Correo electrónico no válido",
     "passwordRequired": "Se requiere contraseña",
-    "loading": "Cargando"
+    "loading": "Cargando",
+    "filterAlt": "Filtro",
+    "action": "Accion",
+    "noTickets": "No se encontraron tickets"
   },
   "RegisterForm": {
     "welcomeText": "¡Bienvenido! Crea tu cuenta a continuación.",
@@ -94,6 +97,8 @@
       "name": "Nombre",
       "email": "Correo electrónico",
       "password": "Contraseña",
+      "passportNo": "Número de pasaporte",
+      "dateOfBirth": "Fecha de nacimiento",
       "phone": "Teléfono",
       "countryCode": "Código de país"
     },
@@ -102,6 +107,8 @@
       "name": "Ingresa tu nombre completo",
       "email": "Ingresa tu correo electrónico",
       "password": "Ingresa tu contraseña",
+      "passportNo": "Ingresa tu número de pasaporte",
+      "dateOfBirth": "Selecciona tu fecha de nacimiento",
       "phone": "Ingresa tu número de teléfono",
       "countryCode": "Ingresa el código de país (p. ej. +34)"
     },
@@ -117,7 +124,116 @@
     "noCountryFound": "No se encontró ningún país",
     "or": "o",
     "registerWithGoogle": "Regístrate con Google",
-    "loading": "Cargando"
+    "loading": "Cargando",
+    "filterAlt": "Filtro",
+    "action": "Accion",
+    "noTickets": "No se encontraron tickets"
+  },
+  "ForgotPassword": {
+    "title": "Olvido su contrasena",
+    "emailLabel": "Correo",
+    "emailPlaceholder": "Ingrese su correo registrado",
+    "sending": "Enviando...",
+    "sendOtp": "Enviar OTP",
+    "invalidEmail": "Correo invalido",
+    "otpSent": "OTP enviado a su correo!",
+    "sendFailed": "No se pudo enviar el correo de restablecimiento!"
+  },
+  "ResetPassword": {
+    "title": "Restablecer su contrasena",
+    "emailLabel": "Correo",
+    "otpLabel": "Ingrese OTP",
+    "newPasswordLabel": "Nueva contrasena",
+    "newPasswordPlaceholder": "Ingrese su nueva contrasena",
+    "sending": "Enviando...",
+    "resendOtp": "Reenviar OTP",
+    "resetting": "Restableciendo...",
+    "resetButton": "Restablecer contrasena",
+    "invalidEmail": "Correo invalido",
+    "otpLength": "OTP debe tener 6 digitos",
+    "passwordMin": "La contrasena debe tener al menos 6 caracteres",
+    "passwordMax": "Contrasena demasiado larga",
+    "resetSuccess": "Contrasena restablecida correctamente!",
+    "resetFailed": "No se pudo restablecer la contrasena!",
+    "emailNotFound": "Correo no encontrado",
+    "otpResent": "OTP reenviado correctamente",
+    "otpResendFailed": "No se pudo reenviar OTP"
+  },
+  "OTPVerification": {
+    "title": "Verifique su correo",
+    "emailLabel": "Correo",
+    "otpLabel": "Ingrese OTP",
+    "sending": "Enviando...",
+    "resendOtp": "Reenviar OTP",
+    "verifying": "Verificando...",
+    "verifyAndLogin": "Verificar y ir a inicio de sesion",
+    "invalidEmail": "Correo invalido",
+    "otpLength": "OTP debe tener 6 digitos",
+    "otpNumeric": "OTP debe ser numerico",
+    "otpVerified": "OTP verificado correctamente!",
+    "otpVerifyFailed": "Fallo la verificacion de OTP!",
+    "emailNotFound": "Correo no encontrado",
+    "otpResent": "OTP reenviado correctamente",
+    "otpResendFailed": "No se pudo reenviar OTP"
+  },
+  "Kyc": {
+    "sumsubTitle": "Verificacion Sumsub",
+    "manualTitle": "Verificacion KYC manual",
+    "chooseMethodTitle": "Elegir metodo de verificacion",
+    "statusPending": "Pendiente",
+    "kycFailed": "Fallo KYC. Intente de nuevo.",
+    "invalidFormat": "Formato invalido. Permitido: JPG, PNG, JPEG, WEBP, HEIC, PDF.",
+    "fileTooLarge": "Cada archivo debe ser de 10MB o menos.",
+    "maxFiles": "Puede subir un maximo de 3 archivos.",
+    "sessionExpired": "Sesion KYC expirada. Verifique OTP nuevamente.",
+    "uploadFailed": "No se pudo subir el documento.",
+    "manualSubmitSuccess": "KYC manual enviado. Su estado esta en revision.",
+    "manualSubmitFailed": "No se pudo enviar KYC manual.",
+    "kycInProgressTitle": "Verificacion KYC en progreso",
+    "kycInProgressBody": "Sus documentos fueron enviados y estan en revision. Le avisaremos cuando termine la verificacion.",
+    "currentStatus": "Estado actual",
+    "registeredEmail": "Correo registrado",
+    "notAvailable": "No disponible",
+    "nameLabel": "Nombre",
+    "mobileNumber": "Numero de movil",
+    "reviewerNote": "Nota del revisor",
+    "backToLogin": "Volver a iniciar sesion",
+    "manualKycTitle": "KYC manual",
+    "manualKycBody": "Suba su documento y envie detalles para revision.",
+    "sumsubCardTitle": "Usar Sumsub",
+    "sumsubCardBody": "Continuar con el flujo de verificacion Sumsub existente.",
+    "rejectionReason": "Motivo de rechazo",
+    "fullNameLabel": "Nombre completo",
+    "fullNamePlaceholder": "Ingrese nombre completo",
+    "dobLabel": "Fecha de nacimiento",
+    "addressLabel": "Direccion",
+    "addressPlaceholder": "Ingrese direccion",
+    "countryLabel": "Pais",
+    "selectCountry": "Seleccionar pais",
+    "searchCountry": "Buscar pais...",
+    "noCountryFound": "No se encontro pais",
+    "documentTypeLabel": "Tipo de documento",
+    "selectDocumentType": "Seleccione tipo de documento",
+    "passport": "Pasaporte",
+    "nationalId": "ID nacional",
+    "drivingLicense": "Licencia de conducir",
+    "other": "Otro",
+    "uploadDocument": "Subir documento KYC",
+    "uploadHelp": "Permitido: JPG, PNG, JPEG, WEBP, HEIC, PDF. Tamano maximo: 10MB cada uno. Maximo 3 archivos.",
+    "remove": "Eliminar",
+    "preview": "Vista previa",
+    "back": "Atras",
+    "submitting": "Enviando...",
+    "submitManual": "Enviar KYC manual",
+    "loadingProfile": "Cargando perfil para autocompletar...",
+    "sumsubPreparing": "Preparando verificacion Sumsub...",
+    "sumsubTokenMissing": "Token Sumsub no disponible. Inicie sesion nuevamente si es necesario para continuar KYC Sumsub.",
+    "continueToLogin": "Continuar a iniciar sesion",
+    "fullNameRequired": "El nombre completo es obligatorio.",
+    "dobRequired": "La fecha de nacimiento es obligatoria.",
+    "addressRequired": "La direccion es obligatoria.",
+    "countryRequired": "El pais es obligatorio.",
+    "documentRequired": "Se requiere al menos un documento."
   },
   "AboutUs": {
     "explore": {
@@ -172,8 +288,10 @@
         { "label": "Años de experiencia en telecomunicaciones" },
         { "label": "Descargas de aplicaciones en iOS y Android" }
       ],
-      "content": "El viaje de Sophia Michelle está lejos de terminar. Su historia es un testimonio del poder de la pasión y la perseverancia. Para los aspirantes a diseñadores, sigue siendo un faro de inspiración: un recordatorio de que la creatividad, cuando se cultiva, puede transformar vidas."
-    }
+      "content": "Necesitamos mas informacion para la seccion de impacto."
+    },
+    "bannerAlt": "Banner de sobre nosotros",
+    "impactImageAlt": "Imagen de impacto"
   },
   "ContactUs": {
     "heroAlt": "Contáctenos",
@@ -192,7 +310,12 @@
       "namePlaceholder": "Rashed Kabir",
       "emailPlaceholder": "rshdkabir@gmail.com",
       "submit": "ENVIAR MENSAJE"
-    }
+    },
+    "messageSent": "Mensaje enviado correctamente!",
+    "messageFailed": "No se pudo enviar el mensaje",
+    "mailAlt": "Correo",
+    "phoneAlt": "Telefono",
+    "chatAlt": "Chat en vivo"
   },
   "PartnerWithUs": {
     "partnerTitle": "Asóciate con Nosotros",
@@ -212,7 +335,15 @@
       "namePlaceholder": "Rashed Kabir",
       "emailPlaceholder": "rshdkabir@gmail.com",
       "submit": "ENVIAR MENSAJE"
-    }
+    },
+    "messageSent": "Mensaje enviado correctamente!",
+    "messageFailed": "No se pudo enviar el mensaje",
+    "mailAlt": "Correo",
+    "phoneAlt": "Telefono",
+    "chatAlt": "Chat en vivo",
+    "code": "Codigo",
+    "searchCountry": "Buscar pais...",
+    "noCountryFound": "No se encontro pais"
   },
   "Plans": {
     "bannerAlt": "Banner de planes",
@@ -240,6 +371,18 @@
     "validityLabel": "Validez",
     "data": "Datos",
     "buy": "Comprar",
+    "days": "Días",
+    "noPlans": "Aún no hay planes disponibles.",
+    "loginRequired": "Por favor inicia sesión para comprar.",
+    "orderCreated": "¡Pedido creado con éxito!",
+    "checkoutUrlMissing": "No se encontró la URL de pago",
+    "orderCreateFailed": "No se pudo crear el pedido",
+    "metaTitleDefault": "Planes eSIM - Telenet",
+    "metaDescriptionDefault": "Explora y compra planes eSIM para conectividad global.",
+    "metaTitleRegion": "Planes eSIM para la región {region} | Telenet",
+    "metaDescriptionRegion": "Encuentra los mejores planes eSIM disponibles en la región {region}.",
+    "metaTitleCountry": "Planes eSIM para {country} | Telenet",
+    "metaDescriptionCountry": "Descubre planes eSIM para {country}. Mantente conectado globalmente con activación instantánea.",
     "countries": {
       "us": "Estados Unidos",
       "uk": "Reino Unido",
@@ -380,6 +523,10 @@
     "downloadPDF": "Descargar guía en PDF",
     "stepsTitle": "Desbloquea nuestras funciones de conectividad completando los siguientes pasos:",
     "step": "Paso",
+    "stepLabel": "Paso",
+    "iosStepAlt": "Paso iOS",
+    "androidStepAlt": "Paso Android",
+    "videoPreviewAlt": "Vista previa de video",
     "ios": {
       "steps": [
         "Instala la eSIM en tu dispositivo.",
@@ -425,6 +572,15 @@
     "pushNotifications": "Notificaciones Push",
     "deleteAccount": "Eliminar su cuenta",
     "privacyPolicy": "Política de privacidad y Términos de uso",
+    "newPasswordRequired": "Por favor ingresa una nueva contraseña",
+    "passwordChanged": "¡Contraseña cambiada con éxito!",
+    "passwordChangeFailed": "No se pudo cambiar la contraseña",
+    "notificationUpdated": "Preferencias de notificación actualizadas",
+    "imageUploadFailed": "No se pudo subir la imagen",
+    "pictureUploaded": "Foto de perfil subida con éxito.",
+    "pictureUpdateFailed": "No se pudo actualizar la foto",
+    "profileAlt": "Perfil",
+    "changePhoto": "Cambiar foto",
     "modal": {
       "delete": {
         "title": "¿Estás seguro?",
@@ -447,6 +603,7 @@
     }
   },
   "TopUp": {
+    "bannerAlt": "Banner de recarga",
     "enterNumber": "12358000",
     "availablePacks": "Paquetes de recarga disponibles",
     "providerLogo": "LogoProveedor",
@@ -476,6 +633,7 @@
     "confirm": "Confirmar"
   },
   "VirtualNumber": {
+    "bannerAlt": "Banner de numero virtual",
     "numbers": "Números"
   },
   "Dashboard": {
@@ -484,11 +642,13 @@
     "activePlans": "Planes Activos",
     "walletBalance": "Saldo de Billetera",
     "lastTransaction": "Última Transacción",
-    "date": "12 sep 2025",
+    "date": "Fecha",
     "suggestedPlans": "Planes Sugeridos",
     "validity": "Validez",
     "data": "Datos",
-    "buyNow": "Comprar Ahora"
+    "buyNow": "Comprar Ahora",
+    "decorativeCurveLeft": "Curva decorativa izquierda",
+    "decorativeCurveRight": "Curva decorativa derecha"
   },
   "Wallet": {
     "title": "Billetera",
@@ -508,7 +668,13 @@
     "pending": "Pendiente",
     "all": "Todos",
     "sep": "Sep",
-    "aug": "Ago"
+    "aug": "Ago",
+    "bannerAlt": "Banner de billetera",
+    "filterAlt": "Filtro",
+    "googlePay": "Google Pay",
+    "creditCard": "Tarjeta de credito",
+    "applePay": "Apple Pay",
+    "walletAuto": "Billetera Auto"
   },
   "OrderBilling": {
     "filter": "Filtro",
@@ -524,12 +690,46 @@
     "failed": "Fallido",
     "cancelled": "Cancelado",
     "completed": "Completado",
-    "download": "Descargar"
+    "download": "Descargar",
+    "invoiceCompanyName": "NOMBRE DE LA EMPRESA",
+    "invoiceTitle": "FACTURA",
+    "invoiceCompanyAddress": "123 Business Street, City, State 12345",
+    "invoiceCompanyContact": "Email: contact@yourcompany.com | Phone: +1 (555) 123-4567",
+    "invoiceCompanyTaxId": "Tax ID: XX-XXXXXXX",
+    "invoiceNumber": "Factura #",
+    "orderNumber": "Orden #",
+    "invoiceDate": "Fecha",
+    "billTo": "FACTURAR A:",
+    "customerFallback": "Cliente",
+    "countryLabel": "Pais",
+    "orderDetails": "DETALLES DEL PEDIDO:",
+    "packageName": "Nombre del paquete",
+    "providerLabel": "Proveedor",
+    "coverage": "Cobertura",
+    "dataLabel": "Datos",
+    "duration": "Duracion",
+    "iccid": "ICCID",
+    "validUntil": "Valido hasta",
+    "paymentMethod": "Metodo de pago",
+    "orderStatus": "Estado del pedido",
+    "paymentSummary": "RESUMEN DE PAGO:",
+    "totalAmount": "Monto total",
+    "paymentStatus": "Estado de pago",
+    "invoiceThanks": "Gracias por su compra!",
+    "invoiceSupportNote": "Para cualquier consulta, contacte a nuestro equipo de soporte.",
+    "ordersBannerAlt": "Banner de pedidos",
+    "filterAlt": "Filtro",
+    "searchPlaceholder": "Buscar id de orden, plan, proveedor...",
+    "card": "Tarjeta",
+    "noOrders": "No hay pedidos",
+    "prev": "Anterior",
+    "next": "Siguiente"
   },
   "MyPlans": {
     "title": "Mis",
     "active": "Planes activos",
     "expired": "Planes vencidos",
+    "cancelled": "Planes cancelados",
     "addNew": "Agregar nuevo plan",
     "dataLeft": "datos restantes",
     "validUntil": "Válido hasta",
@@ -538,9 +738,20 @@
     "viewQR": "Ver QR",
     "refund": "Reembolsar",
     "expiredOn": "Expirado el",
+    "cancelledOn": "Cancelado el",
     "lastPlan": "Último plan",
     "viewSimilar": "Ver plan similar",
-    "repurchase": "Recomprar"
+    "repurchase": "Recomprar",
+    "noActivePlans": "No hay planes activos",
+    "noExpiredPlans": "No hay planes vencidos",
+    "noCancelledPlans": "No hay planes cancelados",
+    "howToInstall": "Como instalar",
+    "refundStatusHint": "Consulta el estado del reembolso en soporte de tu perfil",
+    "viewBilling": "Ver facturacion",
+    "refundRequested": "Reembolso solicitado",
+    "refundApproved": "Reembolso aprobado",
+    "refundRejected": "Reembolso rechazado",
+    "refundFailed": "Reembolso fallido"
   },
   "Favorites": {
     "bannerAlt": "Banner de favoritos",
@@ -548,7 +759,13 @@
     "remove": "Eliminar",
     "buy": "Comprar",
     "days": "días",
-    "empty": "Aún no tienes planes favoritos. Agrégalos desde la página de planes."
+    "empty": "Aun no tienes planes favoritos. Agregalos desde la pagina de planes.",
+    "countryDetectFailed": "No se pudo detectar el pais del plan.",
+    "orderCreated": "Orden creada correctamente!",
+    "checkoutUrlMissing": "URL de pago no encontrada",
+    "orderCreateFailed": "No se pudo crear la orden",
+    "removedSuccess": "Plan eliminado de favoritos.",
+    "removeFailed": "No se pudo eliminar de favoritos."
   },
   "Support": {
     "title": "Soporte",
@@ -599,6 +816,51 @@
     "countryCodeLabel": "Código de país",
     "noCountryFound": "No se encontró ningún país",
     "searchCountry": "Buscar país...",
-    "loading": "Cargando"
+    "loading": "Cargando",
+    "filterAlt": "Filtro",
+    "action": "Accion",
+    "noTickets": "No se encontraron tickets"
+  }
+,  "Destination": {
+    "all": "Todos",
+    "title": "Busca un",
+    "titleHighlight": "destino",
+    "subtitle": "Encuentra y compra los mejores eSIMs para tu viaje.",
+    "searchAria": "Buscar destinos",
+    "searchPlaceholder": "Buscar un destino internacional",
+    "noDestinations": "No se encontraron destinos.",
+    "noImage": "Sin imagen"
+  },
+  "Region": {
+    "all": "Todos",
+    "title": "Busca una",
+    "titleHighlight": "region",
+    "subtitle": "Encuentra y compra los mejores eSIMs para tu viaje.",
+    "searchAria": "Buscar regiones",
+    "searchPlaceholder": "Buscar una region internacional",
+    "noRegions": "No se encontraron regiones.",
+    "noImage": "Sin imagen"
+  },
+  "Blog": {
+    "metaTitle": "Blog | Telenet",
+    "metaTitleSuffix": "Blog Telenet",
+    "metaDescription": "Ultimas noticias, actualizaciones e ideas de Telenet.",
+    "unknownDate": "Fecha desconocida",
+    "minRead": "{minutes} min lectura",
+    "generalCategory": "General",
+    "bannerAlt": "Banner del blog",
+    "postNotFound": "Publicacion no encontrada",
+    "backToBlog": "Volver al blog"
+  },
+  "Success": {
+    "title": "Pago exitoso!",
+    "subtitle": "Tu pedido fue procesado correctamente.",
+    "backHome": "Volver al inicio"
+  },
+  "Cancel": {
+    "title": "Pago cancelado",
+    "subtitle": "Tu pago no se completo. Puedes intentarlo de nuevo o contactar soporte.",
+    "backHome": "Volver al inicio"
   }
 }
+

@@ -28,9 +28,10 @@ export interface Plan {
   totalData: string;
   validUntil?: string;
   expiredOn?: string;
+  cancelledOn?: string;
   lastPlan?: string;
   price: string;
-  status: "active" | "expired" | string;
+  status: "active" | "expired" | "cancelled" | string;
   package_sms: number;
   package_call: number;
   qrcode?: string;
@@ -39,11 +40,13 @@ export interface Plan {
     expiryDate: string;
     finalPrice: string;
     country: string;
+    cancelledAt?: string;
   };
 }
 interface MyPlansClientProps {
   plans: Plan[];
   expiredPlan: Plan[];
+  cancelledPlan: Plan[];
 }
 
 enum RefundStatusEnum {
@@ -52,14 +55,19 @@ enum RefundStatusEnum {
   REJECTED = "rejected",
   FAILED = "failed",
 }
-export default function MyPlans({ plans, expiredPlan }: MyPlansClientProps) {
+export default function MyPlans({
+  plans,
+  expiredPlan,
+  cancelledPlan,
+}: MyPlansClientProps) {
   const t = useTranslations("MyPlans");
-  const [tab, setTab] = useState<"active" | "expired">("active");
+  const [tab, setTab] = useState<"active" | "expired" | "cancelled">("active");
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const router = useRouter();
   const locale = useLocale();
   const activePlans = plans;
   const expiredPlans = expiredPlan;
+  const cancelledPlans = cancelledPlan;
   const [showRefund, setShowRefund] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const [showBilling, setShowBilling] = useState(false);
@@ -93,7 +101,6 @@ export default function MyPlans({ plans, expiredPlan }: MyPlansClientProps) {
 
       while (true) {
         const orderData = await getOrderList(currentPage, pageSize);
-        console.log(orderData, "orderData");
         if (!orderData) break;
 
         orderData.result.forEach((order) => {
@@ -154,6 +161,15 @@ export default function MyPlans({ plans, expiredPlan }: MyPlansClientProps) {
             >
               {t("expired")}
             </Button>
+            <Button
+              variant={tab === "cancelled" ? "default" : "outline"}
+              onClick={() => setTab("cancelled")}
+              className={cn(
+                tab === "cancelled" && "bg-primary text-white hover:bg-primary",
+              )}
+            >
+              {t("cancelled")}
+            </Button>
           </div>
 
           <Button
@@ -170,7 +186,7 @@ export default function MyPlans({ plans, expiredPlan }: MyPlansClientProps) {
           <div className="space-y-4">
             {activePlans.length === 0 ? (
               <p className="text-center dark:text-gray-300">
-                No active plan available
+                {t("noActivePlans")}
               </p>
             ) : (
               activePlans.map((plan, i) => {
@@ -180,7 +196,6 @@ export default function MyPlans({ plans, expiredPlan }: MyPlansClientProps) {
                   plan.orderId,
                 );
 
-                console.log("Index:", i, "Plan:", plan);
                 return (
                   <div
                     key={plan._id}
@@ -275,13 +290,13 @@ export default function MyPlans({ plans, expiredPlan }: MyPlansClientProps) {
                           }
                           className="border-b border-primary text-primary h-fit place-self-center cursor-pointer"
                         >
-                          How to install
+                          {t("howToInstall")}
                         </p>
                       </div>
 
                       {hasRefundRequested && (
                         <p className="text-sm text-red-600 dark:text-red-400 mt-2 text-center mb-0">
-                          Check refund status in support page of your profile
+                          {t("refundStatusHint")}
                         </p>
                       )}
                     </div>
@@ -293,7 +308,7 @@ export default function MyPlans({ plans, expiredPlan }: MyPlansClientProps) {
                         }}
                         className="border-b border-primary text-primary h-fit place-self-center cursor-pointer"
                       >
-                        View Billing
+                        {t("viewBilling")}
                       </p>
 
                       {hasRefundRequested && refundStatus && (
@@ -313,10 +328,12 @@ export default function MyPlans({ plans, expiredPlan }: MyPlansClientProps) {
                             {
                               {
                                 [RefundStatusEnum.PROCESSING]:
-                                  "Refund Requested",
-                                [RefundStatusEnum.REFUNDED]: "Refund Approved",
-                                [RefundStatusEnum.REJECTED]: "Refund Rejected",
-                                [RefundStatusEnum.FAILED]: "Refund Failed",
+                                  t("refundRequested"),
+                                [RefundStatusEnum.REFUNDED]:
+                                  t("refundApproved"),
+                                [RefundStatusEnum.REJECTED]:
+                                  t("refundRejected"),
+                                [RefundStatusEnum.FAILED]: t("refundFailed"),
                               }[refundStatus]
                             }
                           </span>
@@ -395,7 +412,82 @@ export default function MyPlans({ plans, expiredPlan }: MyPlansClientProps) {
               ))
             ) : (
               <p className="text-center dark:text-gray-300">
-                No expired plan available
+                {t("noExpiredPlans")}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Cancelled Plans */}
+        {tab === "cancelled" && (
+          <div className="space-y-4">
+            {cancelledPlans.length > 0 ? (
+              cancelledPlans.map((plan) => (
+                <div
+                  key={plan._id}
+                  className="bg-[#F1F8FE] dark:bg-gray-800 rounded-2xl p-4 flex flex-col md:flex-row justify-between items-center shadow-sm"
+                >
+                  <div>
+                    <div className="flex gap-4">
+                      <Image
+                        src={plan.countryFlag}
+                        alt="flag"
+                        width={30}
+                        height={50}
+                        className="rounded"
+                      />
+                      <p className="font-medium text-lg dark:text-white">
+                        {plan.package_name}
+                      </p>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-3 dark:text-gray-400">
+                      {t("cancelledOn")}{" "}
+                      {new Date(
+                        plan?.order?.cancelledAt ||
+                          plan.cancelledOn ||
+                          plan?.order?.expiryDate ||
+                          plan.expiredOn ||
+                          "",
+                      ).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {t("lastPlan")}: {plan.lastPlan} •{" "}
+                      {plan.order?.finalPrice}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-2 mt-3 md:mt-0">
+                    <Button
+                      className="bg-black hover:bg-gray-800 rounded-full"
+                      onClick={() =>
+                        router.push(
+                          `${ROUTES.PLANS(locale)}?filterby=Country&country_code=${plan.order?.country}`,
+                        )
+                      }
+                    >
+                      {t("viewSimilar")}
+                    </Button>
+                    <Button
+                      className="bg-primary hover:bg-primary rounded-full"
+                      onClick={() => {
+                        setSelectedPlan(plan);
+                        router.push(
+                          `${ROUTES.PLANS(locale)}?filterby=Country&country_code=${plan.order?.country}`,
+                        );
+                      }}
+                    >
+                      {t("repurchase")}
+                    </Button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-center dark:text-gray-300">
+                {t("noCancelledPlans")}
               </p>
             )}
           </div>

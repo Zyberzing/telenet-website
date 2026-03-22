@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/Input";
 import { ROUTES } from "@/routes";
 import { resetPassword, resendOtp } from "@/services/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -21,24 +21,28 @@ import { toast } from "sonner";
 import * as z from "zod";
 
 // ✅ Validation schema
-const resetSchema = z.object({
-  email: z.string().email("Invalid email"),
-  otp: z.string().min(6, "OTP must be 6 digits").max(6, "OTP must be 6 digits"),
-  newPassword: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .max(32, "Password too long"),
-});
-
 export default function ResetPassword() {
   const router = useRouter();
   const locale = useLocale();
+  const t = useTranslations("ResetPassword");
   const searchParams = useSearchParams();
 
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
 
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const resetSchema = z.object({
+    email: z.string().email(t("invalidEmail")),
+    otp: z
+      .string()
+      .min(6, t("otpLength"))
+      .max(6, t("otpLength")),
+    newPassword: z
+      .string()
+      .min(6, t("passwordMin"))
+      .max(32, t("passwordMax")),
+  });
 
   const form = useForm<z.infer<typeof resetSchema>>({
     resolver: zodResolver(resetSchema as any),
@@ -94,7 +98,7 @@ export default function ResetPassword() {
     setLoading(true);
     try {
       const res = await resetPassword(values);
-      toast.success(res.message || "Password reset successful!");
+      toast.success(res.message || t("resetSuccess"));
 
       // Clear saved email info
       sessionStorage.removeItem("registrationState");
@@ -103,7 +107,7 @@ export default function ResetPassword() {
       router.push(ROUTES.LOGIN(locale));
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Failed to reset password!";
+        err instanceof Error ? err.message : t("resetFailed");
       toast.error(message);
     } finally {
       setLoading(false);
@@ -116,7 +120,7 @@ export default function ResetPassword() {
       const email = form.getValues("email");
 
       if (!email) {
-        toast.error("Email not found");
+        toast.error(t("emailNotFound"));
         return;
       }
 
@@ -124,10 +128,10 @@ export default function ResetPassword() {
 
       await resendOtp(email);
 
-      toast.success("OTP resent successfully");
+      toast.success(t("otpResent"));
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Failed to resend OTP";
+        err instanceof Error ? err.message : t("otpResendFailed");
       toast.error(message);
     } finally {
       setResendLoading(false);
@@ -139,7 +143,7 @@ export default function ResetPassword() {
       <main className="flex flex-1 items-center justify-center bg-white dark:bg-gray-950 p-8">
         <div className="max-w-md w-full shadow-lg rounded-2xl overflow-hidden p-8 bg-white dark:bg-gray-900 dark:text-gray-100">
           <h2 className="text-2xl font-normal mb-6 text-center text-gray-900 dark:text-gray-50">
-            Reset Your Password
+            {t("title")}
           </h2>
 
           <Form {...form}>
@@ -154,7 +158,9 @@ export default function ResetPassword() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="dark:text-gray-200">Email</FormLabel>
+                    <FormLabel className="dark:text-gray-200">
+                      {t("emailLabel")}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -174,7 +180,9 @@ export default function ResetPassword() {
                 name="otp"
                 render={() => (
                   <FormItem>
-                    <FormLabel className="dark:text-gray-200">Enter OTP</FormLabel>
+                    <FormLabel className="dark:text-gray-200">
+                      {t("otpLabel")}
+                    </FormLabel>
                     <FormControl>
                       <div className="flex justify-between gap-2">
                         {Array.from({ length: 6 }).map((_, i) => (
@@ -219,7 +227,7 @@ export default function ResetPassword() {
                         onClick={handleResendOtp}
                         className="text-sm text-primary hover:underline"
                       >
-                        {resendLoading ? "Sending..." : "Resend OTP"}
+                        {resendLoading ? t("sending") : t("resendOtp")}
                       </button>
                     </div>
 
@@ -234,12 +242,14 @@ export default function ResetPassword() {
                 name="newPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="dark:text-gray-200">New Password</FormLabel>
+                    <FormLabel className="dark:text-gray-200">
+                      {t("newPasswordLabel")}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="password"
-                        placeholder="Enter your new password"
+                        placeholder={t("newPasswordPlaceholder")}
                         className="dark:bg-gray-800 dark:text-gray-50 dark:border-gray-700"
                       />
                     </FormControl>
@@ -253,7 +263,7 @@ export default function ResetPassword() {
                 disabled={loading}
                 className="w-full bg-gradient from-primary to-indigo-600 text-white"
               >
-                {loading ? "Resetting..." : "Reset Password"}
+                {loading ? t("resetting") : t("resetButton")}
               </Button>
             </form>
           </Form>

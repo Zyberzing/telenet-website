@@ -140,7 +140,7 @@ export default function Support({ initialTickets }: SupportProps) {
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-3">
               <span className="text-sm">{t("filter")}</span>
-              <Image src="/filter.svg" alt="Filter" height={14} width={15} />
+              <Image src="/filter.svg" alt={t("filterAlt")} height={14} width={15} />
             </div>
 
             {/* Date Calendar */}
@@ -209,7 +209,7 @@ export default function Support({ initialTickets }: SupportProps) {
                 <th className="p-3">{t("createdOn")}</th>
                 <th className="p-3">{t("lastUpdate")}</th>
                 <th className="p-3">{t("status")}</th>
-                <th className="p-3">Action</th>
+                <th className="p-3">{t("action")}</th>
               </tr>
             </thead>
 
@@ -236,7 +236,7 @@ export default function Support({ initialTickets }: SupportProps) {
                     colSpan={7}
                     className="p-6 text-center text-gray-500 bg-white dark:bg-gray-800"
                   >
-                    No tickets found
+                    {t("noTickets")}
                   </td>
                 </tr>
               )}

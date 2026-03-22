@@ -129,9 +129,13 @@ export default function Plans({
     });
   };
 
-  const handleBuy = async (promotionId?: string): Promise<void> => {
+  const handleBuy = async (
+    promotionId?: string,
+    travelStartDate?: string,
+    travelEndDate?: string,
+  ): Promise<void> => {
     if (!userProfile) {
-      toast.error("Please login first to buy.");
+      toast.error(t("loginRequired"));
       return Promise.resolve();
     }
 
@@ -142,27 +146,32 @@ export default function Plans({
     const orderBody: orderDetails = {
       packageId: selectedPlan?._id,
       country: selectedCountry,
+      providerId: selectedPlan?.provider,
+      customerDOB: userProfile?.customerDOB,
+      customerPassportDOB: userProfile?.customerPassportDOB,
+      travelStartDate,
+      travelEndDate,
       ...(promotionId ? { couponId: promotionId } : {}),
     };
 
     try {
       setOrderLoading(true);
       const res = await createCheckout(orderBody);
-      toast.success(res.message || "Order successfully created!");
+      toast.success(res.message || t("orderCreated"));
 
       setSelectedPlan(null);
 
       if (res?.data?.url) {
         window.location.href = res.data.url;
       } else {
-        toast.error("Checkout URL not found");
+        toast.error(t("checkoutUrlMissing"));
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
         toast.error(err.message);
         console.error(err);
       } else {
-        toast.error("Failed to create order");
+        toast.error(t("orderCreateFailed"));
         console.error(err);
       }
     } finally {
@@ -255,7 +264,7 @@ export default function Plans({
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {plansList.map((plan) => (
                     <div key={plan.package_id}>
-                      <div className="flex justify-between items-center mb-1">
+                      {/* <div className="flex justify-between items-center mb-1">
                         {plan.network && (
                           <TooltipProvider delayDuration={100}>
                             <Tooltip>
@@ -275,7 +284,7 @@ export default function Plans({
                         <span className="text-[14px] font-extrabold text-[#A70123] rounded-[7px] px-2 ">
                           {plan.coverage}
                         </span>
-                      </div>
+                      </div> */}
 
                       <div
                         className="rounded-2xl p-5 shadow-sm border border-gray-100 bg-[#F1F8FE] hover:bg-[#FFF2E0] transition-all duration-300 flex flex-col justify-between cursor-pointer group dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
@@ -300,7 +309,7 @@ export default function Plans({
                           <div className="gap-4">
                             <p className="flex gap-2 items-center">
                               <Calendar size={15} />
-                              {plan.validity} Days
+                              {plan.validity} {t("days")}
                             </p>
                             <p className="flex gap-2 items-center">
                               <MessageCircleMore size={15} /> {plan.sms}
@@ -316,7 +325,7 @@ export default function Plans({
                   ))}
                 </div>
               ) : (
-                <p className="text-[20px]">No plans available yet.</p>
+                <p className="text-[20px]">{t("noPlans")}</p>
               )}
             </div>
           </main>

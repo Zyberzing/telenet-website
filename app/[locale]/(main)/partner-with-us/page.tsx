@@ -67,13 +67,13 @@ const PartnerWithUsPage = () => {
       };
 
       await partnerWithUs(payload);
-      setSuccess("Message sent successfully!");
+      setSuccess(t("messageSent"));
       setForm({ name: "", email: "", phone: "", countryCode: "", message: "" });
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Failed to send message");
+        setError(t("messageFailed"));
       }
     } finally {
       setLoading(false);
@@ -191,7 +191,9 @@ const PartnerWithUsPage = () => {
                               {form.countryCode}
                             </span>
                           ) : (
-                            <span className="text-gray-400 dark:text-gray-500">Code</span>
+                            <span className="text-gray-400 dark:text-gray-500">
+                              {t("code")}
+                            </span>
                           )}
                           <ChevronsUpDown className="h-4 w-4 opacity-50 dark:text-gray-400" />
                         </button>
@@ -199,8 +201,13 @@ const PartnerWithUsPage = () => {
 
                       <PopoverContent className="p-0 w-[120px] bg-white dark:bg-gray-700 border dark:border-gray-600">
                         <Command className="dark:text-gray-100">
-                          <CommandInput placeholder="Search country..." className="dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400" />
-                          <CommandEmpty className="dark:text-gray-300">No country found.</CommandEmpty>
+                          <CommandInput
+                            placeholder={t("searchCountry")}
+                            className="dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
+                          />
+                          <CommandEmpty className="dark:text-gray-300">
+                            {t("noCountryFound")}
+                          </CommandEmpty>
 
                           <CommandGroup className="max-h-[200px] overflow-y-auto">
                             {countryCodes.map(({ code, country }) => (

@@ -47,7 +47,7 @@ export default function Wallet({
       <div className="relative w-full h-[13vh] sm:h-[10vh] md:h-[20vh]">
         <Image
           src="/banner-wallet.svg"
-          alt="Wallet Banner"
+          alt={t("bannerAlt")}
           fill
           className="object-cover object-top"
           priority
@@ -88,7 +88,7 @@ export default function Wallet({
             <div className="flex flex-wrap items-center gap-4">
               <div className="flex items-center gap-3">
                 <span className="text-sm">{t("filter")}</span>
-                <Image src="/filter.svg" alt="Filter" height={14} width={15} />
+                <Image src="/filter.svg" alt={t("filterAlt")} height={14} width={15} />
               </div>
 
               {/* Date Filter */}
@@ -113,10 +113,10 @@ export default function Wallet({
                   <SelectValue placeholder={t("method")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Google Pay">Google Pay</SelectItem>
-                  <SelectItem value="Credit Card">Credit Card</SelectItem>
-                  <SelectItem value="Apple Pay">Apple Pay</SelectItem>
-                  <SelectItem value="Wallet Auto">Wallet Auto</SelectItem>
+                  <SelectItem value="Google Pay">{t("googlePay")}</SelectItem>
+                  <SelectItem value="Credit Card">{t("creditCard")}</SelectItem>
+                  <SelectItem value="Apple Pay">{t("applePay")}</SelectItem>
+                  <SelectItem value="Wallet Auto">{t("walletAuto")}</SelectItem>
                 </SelectContent>
               </Select>
 

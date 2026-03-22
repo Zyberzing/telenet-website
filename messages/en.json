@@ -95,6 +95,8 @@
       "name": "Name",
       "email": "Email",
       "password": "Password",
+      "passportNo": "Passport Number",
+      "dateOfBirth": "Date of Birth",
       "phone": "Phone Number",
       "countryCode": "Country Code"
     },
@@ -103,6 +105,8 @@
       "name": "Enter your full name",
       "email": "Enter your email",
       "password": "Enter your password",
+      "passportNo": "Enter your passport number",
+      "dateOfBirth": "Select your date of birth",
       "phone": "Enter your phone number",
       "countryCode": "Enter country code (e.g. +1)"
     },
@@ -119,6 +123,112 @@
     "or": "or",
     "registerWithGoogle": "Sign up with Google",
     "loading": "Loading"
+  },
+  "ForgotPassword": {
+    "title": "Forgot Password",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your registered email",
+    "sending": "Sending...",
+    "sendOtp": "Send OTP",
+    "invalidEmail": "Invalid email",
+    "otpSent": "OTP sent to your email!",
+    "sendFailed": "Failed to send reset email!"
+  },
+  "ResetPassword": {
+    "title": "Reset Your Password",
+    "emailLabel": "Email",
+    "otpLabel": "Enter OTP",
+    "newPasswordLabel": "New Password",
+    "newPasswordPlaceholder": "Enter your new password",
+    "sending": "Sending...",
+    "resendOtp": "Resend OTP",
+    "resetting": "Resetting...",
+    "resetButton": "Reset Password",
+    "invalidEmail": "Invalid email",
+    "otpLength": "OTP must be 6 digits",
+    "passwordMin": "Password must be at least 6 characters",
+    "passwordMax": "Password too long",
+    "resetSuccess": "Password reset successful!",
+    "resetFailed": "Failed to reset password!",
+    "emailNotFound": "Email not found",
+    "otpResent": "OTP resent successfully",
+    "otpResendFailed": "Failed to resend OTP"
+  },
+  "OTPVerification": {
+    "title": "Verify your email",
+    "emailLabel": "Email",
+    "otpLabel": "Enter OTP",
+    "sending": "Sending...",
+    "resendOtp": "Resend OTP",
+    "verifying": "Verifying...",
+    "verifyAndLogin": "Verify & Go to Login",
+    "invalidEmail": "Invalid email",
+    "otpLength": "OTP must be 6 digits",
+    "otpNumeric": "OTP must be numeric",
+    "otpVerified": "OTP verified successfully!",
+    "otpVerifyFailed": "OTP verification failed!",
+    "emailNotFound": "Email not found",
+    "otpResent": "OTP resent successfully",
+    "otpResendFailed": "Failed to resend OTP"
+  },
+  "Kyc": {
+    "sumsubTitle": "Sumsub Verification",
+    "manualTitle": "Manual KYC Verification",
+    "chooseMethodTitle": "Choose Verification Method",
+    "statusPending": "Pending",
+    "kycFailed": "KYC failed. Please try again.",
+    "invalidFormat": "Invalid format. Allowed: JPG, PNG, JPEG, WEBP, HEIC, PDF.",
+    "fileTooLarge": "Each file must be 10MB or smaller.",
+    "maxFiles": "You can upload a maximum of 3 files.",
+    "sessionExpired": "KYC session expired. Please verify OTP again.",
+    "uploadFailed": "Failed to upload document.",
+    "manualSubmitSuccess": "Manual KYC submitted. Your status is pending review.",
+    "manualSubmitFailed": "Failed to submit manual KYC.",
+    "kycInProgressTitle": "KYC Verification In Progress",
+    "kycInProgressBody": "Your documents are submitted and currently under review. We will notify you once verification is complete.",
+    "currentStatus": "Current Status",
+    "registeredEmail": "Registered Email",
+    "notAvailable": "Not available",
+    "nameLabel": "Name",
+    "mobileNumber": "Mobile Number",
+    "reviewerNote": "Reviewer Note",
+    "backToLogin": "Back to Login",
+    "manualKycTitle": "Manual KYC",
+    "manualKycBody": "Upload your document and submit details for review.",
+    "sumsubCardTitle": "Use Sumsub",
+    "sumsubCardBody": "Continue with the existing Sumsub verification flow.",
+    "rejectionReason": "Rejection Reason",
+    "fullNameLabel": "Full Name",
+    "fullNamePlaceholder": "Enter full name",
+    "dobLabel": "Date of Birth",
+    "addressLabel": "Address",
+    "addressPlaceholder": "Enter address",
+    "countryLabel": "Country",
+    "selectCountry": "Select country",
+    "searchCountry": "Search country...",
+    "noCountryFound": "No country found",
+    "documentTypeLabel": "Document Type",
+    "selectDocumentType": "Select document type",
+    "passport": "Passport",
+    "nationalId": "National ID",
+    "drivingLicense": "Driving License",
+    "other": "Other",
+    "uploadDocument": "Upload KYC Document",
+    "uploadHelp": "Allowed: JPG, PNG, JPEG, WEBP, HEIC, PDF. Max size: 10MB each. Maximum 3 files.",
+    "remove": "Remove",
+    "preview": "Preview",
+    "back": "Back",
+    "submitting": "Submitting...",
+    "submitManual": "Submit Manual KYC",
+    "loadingProfile": "Loading profile for auto-fill...",
+    "sumsubPreparing": "Preparing Sumsub verification...",
+    "sumsubTokenMissing": "Sumsub token not available yet. Please login again if needed to continue Sumsub KYC.",
+    "continueToLogin": "Continue to Login",
+    "fullNameRequired": "Full name is required.",
+    "dobRequired": "Date of birth is required.",
+    "addressRequired": "Address is required.",
+    "countryRequired": "Country is required.",
+    "documentRequired": "At least one document is required."
   },
   "AboutUs": {
     "explore": {
@@ -174,7 +284,9 @@
         { "label": "App Downloads on iOS & Android" }
       ],
       "content": "Sophia Michelle’s journey is far from over. Her story serves as a testament to the power of passion, and perseverance.For aspiring designers, she remains a beacon of inspiration—a reminder that creativity, when nurtured, can transform lives."
-    }
+    },
+    "bannerAlt": "About us banner",
+    "impactImageAlt": "Impact image"
   },
   "ContactUs": {
     "heroAlt": "Contact Us",
@@ -193,7 +305,15 @@
       "namePlaceholder": "Rashed Kabir",
       "emailPlaceholder": "rshdkabir@gmail.com",
       "submit": "SEND MESSAGE"
-    }
+    },
+    "messageSent": "Message sent successfully!",
+    "messageFailed": "Failed to send message",
+    "mailAlt": "Mail",
+    "phoneAlt": "Phone",
+    "chatAlt": "Live chat",
+    "code": "Code",
+    "searchCountry": "Search country...",
+    "noCountryFound": "No country found"
   },
   "PartnerWithUs": {
     "partnerTitle": "Partner With Us",
@@ -213,7 +333,15 @@
       "namePlaceholder": "Rashed Kabir",
       "emailPlaceholder": "rshdkabir@gmail.com",
       "submit": "SEND MESSAGE"
-    }
+    },
+    "messageSent": "Message sent successfully!",
+    "messageFailed": "Failed to send message",
+    "mailAlt": "Mail",
+    "phoneAlt": "Phone",
+    "chatAlt": "Live chat",
+    "code": "Code",
+    "searchCountry": "Search country...",
+    "noCountryFound": "No country found"
   },
   "Plans": {
     "bannerAlt": "Plans banner",
@@ -241,6 +369,18 @@
     "validityLabel": "Validity",
     "data": "Data",
     "buy": "Buy",
+    "days": "Days",
+    "noPlans": "No plans available yet.",
+    "loginRequired": "Please login first to buy.",
+    "orderCreated": "Order successfully created!",
+    "checkoutUrlMissing": "Checkout URL not found",
+    "orderCreateFailed": "Failed to create order",
+    "metaTitleDefault": "eSIM Plans - Telenet",
+    "metaDescriptionDefault": "Browse and purchase eSIM plans for global connectivity.",
+    "metaTitleRegion": "eSIM Plans for {region} Region | Telenet",
+    "metaDescriptionRegion": "Find the best eSIM plans available in the {region} region.",
+    "metaTitleCountry": "eSIM Plans for {country} | Telenet",
+    "metaDescriptionCountry": "Discover eSIM plans for {country}. Stay connected globally with instant activation.",
     "countries": {
       "us": "United States",
       "uk": "United Kingdom",
@@ -381,6 +521,10 @@
     "downloadPDF": "Download PDF Guide",
     "stepsTitle": "Unlock our connectivity features by completing the following steps:",
     "step": "Step",
+    "stepLabel": "Step",
+    "iosStepAlt": "iOS step",
+    "androidStepAlt": "Android step",
+    "videoPreviewAlt": "Video preview",
     "ios": {
       "steps": [
         "Install the eSIM on your device.",
@@ -426,6 +570,15 @@
     "pushNotifications": "Push Notifications",
     "deleteAccount": "Delete Your Account",
     "privacyPolicy": "Privacy Policy and Terms of Use",
+    "newPasswordRequired": "Please enter a new password",
+    "passwordChanged": "Password changed successfully!",
+    "passwordChangeFailed": "Failed to change password",
+    "notificationUpdated": "Notification preferences updated",
+    "imageUploadFailed": "Failed to upload image",
+    "pictureUploaded": "Profile picture uploaded successfully.",
+    "pictureUpdateFailed": "Failed to update picture",
+    "profileAlt": "Profile",
+    "changePhoto": "Change Photo",
     "modal": {
       "delete": {
         "title": "Are you sure?",
@@ -448,6 +601,7 @@
     }
   },
   "TopUp": {
+    "bannerAlt": "Top up banner",
     "enterNumber": "12358000",
     "availablePacks": "Available Top-Up Packs",
     "providerLogo": "ProviderLogo",
@@ -477,7 +631,8 @@
     "confirm": "Confirm"
   },
   "VirtualNumber": {
-    "numbers": "Numbers"
+    "numbers": "Numbers",
+    "bannerAlt": "Virtual number banner"
   },
   "Dashboard": {
     "greeting": "Hi",
@@ -485,11 +640,54 @@
     "activePlans": "Active Plans",
     "walletBalance": "Wallet Balance",
     "lastTransaction": "Last Transaction",
-    "date": "12 Sep 2025",
+    "date": "Date",
     "suggestedPlans": "Suggested Plans",
     "validity": "Validity",
     "data": "Data",
-    "buyNow": "Buy Now"
+    "buyNow": "Buy Now",
+    "decorativeCurveLeft": "Decorative curve left",
+    "decorativeCurveRight": "Decorative curve right"
+  },
+  "Destination": {
+    "all": "All",
+    "title": "Search an international",
+    "titleHighlight": "destination",
+    "subtitle": "Find & buy the best eSIMs for your travel.",
+    "searchAria": "Search destinations",
+    "searchPlaceholder": "Search an International Destination",
+    "noDestinations": "No destinations found.",
+    "noImage": "No image"
+  },
+  "Region": {
+    "all": "All",
+    "title": "Search an international",
+    "titleHighlight": "regions",
+    "subtitle": "Find & buy the best eSIMs for your travel.",
+    "searchAria": "Search regions",
+    "searchPlaceholder": "Search an International Region",
+    "noRegions": "No regions found.",
+    "noImage": "No image"
+  },
+  "Blog": {
+    "metaTitle": "Blog | Telenet",
+    "metaTitleSuffix": "Telenet Blog",
+    "metaDescription": "Latest news, updates, and insights from Telenet.",
+    "unknownDate": "Unknown date",
+    "minRead": "{minutes} min read",
+    "generalCategory": "General",
+    "bannerAlt": "Blog banner",
+    "postNotFound": "Post Not Found",
+    "backToBlog": "Back to Blog"
+  },
+  "Success": {
+    "title": "Payment Successful!",
+    "subtitle": "Your order has been processed successfully.",
+    "backHome": "Back to Home"
+  },
+  "Cancel": {
+    "title": "Payment Cancelled",
+    "subtitle": "Your payment was not completed. You can try again or contact support.",
+    "backHome": "Back to Home"
   },
   "Wallet": {
     "title": "Wallet",
@@ -509,7 +707,13 @@
     "pending": "Pending",
     "all": "All",
     "sep": "Sep",
-    "aug": "Aug"
+    "aug": "Aug",
+    "bannerAlt": "Wallet banner",
+    "filterAlt": "Filter",
+    "googlePay": "Google Pay",
+    "creditCard": "Credit Card",
+    "applePay": "Apple Pay",
+    "walletAuto": "Wallet Auto"
   },
   "OrderBilling": {
     "filter": "Filter",
@@ -525,12 +729,46 @@
     "failed": "Failed",
     "cancelled": "Cancelled",
     "completed": "Completed",
-    "download": "Download"
+    "download": "Download",
+    "invoiceCompanyName": "YOUR COMPANY NAME",
+    "invoiceTitle": "INVOICE",
+    "invoiceCompanyAddress": "123 Business Street, City, State 12345",
+    "invoiceCompanyContact": "Email: contact@yourcompany.com | Phone: +1 (555) 123-4567",
+    "invoiceCompanyTaxId": "Tax ID: XX-XXXXXXX",
+    "invoiceNumber": "Invoice #",
+    "orderNumber": "Order #",
+    "invoiceDate": "Date",
+    "billTo": "BILL TO:",
+    "customerFallback": "Customer",
+    "countryLabel": "Country",
+    "orderDetails": "ORDER DETAILS:",
+    "packageName": "Package Name",
+    "providerLabel": "Provider",
+    "coverage": "Coverage",
+    "dataLabel": "Data",
+    "duration": "Duration",
+    "iccid": "ICCID",
+    "validUntil": "Valid Until",
+    "paymentMethod": "Payment Method",
+    "orderStatus": "Order Status",
+    "paymentSummary": "PAYMENT SUMMARY:",
+    "totalAmount": "Total Amount",
+    "paymentStatus": "Payment Status",
+    "invoiceThanks": "Thank you for your business!",
+    "invoiceSupportNote": "For any queries, please contact our support team.",
+    "ordersBannerAlt": "Orders banner",
+    "filterAlt": "Filter",
+    "searchPlaceholder": "Search order id, plan, provider...",
+    "card": "Card",
+    "noOrders": "No Order Available",
+    "prev": "Prev",
+    "next": "Next"
   },
   "MyPlans": {
     "title": "My",
     "active": "Active Plans",
     "expired": "Expired Plans",
+    "cancelled": "Cancelled Plans",
     "addNew": "Add New Plan",
     "dataLeft": "data Left",
     "validUntil": "Valid until",
@@ -539,9 +777,20 @@
     "viewQR": "View QR",
     "refund": "Refund",
     "expiredOn": "Expired on",
+    "cancelledOn": "Cancelled on",
     "lastPlan": "Last Plan",
     "viewSimilar": "View similar plan",
-    "repurchase": "Re-Purchase"
+    "repurchase": "Re-Purchase",
+    "noActivePlans": "No active plan available",
+    "noExpiredPlans": "No expired plan available",
+    "noCancelledPlans": "No cancelled plan available",
+    "howToInstall": "How to install",
+    "refundStatusHint": "Check refund status in support page of your profile",
+    "viewBilling": "View Billing",
+    "refundRequested": "Refund Requested",
+    "refundApproved": "Refund Approved",
+    "refundRejected": "Refund Rejected",
+    "refundFailed": "Refund Failed"
   },
   "Favorites": {
     "bannerAlt": "Favorites banner",
@@ -549,7 +798,13 @@
     "remove": "Remove",
     "buy": "Buy",
     "days": "Days",
-    "empty": "No favorite plans yet. Add plans from the plans page."
+    "empty": "No favorite plans yet. Add plans from the plans page.",
+    "countryDetectFailed": "Unable to detect plan country.",
+    "orderCreated": "Order successfully created!",
+    "checkoutUrlMissing": "Checkout URL not found",
+    "orderCreateFailed": "Failed to create order",
+    "removedSuccess": "Plan removed from favorites.",
+    "removeFailed": "Failed to remove from favorites."
   },
   "Support": {
     "title": "Support",
@@ -600,6 +855,9 @@
     "countryCodeLabel": "Country Code",
     "noCountryFound": "No country found",
     "searchCountry": "Search country...",
-    "loading": "Loading"
+    "loading": "Loading",
+    "filterAlt": "Filter",
+    "action": "Action",
+    "noTickets": "No tickets found"
   }
 }

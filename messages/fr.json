@@ -81,7 +81,10 @@
     "createAccount": "Créer un compte",
     "emailRequired": "Adresse e-mail invalide",
     "passwordRequired": "Un mot de passe est requis.",
-    "loading": "Chargement"
+    "loading": "Chargement",
+    "filterAlt": "Filtre",
+    "action": "Action",
+    "noTickets": "Aucun ticket trouve"
   },
   "RegisterForm": {
     "welcomeText": "Bienvenue ! Créez votre compte ci-dessous.",
@@ -94,6 +97,8 @@
       "name": "Nom",
       "email": "E-mail",
       "password": "Mot de passe",
+      "passportNo": "Numero de passeport",
+      "dateOfBirth": "Date de naissance",
       "phone": "Téléphone",
       "countryCode": "Code du pays"
     },
@@ -102,6 +107,8 @@
       "name": "Entrez votre nom complet",
       "email": "Entrez votre e-mail",
       "password": "Entrez votre mot de passe",
+      "passportNo": "Entrez votre numero de passeport",
+      "dateOfBirth": "Selectionnez votre date de naissance",
       "phone": "Entrez votre numéro de téléphone",
       "countryCode": "Entrez le code du pays (ex. +33)"
     },
@@ -117,7 +124,116 @@
     "noCountryFound": "Aucun pays trouvé",
     "or": "ou",
     "registerWithGoogle": "S'inscrire avec Google",
-    "loading": "Chargement"
+    "loading": "Chargement",
+    "filterAlt": "Filtre",
+    "action": "Action",
+    "noTickets": "Aucun ticket trouve"
+  },
+  "ForgotPassword": {
+    "title": "Mot de passe oublie",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Entrez votre email enregistre",
+    "sending": "Envoi...",
+    "sendOtp": "Envoyer OTP",
+    "invalidEmail": "Email invalide",
+    "otpSent": "OTP envoye a votre email!",
+    "sendFailed": "Echec de l'envoi de l'email de reinitialisation!"
+  },
+  "ResetPassword": {
+    "title": "Reinitialiser votre mot de passe",
+    "emailLabel": "Email",
+    "otpLabel": "Entrer OTP",
+    "newPasswordLabel": "Nouveau mot de passe",
+    "newPasswordPlaceholder": "Entrez votre nouveau mot de passe",
+    "sending": "Envoi...",
+    "resendOtp": "Renvoyer OTP",
+    "resetting": "Reinitialisation...",
+    "resetButton": "Reinitialiser le mot de passe",
+    "invalidEmail": "Email invalide",
+    "otpLength": "OTP doit contenir 6 chiffres",
+    "passwordMin": "Le mot de passe doit avoir au moins 6 caracteres",
+    "passwordMax": "Mot de passe trop long",
+    "resetSuccess": "Mot de passe reinitialise avec succes!",
+    "resetFailed": "Echec de la reinitialisation du mot de passe!",
+    "emailNotFound": "Email introuvable",
+    "otpResent": "OTP renvoye avec succes",
+    "otpResendFailed": "Echec de l'envoi de l'OTP"
+  },
+  "OTPVerification": {
+    "title": "Verifiez votre email",
+    "emailLabel": "Email",
+    "otpLabel": "Entrer OTP",
+    "sending": "Envoi...",
+    "resendOtp": "Renvoyer OTP",
+    "verifying": "Verification...",
+    "verifyAndLogin": "Verifier et aller a la connexion",
+    "invalidEmail": "Email invalide",
+    "otpLength": "OTP doit contenir 6 chiffres",
+    "otpNumeric": "OTP doit etre numerique",
+    "otpVerified": "OTP verifie avec succes!",
+    "otpVerifyFailed": "Echec de la verification OTP!",
+    "emailNotFound": "Email introuvable",
+    "otpResent": "OTP renvoye avec succes",
+    "otpResendFailed": "Echec de l'envoi de l'OTP"
+  },
+  "Kyc": {
+    "sumsubTitle": "Verification Sumsub",
+    "manualTitle": "Verification KYC manuelle",
+    "chooseMethodTitle": "Choisir la methode de verification",
+    "statusPending": "En attente",
+    "kycFailed": "Echec KYC. Veuillez reessayer.",
+    "invalidFormat": "Format invalide. Autorise: JPG, PNG, JPEG, WEBP, HEIC, PDF.",
+    "fileTooLarge": "Chaque fichier doit faire 10MB ou moins.",
+    "maxFiles": "Vous pouvez televerser un maximum de 3 fichiers.",
+    "sessionExpired": "Session KYC expiree. Veuillez verifier l'OTP a nouveau.",
+    "uploadFailed": "Echec du televersement du document.",
+    "manualSubmitSuccess": "KYC manuel soumis. Votre statut est en attente d'examen.",
+    "manualSubmitFailed": "Echec de la soumission KYC manuelle.",
+    "kycInProgressTitle": "Verification KYC en cours",
+    "kycInProgressBody": "Vos documents sont soumis et en cours d'examen. Nous vous avertirons une fois la verification terminee.",
+    "currentStatus": "Statut actuel",
+    "registeredEmail": "Email enregistre",
+    "notAvailable": "Non disponible",
+    "nameLabel": "Nom",
+    "mobileNumber": "Numero de mobile",
+    "reviewerNote": "Note du relecteur",
+    "backToLogin": "Retour a la connexion",
+    "manualKycTitle": "KYC manuel",
+    "manualKycBody": "Televersez votre document et soumettez les details pour examen.",
+    "sumsubCardTitle": "Utiliser Sumsub",
+    "sumsubCardBody": "Continuer avec le flux de verification Sumsub existant.",
+    "rejectionReason": "Raison du refus",
+    "fullNameLabel": "Nom complet",
+    "fullNamePlaceholder": "Entrez le nom complet",
+    "dobLabel": "Date de naissance",
+    "addressLabel": "Adresse",
+    "addressPlaceholder": "Entrez l'adresse",
+    "countryLabel": "Pays",
+    "selectCountry": "Selectionner un pays",
+    "searchCountry": "Rechercher un pays...",
+    "noCountryFound": "Aucun pays trouve",
+    "documentTypeLabel": "Type de document",
+    "selectDocumentType": "Selectionner le type de document",
+    "passport": "Passeport",
+    "nationalId": "Carte nationale",
+    "drivingLicense": "Permis de conduire",
+    "other": "Autre",
+    "uploadDocument": "Televerser un document KYC",
+    "uploadHelp": "Autorise: JPG, PNG, JPEG, WEBP, HEIC, PDF. Taille max: 10MB chacun. Maximum 3 fichiers.",
+    "remove": "Supprimer",
+    "preview": "Apercu",
+    "back": "Retour",
+    "submitting": "Soumission...",
+    "submitManual": "Soumettre KYC manuel",
+    "loadingProfile": "Chargement du profil pour auto-remplissage...",
+    "sumsubPreparing": "Preparation de la verification Sumsub...",
+    "sumsubTokenMissing": "Jeton Sumsub non disponible. Veuillez vous reconnecter si necessaire pour continuer le KYC Sumsub.",
+    "continueToLogin": "Continuer vers la connexion",
+    "fullNameRequired": "Le nom complet est requis.",
+    "dobRequired": "La date de naissance est requise.",
+    "addressRequired": "L'adresse est requise.",
+    "countryRequired": "Le pays est requis.",
+    "documentRequired": "Au moins un document est requis."
   },
   "AboutUs": {
     "explore": {
@@ -172,8 +288,10 @@
         { "label": "Des années d'expertise en télécommunications" },
         { "label": "Téléchargements d'applications sur iOS et Android" }
       ],
-      "content": "Le parcours de Sophia Michelle est loin d'être terminé. Son histoire témoigne du pouvoir de la passion et de la persévérance. Pour les designers en herbe, elle demeure une source d'inspiration, un rappel que la créativité, nourrie, peut transformer des vies."
-    }
+      "content": "Besoin de plus d informations pour la section impact."
+    },
+    "bannerAlt": "Banniere a propos",
+    "impactImageAlt": "Image d impact"
   },
   "ContactUs": {
     "heroAlt": "Contactez-nous",
@@ -192,7 +310,12 @@
       "namePlaceholder": "Rashed Kabir",
       "emailPlaceholder": "rshdkabir@gmail.com",
       "submit": "ENVOYER LE MESSAGE"
-    }
+    },
+    "messageSent": "Message envoye avec succes!",
+    "messageFailed": "Echec de envoi du message",
+    "mailAlt": "Email",
+    "phoneAlt": "Telephone",
+    "chatAlt": "Chat en direct"
   },
   "PartnerWithUs": {
     "partnerTitle": "Devenez Partenaire",
@@ -212,7 +335,15 @@
       "namePlaceholder": "Rashed Kabir",
       "emailPlaceholder": "rshdkabir@gmail.com",
       "submit": "ENVOYER LE MESSAGE"
-    }
+    },
+    "messageSent": "Message envoye avec succes!",
+    "messageFailed": "Echec de envoi du message",
+    "mailAlt": "Email",
+    "phoneAlt": "Telephone",
+    "chatAlt": "Chat en direct",
+    "code": "Code",
+    "searchCountry": "Rechercher un pays...",
+    "noCountryFound": "Aucun pays trouve"
   },
   "Plans": {
     "bannerAlt": "Bannière des forfaits",
@@ -425,6 +556,15 @@
     "pushNotifications": "Notifications Push",
     "deleteAccount": "Supprimer votre compte",
     "privacyPolicy": "Politique de confidentialité et conditions d'utilisation",
+    "newPasswordRequired": "Veuillez entrer un nouveau mot de passe",
+    "passwordChanged": "Mot de passe change avec succes!",
+    "passwordChangeFailed": "Echec de changement du mot de passe",
+    "notificationUpdated": "Preferences de notification mises a jour",
+    "imageUploadFailed": "Echec du televersement de l image",
+    "pictureUploaded": "Photo de profil televersee avec succes.",
+    "pictureUpdateFailed": "Echec de mise a jour de la photo",
+    "profileAlt": "Profil",
+    "changePhoto": "Changer la photo",
     "modal": {
       "delete": {
         "title": "Êtes-vous sûr ?",
@@ -447,6 +587,7 @@
     }
   },
   "TopUp": {
+    "bannerAlt": "Banniere de recharge",
     "enterNumber": "12358000",
     "availablePacks": "Forfaits de recharge disponibles",
     "providerLogo": "LogoFournisseur",
@@ -476,6 +617,7 @@
     "confirm": "Confirmer"
   },
   "VirtualNumber": {
+    "bannerAlt": "Banniere de numero virtuel",
     "numbers": "Nombres"
   },
   "Dashboard": {
@@ -488,7 +630,9 @@
     "suggestedPlans": "Forfaits Sugérés",
     "validity": "Validité",
     "data": "Données",
-    "buyNow": "Acheter Maintenant"
+    "buyNow": "Acheter maintenant",
+    "decorativeCurveLeft": "Courbe decorative gauche",
+    "decorativeCurveRight": "Courbe decorative droite"
   },
   "Wallet": {
     "title": "Portefeuille",
@@ -508,7 +652,13 @@
     "pending": "En attente",
     "all": "Tous",
     "sep": "Sept",
-    "aug": "Août"
+    "aug": "Août",
+    "bannerAlt": "Banniere du portefeuille",
+    "filterAlt": "Filtre",
+    "googlePay": "Google Pay",
+    "creditCard": "Carte de credit",
+    "applePay": "Apple Pay",
+    "walletAuto": "Portefeuille auto"
   },
   "OrderBilling": {
     "filter": "Filtrer",
@@ -524,12 +674,46 @@
     "failed": "Échoué",
     "cancelled": "Annulé",
     "completed": "Terminé",
-    "download": "Télécharger"
+    "download": "Télécharger",
+    "invoiceCompanyName": "NOM DE LA SOCIETE",
+    "invoiceTitle": "FACTURE",
+    "invoiceCompanyAddress": "123 Business Street, City, State 12345",
+    "invoiceCompanyContact": "Email: contact@yourcompany.com | Phone: +1 (555) 123-4567",
+    "invoiceCompanyTaxId": "Tax ID: XX-XXXXXXX",
+    "invoiceNumber": "Facture #",
+    "orderNumber": "Commande #",
+    "invoiceDate": "Date",
+    "billTo": "FACTURER A:",
+    "customerFallback": "Client",
+    "countryLabel": "Pays",
+    "orderDetails": "DETAILS DE COMMANDE:",
+    "packageName": "Nom du forfait",
+    "providerLabel": "Fournisseur",
+    "coverage": "Couverture",
+    "dataLabel": "Donnees",
+    "duration": "Duree",
+    "iccid": "ICCID",
+    "validUntil": "Valide jusqu au",
+    "paymentMethod": "Methode de paiement",
+    "orderStatus": "Statut de commande",
+    "paymentSummary": "RESUME DE PAIEMENT:",
+    "totalAmount": "Montant total",
+    "paymentStatus": "Statut de paiement",
+    "invoiceThanks": "Merci pour votre achat!",
+    "invoiceSupportNote": "Pour toute question, contactez notre support.",
+    "ordersBannerAlt": "Banniere des commandes",
+    "filterAlt": "Filtre",
+    "searchPlaceholder": "Rechercher id de commande, forfait, fournisseur...",
+    "card": "Carte",
+    "noOrders": "Aucune commande",
+    "prev": "Precedent",
+    "next": "Suivant"
   },
   "MyPlans": {
     "title": "Mes",
     "active": "Plans actifs",
     "expired": "Plans expirés",
+    "cancelled": "Plans annulés",
     "addNew": "Ajouter un nouveau plan",
     "dataLeft": "données restantes",
     "validUntil": "Valide jusqu’au",
@@ -538,9 +722,20 @@
     "viewQR": "Voir le QR",
     "refund": "Rembourser",
     "expiredOn": "Expiré le",
+    "cancelledOn": "Annulé le",
     "lastPlan": "Dernier plan",
     "viewSimilar": "Voir un plan similaire",
-    "repurchase": "Racheter"
+    "repurchase": "Racheter",
+    "noActivePlans": "Aucun plan actif",
+    "noExpiredPlans": "Aucun plan expire",
+    "noCancelledPlans": "Aucun plan annule",
+    "howToInstall": "Comment installer",
+    "refundStatusHint": "Consultez le statut du remboursement dans la page support de votre profil",
+    "viewBilling": "Voir la facture",
+    "refundRequested": "Remboursement demande",
+    "refundApproved": "Remboursement approuve",
+    "refundRejected": "Remboursement rejete",
+    "refundFailed": "Remboursement echoue"
   },
   "Favorites": {
     "bannerAlt": "Bannière des favoris",
@@ -548,7 +743,13 @@
     "remove": "Supprimer",
     "buy": "Acheter",
     "days": "jours",
-    "empty": "Aucun forfait favori pour le moment. Ajoutez-en depuis la page des forfaits."
+    "empty": "Aucun forfait favori pour le moment. Ajoutez des forfaits depuis la page des forfaits.",
+    "countryDetectFailed": "Impossible de detecter le pays du forfait.",
+    "orderCreated": "Commande creee avec succes!",
+    "checkoutUrlMissing": "URL de paiement introuvable",
+    "orderCreateFailed": "Echec de creation de commande",
+    "removedSuccess": "Forfait retire des favoris.",
+    "removeFailed": "Echec de suppression des favoris."
   },
   "Support": {
     "title": "Support",
@@ -599,6 +800,50 @@
     "countryCodeLabel": "Code pays",
     "noCountryFound": "Aucun pays trouvé",
     "searchCountry": "Rechercher un pays...",
-    "loading": "Chargement"
+    "loading": "Chargement",
+    "filterAlt": "Filtre",
+    "action": "Action",
+    "noTickets": "Aucun ticket trouve"
+  },
+  "Destination": {
+    "all": "Tous",
+    "title": "Rechercher une",
+    "titleHighlight": "destination",
+    "subtitle": "Trouvez et achetez les meilleurs eSIMs pour votre voyage.",
+    "searchAria": "Rechercher des destinations",
+    "searchPlaceholder": "Rechercher une destination internationale",
+    "noDestinations": "Aucune destination trouvee.",
+    "noImage": "Pas d image"
+  },
+  "Region": {
+    "all": "Tous",
+    "title": "Rechercher des",
+    "titleHighlight": "regions",
+    "subtitle": "Trouvez et achetez les meilleurs eSIMs pour votre voyage.",
+    "searchAria": "Rechercher des regions",
+    "searchPlaceholder": "Rechercher une region internationale",
+    "noRegions": "Aucune region trouvee.",
+    "noImage": "Pas d image"
+  },
+  "Blog": {
+    "metaTitle": "Blog | Telenet",
+    "metaTitleSuffix": "Blog Telenet",
+    "metaDescription": "Dernieres nouvelles, mises a jour et insights de Telenet.",
+    "unknownDate": "Date inconnue",
+    "minRead": "{minutes} min lecture",
+    "generalCategory": "General",
+    "bannerAlt": "Banniere du blog",
+    "postNotFound": "Article introuvable",
+    "backToBlog": "Retour au blog"
+  },
+  "Success": {
+    "title": "Paiement reussi!",
+    "subtitle": "Votre commande a ete traitee avec succes.",
+    "backHome": "Retour a l accueil"
+  },
+  "Cancel": {
+    "title": "Paiement annule",
+    "subtitle": "Votre paiement n a pas ete complete. Vous pouvez reessayer ou contacter le support.",
+    "backHome": "Retour a l accueil"
   }
 }

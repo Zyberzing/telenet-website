@@ -110,7 +110,7 @@ export default function TopUp() {
         <div className="relative w-full h-[20vh] sm:h-[25vh] md:h-[37vh]">
           <Image
             src="/banner-top-up.svg"
-            alt="Top up banner"
+            alt={t("bannerAlt")}
             fill
             className="object-cover object-top"
             priority

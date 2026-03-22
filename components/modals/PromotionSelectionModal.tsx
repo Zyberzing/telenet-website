@@ -29,6 +29,8 @@ export default function PromotionSelectionModal({
   const [selectedPromotionId, setSelectedPromotionId] = useState<string | null>(
     null,
   );
+  const [travelStartDate, setTravelStartDate] = useState("");
+  const [travelEndDate, setTravelEndDate] = useState("");
   const [verifyingPromotionId, setVerifyingPromotionId] = useState<
     string | null
   >(null);
@@ -37,6 +39,8 @@ export default function PromotionSelectionModal({
     if (!open) {
       setSelectedPromotionId(null);
       setSearch("");
+      setTravelStartDate("");
+      setTravelEndDate("");
       return;
     }
 
@@ -142,6 +146,19 @@ export default function PromotionSelectionModal({
 
   if (!selectedPlan) return null;
 
+  const handleBuy = () => {
+    if (!travelStartDate || !travelEndDate) {
+      toast.error("Please select travel start and end dates.");
+      return;
+    }
+    if (travelEndDate < travelStartDate) {
+      toast.error("Travel end date must be on or after the start date.");
+      return;
+    }
+
+    onBuy(selectedPromotionId || undefined, travelStartDate, travelEndDate);
+  };
+
   return (
     <Dialog
       open={open}
@@ -182,6 +199,31 @@ export default function PromotionSelectionModal({
         </div>
 
         <div className="p-2 overflow-y-auto flex-1 space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="space-y-1">
+              <label className="text-xs text-gray-600 dark:text-gray-300">
+                Travel Start Date
+              </label>
+              <Input
+                type="date"
+                className="bg-white dark:bg-zinc-900 border-gray-300 dark:border-zinc-700"
+                value={travelStartDate}
+                onChange={(e) => setTravelStartDate(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-gray-600 dark:text-gray-300">
+                Travel End Date
+              </label>
+              <Input
+                type="date"
+                className="bg-white dark:bg-zinc-900 border-gray-300 dark:border-zinc-700"
+                value={travelEndDate}
+                onChange={(e) => setTravelEndDate(e.target.value)}
+              />
+            </div>
+          </div>
+
           <Input
             placeholder="Search by promotion name or code"
             className="bg-white dark:bg-zinc-900 border-gray-300 dark:border-zinc-700"
@@ -268,7 +310,7 @@ export default function PromotionSelectionModal({
             Back
           </Button>
           <LoadingButton
-            onClick={() => onBuy(selectedPromotionId || undefined)}
+            onClick={handleBuy}
             loading={orderLoading}
             label={orderLoading ? "Processing..." : "Buy"}
             className="bg-gradient cursor-pointer flex-1 text-white rounded-full px-4 py-2 text-sm"

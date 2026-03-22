@@ -32,7 +32,7 @@ export default function InstallationGuide() {
               : "bg-[#D0CEC6] text-[#7B7765] hover:bg-[#cfcfc7] dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
               }`}
           >
-            Step:{num}
+            {t("stepLabel")}:{num}
           </button>
         );
       })}
@@ -107,7 +107,7 @@ export default function InstallationGuide() {
                     </p>
                     <Image
                       src="/ios-guide-step.svg"
-                      alt="iOS Step 1"
+                      alt={t("iosStepAlt")}
                       width={200}
                       height={100}
                       className="mx-auto rounded-[3em] shadow-md w-[80%] sm:w-[50%] md:w-[30%]"
@@ -154,7 +154,7 @@ export default function InstallationGuide() {
                     </p>
                     <Image
                       src="/android-guide-step.svg"
-                      alt="Android Step 1"
+                      alt={t("androidStepAlt")}
                       width={200}
                       height={100}
                       className="mx-auto shadow-md w-[80%] sm:w-[50%] md:w-[30%]"
@@ -178,7 +178,7 @@ export default function InstallationGuide() {
             <div className="flex justify-center mt-8">
               <Image
                 src="/watch-video-tutorial.svg"
-                alt="Video Preview"
+                alt={t("videoPreviewAlt")}
                 width={1000}
                 height={1000}
                 className="w-[90%] sm:w-[80%] md:w-[50em] h-auto md:h-[30em]"

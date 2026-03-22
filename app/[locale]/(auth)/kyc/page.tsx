@@ -36,7 +36,7 @@ import { getKYC, submitManualKycWithToken } from "@/services/kyc";
 import { uploadPublicMedia } from "@/services/upload";
 import { getCountries, getCountryCallingCode } from "libphonenumber-js";
 import { Check, ChevronsUpDown, Clock3 } from "lucide-react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import ReactCountryFlag from "react-country-flag";
@@ -66,6 +66,7 @@ type ManualFormErrors = Partial<Record<keyof ManualKycForm | "files", string>>;
 
 export default function KYC() {
   const locale = useLocale();
+  const t = useTranslations("Kyc");
   const router = useRouter();
   const [method, setMethod] = useState<KycMethod | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -85,7 +86,6 @@ export default function KYC() {
   const [selectedCountryIso, setSelectedCountryIso] = useState("");
   const [manualErrors, setManualErrors] = useState<ManualFormErrors>({});
   const fullNameRef = useRef<HTMLInputElement>(null);
-  const dateOfBirthRef = useRef<HTMLInputElement>(null);
   const addressRef = useRef<HTMLInputElement>(null);
   const countryTriggerRef = useRef<HTMLButtonElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -103,10 +103,10 @@ export default function KYC() {
   }, [locale]);
 
   const methodTitle = useMemo(() => {
-    if (method === "sumsub") return "Sumsub Verification";
-    if (method === "manual") return "Manual KYC Verification";
-    return "Choose Verification Method";
-  }, [method]);
+    if (method === "sumsub") return t("sumsubTitle");
+    if (method === "manual") return t("manualTitle");
+    return t("chooseMethodTitle");
+  }, [method, t]);
 
   const normalizedKycStatus = useMemo(
     () => (registrationState?.kycStatus || "").toLowerCase(),
@@ -126,11 +126,11 @@ export default function KYC() {
     [normalizedKycStatus],
   );
   const statusLabel = useMemo(() => {
-    if (!registrationState?.kycStatus) return "Pending";
+    if (!registrationState?.kycStatus) return t("statusPending");
     return registrationState.kycStatus
       .replace(/_/g, " ")
       .replace(/\b\w/g, (char) => char.toUpperCase());
-  }, [registrationState?.kycStatus]);
+  }, [registrationState?.kycStatus, t]);
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem("sumsub_kyc_token");
@@ -280,7 +280,7 @@ export default function KYC() {
           setKycCompleted(true);
         })
         .on("idCheck.onError", () => {
-          toast.error("KYC failed. Please try again.");
+          toast.error(t("kycFailed"));
         })
         .build();
 
@@ -299,15 +299,13 @@ export default function KYC() {
     files: File[],
   ) => {
     if (key === "fullName")
-      return formValue.fullName.trim() ? "" : "Full name is required.";
-    if (key === "dateOfBirth")
-      return formValue.dateOfBirth ? "" : "Date of birth is required.";
+      return formValue.fullName.trim() ? "" : t("fullNameRequired");
     if (key === "address")
-      return formValue.address.trim() ? "" : "Address is required.";
+      return formValue.address.trim() ? "" : t("addressRequired");
     if (key === "countryCode")
-      return formValue.countryCode ? "" : "Country is required.";
+      return formValue.countryCode ? "" : t("countryRequired");
     if (key === "files")
-      return files.length > 0 ? "" : "At least one document is required.";
+      return files.length > 0 ? "" : t("documentRequired");
     return "";
   };
 
@@ -341,8 +339,7 @@ export default function KYC() {
     });
 
     if (invalidFormatFile) {
-      const message =
-        "Invalid format. Allowed: JPG, PNG, JPEG, WEBP, HEIC, PDF.";
+      const message = t("invalidFormat");
       setManualErrors((prev) => ({ ...prev, files: message }));
       toast.error(message);
       return;
@@ -353,7 +350,7 @@ export default function KYC() {
     );
 
     if (oversizedFile) {
-      const message = "Each file must be 10MB or smaller.";
+      const message = t("fileTooLarge");
       setManualErrors((prev) => ({ ...prev, files: message }));
       toast.error(message);
       return;
@@ -372,9 +369,7 @@ export default function KYC() {
       );
 
       const exceedsMax = unique.length > MAX_MANUAL_FILES;
-      const fileMessage = exceedsMax
-        ? "You can upload a maximum of 3 files."
-        : "";
+      const fileMessage = exceedsMax ? t("maxFiles") : "";
       setManualErrors((current) => ({ ...current, files: fileMessage }));
       if (exceedsMax) toast.error(fileMessage);
 
@@ -410,7 +405,6 @@ export default function KYC() {
   const handleManualSubmit = async () => {
     const nextErrors: ManualFormErrors = {
       fullName: validateManualField("fullName", manualForm, manualFiles),
-      dateOfBirth: validateManualField("dateOfBirth", manualForm, manualFiles),
       address: validateManualField("address", manualForm, manualFiles),
       countryCode: validateManualField("countryCode", manualForm, manualFiles),
       files: validateManualField("files", manualForm, manualFiles),
@@ -419,8 +413,6 @@ export default function KYC() {
     if (Object.values(nextErrors).some(Boolean)) {
       if (nextErrors.fullName) {
         fullNameRef.current?.focus();
-      } else if (nextErrors.dateOfBirth) {
-        dateOfBirthRef.current?.focus();
       } else if (nextErrors.address) {
         addressRef.current?.focus();
       } else if (nextErrors.countryCode) {
@@ -443,7 +435,7 @@ export default function KYC() {
       setManualSubmitting(true);
 
       if (!registrationState?.otpAccessToken) {
-        throw new Error("KYC session expired. Please verify OTP again.");
+        throw new Error(t("sessionExpired"));
       }
       const otpAccessToken = registrationState.otpAccessToken;
 
@@ -461,7 +453,7 @@ export default function KYC() {
           uploaded?.data?.[0]?.fileUrl;
 
         if (!uploadedUrl) {
-          throw new Error("Failed to upload document.");
+          throw new Error(t("uploadFailed"));
         }
 
         return uploadedUrl as string;
@@ -475,7 +467,6 @@ export default function KYC() {
 
       const payload = {
         fullName: manualForm.fullName.trim(),
-        dateOfBirth: manualForm.dateOfBirth,
         address: manualForm.address.trim(),
         country: manualForm.country.trim(),
         documentUrls: documentUrls.map((url) => ({
@@ -488,14 +479,11 @@ export default function KYC() {
         accessToken: registrationState.otpAccessToken,
         refreshToken: registrationState.otpRefreshToken,
       });
-      toast.success(
-        response?.message ||
-          "Manual KYC submitted. Your status is pending review.",
-      );
+      toast.success(response?.message || t("manualSubmitSuccess"));
       router.push(ROUTES.LOGIN(locale));
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Failed to submit manual KYC.";
+        error instanceof Error ? error.message : t("manualSubmitFailed");
       toast.error(message);
     } finally {
       setManualSubmitting(false);
@@ -522,16 +510,15 @@ export default function KYC() {
                   </div>
                   <div className="flex-1">
                     <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                      KYC Verification In Progress
+                      {t("kycInProgressTitle")}
                     </h2>
                     <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
-                      Your documents are submitted and currently under review.
-                      We will notify you once verification is complete.
+                      {t("kycInProgressBody")}
                     </p>
                     <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                       <div className="rounded-lg border border-amber-200/80 bg-white/70 px-4 py-3 dark:border-amber-900/70 dark:bg-gray-900/40">
                         <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                          Current Status
+                          {t("currentStatus")}
                         </p>
                         <p className="mt-1 text-sm font-medium text-amber-700 dark:text-amber-200">
                           {statusLabel}
@@ -539,35 +526,35 @@ export default function KYC() {
                       </div>
                       <div className="rounded-lg border border-amber-200/80 bg-white/70 px-4 py-3 dark:border-amber-900/70 dark:bg-gray-900/40">
                         <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                          Registered Email
+                          {t("registeredEmail")}
                         </p>
                         <p className="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {registrationState?.email || "Not available"}
+                          {registrationState?.email || t("notAvailable")}
                         </p>
                       </div>
                       <div className="rounded-lg border border-amber-200/80 bg-white/70 px-4 py-3 dark:border-amber-900/70 dark:bg-gray-900/40">
                         <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                          Name
+                          {t("nameLabel")}
                         </p>
                         <p className="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {registrationState?.name || "Not available"}
+                          {registrationState?.name || t("notAvailable")}
                         </p>
                       </div>
                       <div className="rounded-lg border border-amber-200/80 bg-white/70 px-4 py-3 dark:border-amber-900/70 dark:bg-gray-900/40">
                         <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                          Mobile Number
+                          {t("mobileNumber")}
                         </p>
                         <p className="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
                           {registrationState?.phone
                             ? `${registrationState.countryCode || ""} ${registrationState.phone}`.trim()
-                            : "Not available"}
+                            : t("notAvailable")}
                         </p>
                       </div>
                     </div>
                     {registrationState?.kycReason && (
                       <div className="mt-4 rounded-lg border border-amber-300/80 bg-white/80 px-4 py-3 dark:border-amber-800 dark:bg-gray-900/50">
                         <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                          Reviewer Note
+                          {t("reviewerNote")}
                         </p>
                         <p className="mt-1 text-sm text-gray-800 dark:text-gray-200">
                           {registrationState.kycReason}
@@ -580,7 +567,7 @@ export default function KYC() {
                         className="bg-primary text-white cursor-pointer"
                         onClick={() => router.push(ROUTES.LOGIN(locale))}
                       >
-                        Back to Login
+                        {t("backToLogin")}
                       </Button>
                     </div>
                   </div>
@@ -597,12 +584,12 @@ export default function KYC() {
                   className="text-left border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:border-primary transition cursor-pointer bg-white dark:bg-gray-800"
                   onClick={() => setMethod("manual")}
                 >
-                  <p className="text-lg font-medium text-gray-900 dark:text-white">
-                    Manual KYC
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
-                    Upload your document and submit details for review.
-                  </p>
+                    <p className="text-lg font-medium text-gray-900 dark:text-white">
+                      {t("manualKycTitle")}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
+                      {t("manualKycBody")}
+                    </p>
                 </button>
 
                 <button
@@ -610,19 +597,19 @@ export default function KYC() {
                   className="text-left border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:border-primary transition cursor-pointer bg-white dark:bg-gray-800"
                   onClick={() => void handleSumsubClick()}
                 >
-                  <p className="text-lg font-medium text-gray-900 dark:text-white">
-                    Use Sumsub
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
-                    Continue with the existing Sumsub verification flow.
-                  </p>
+                    <p className="text-lg font-medium text-gray-900 dark:text-white">
+                      {t("sumsubCardTitle")}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
+                      {t("sumsubCardBody")}
+                    </p>
                 </button>
               </div>
 
               {isKycRejected && registrationState?.kycReason && (
                 <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 dark:border-red-900 dark:bg-red-950/30">
                   <p className="text-xs uppercase tracking-wide text-red-700 dark:text-red-300">
-                    Rejection Reason
+                    {t("rejectionReason")}
                   </p>
                   <p className="mt-1 text-sm text-red-800 dark:text-red-200">
                     {registrationState.kycReason}
@@ -637,11 +624,11 @@ export default function KYC() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
-                    Full Name
+                    {t("fullNameLabel")}
                   </label>
                   <Input
                     ref={fullNameRef}
-                    placeholder="Enter full name"
+                    placeholder={t("fullNamePlaceholder")}
                     className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                     value={manualForm.fullName}
                     onChange={(e) =>
@@ -656,30 +643,11 @@ export default function KYC() {
                 </div>
                 <div>
                   <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
-                    Date of Birth
-                  </label>
-                  <Input
-                    ref={dateOfBirthRef}
-                    type="date"
-                    className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
-                    value={manualForm.dateOfBirth}
-                    onChange={(e) =>
-                      handleManualChange("dateOfBirth", e.target.value)
-                    }
-                  />
-                  {manualErrors.dateOfBirth && (
-                    <p className="text-xs text-red-600 dark:text-red-400 mt-1">
-                      {manualErrors.dateOfBirth}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
-                    Address
+                    {t("addressLabel")}
                   </label>
                   <Input
                     ref={addressRef}
-                    placeholder="Enter address"
+                    placeholder={t("addressPlaceholder")}
                     className="dark:bg-gray-700 dark:text-white dark:border-gray-600"
                     value={manualForm.address}
                     onChange={(e) =>
@@ -694,7 +662,7 @@ export default function KYC() {
                 </div>
                 <div>
                   <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
-                    Country
+                    {t("countryLabel")}
                   </label>
                   <Popover open={countryOpen} onOpenChange={setCountryOpen}>
                     <PopoverTrigger asChild>
@@ -719,15 +687,15 @@ export default function KYC() {
                             {manualForm.countryCode}
                           </span>
                         ) : (
-                          <span>Select country</span>
+                          <span>{t("selectCountry")}</span>
                         )}
                         <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-[300px] p-0 dark:bg-gray-800 dark:border-gray-700">
                       <Command className="dark:bg-gray-800">
-                        <CommandInput placeholder="Search country..." />
-                        <CommandEmpty>No country found</CommandEmpty>
+                        <CommandInput placeholder={t("searchCountry")} />
+                        <CommandEmpty>{t("noCountryFound")}</CommandEmpty>
                         <CommandGroup className="max-h-[300px] overflow-auto">
                           {countryCodes.map(({ iso, name, code }) => (
                             <CommandItem
@@ -776,7 +744,7 @@ export default function KYC() {
                 </div>
                 <div>
                   <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
-                    Document Type
+                    {t("documentTypeLabel")}
                   </label>
                   <Select
                     value={manualForm.documentType}
@@ -788,15 +756,17 @@ export default function KYC() {
                     }
                   >
                     <SelectTrigger className="w-full dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                      <SelectValue placeholder="Select document type" />
+                      <SelectValue placeholder={t("selectDocumentType")} />
                     </SelectTrigger>
                     <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
-                      <SelectItem value="passport">Passport</SelectItem>
-                      <SelectItem value="national_id">National ID</SelectItem>
-                      <SelectItem value="driving_license">
-                        Driving License
+                      <SelectItem value="passport">{t("passport")}</SelectItem>
+                      <SelectItem value="national_id">
+                        {t("nationalId")}
                       </SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
+                      <SelectItem value="driving_license">
+                        {t("drivingLicense")}
+                      </SelectItem>
+                      <SelectItem value="other">{t("other")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -815,7 +785,7 @@ export default function KYC() {
 
               <div>
                 <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">
-                  Upload KYC Document
+                  {t("uploadDocument")}
                 </label>
                 <Input
                   ref={fileInputRef}
@@ -826,8 +796,7 @@ export default function KYC() {
                   onChange={handleManualFileChange}
                 />
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Allowed: JPG, PNG, JPEG, WEBP, HEIC, PDF. Max size: 10MB each.
-                  Maximum 3 files.
+                  {t("uploadHelp")}
                 </p>
                 {manualErrors.files && (
                   <p className="text-xs text-red-600 dark:text-red-400 mt-1">
@@ -849,7 +818,7 @@ export default function KYC() {
                             onClick={() => removeManualFile(index)}
                             className="text-xs text-red-600 dark:text-red-400 cursor-pointer"
                           >
-                            Remove
+                            {t("remove")}
                           </button>
                         </div>
 
@@ -870,7 +839,7 @@ export default function KYC() {
                               rel="noreferrer"
                               className="mt-2 inline-block text-sm text-primary underline"
                             >
-                              Preview
+                              {t("preview")}
                             </a>
                           )}
                       </div>
@@ -886,7 +855,7 @@ export default function KYC() {
                   onClick={() => setMethod(null)}
                   className="cursor-pointer dark:bg-gray-800 dark:text-white dark:border-gray-600"
                 >
-                  Back
+                  {t("back")}
                 </Button>
                 <Button
                   type="button"
@@ -894,13 +863,13 @@ export default function KYC() {
                   onClick={handleManualSubmit}
                   disabled={manualSubmitting}
                 >
-                  {manualSubmitting ? "Submitting..." : "Submit Manual KYC"}
+                  {manualSubmitting ? t("submitting") : t("submitManual")}
                 </Button>
               </div>
 
               {profileLoading && (
                 <p className="text-xs text-gray-500 dark:text-gray-300">
-                  Loading profile for auto-fill...
+                  {t("loadingProfile")}
                 </p>
               )}
             </div>
@@ -912,8 +881,8 @@ export default function KYC() {
                 <div className="rounded-lg border border-amber-200 bg-amber-50 dark:bg-amber-950/40 p-4">
                   <p className="text-sm text-amber-700 dark:text-amber-200">
                     {loadingToken
-                      ? "Preparing Sumsub verification..."
-                      : "Sumsub token not available yet. Please login again if needed to continue Sumsub KYC."}
+                      ? t("sumsubPreparing")
+                      : t("sumsubTokenMissing")}
                   </p>
                 </div>
               )}
@@ -927,7 +896,7 @@ export default function KYC() {
                   onClick={() => setMethod(null)}
                   className="cursor-pointer dark:bg-gray-800 dark:text-white dark:border-gray-600"
                 >
-                  Back
+                  {t("back")}
                 </Button>
                 {kycCompleted && (
                   <Button
@@ -935,7 +904,7 @@ export default function KYC() {
                     className="bg-primary text-white cursor-pointer"
                     onClick={() => router.push(ROUTES.LOGIN(locale))}
                   >
-                    Continue to Login
+                    {t("continueToLogin")}
                   </Button>
                 )}
               </div>

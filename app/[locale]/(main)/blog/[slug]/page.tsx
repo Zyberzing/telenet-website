@@ -3,6 +3,7 @@ import { getCmsBlogList } from "@/services/cms";
 import { getLanguageIdByCode } from "@/services/language";
 import { ArrowLeft, CalendarIcon, Clock } from "lucide-react";
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -22,21 +23,28 @@ const stripHtml = (value: string) =>
     .replace(/\s+/g, " ")
     .trim();
 
-const formatDate = (value?: string) => {
-  if (!value) return "Unknown date";
+const formatDate = (
+  value: string | undefined,
+  locale: string,
+  t: (key: string) => string,
+) => {
+  if (!value) return t("unknownDate");
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "Unknown date";
-  return date.toLocaleDateString("en-US", {
+  if (Number.isNaN(date.getTime())) return t("unknownDate");
+  return date.toLocaleDateString(locale, {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 };
 
-const estimateReadTime = (value: string) => {
+const estimateReadTime = (
+  value: string,
+  t: (key: string, values?: Record<string, string | number | Date>) => string,
+) => {
   const words = stripHtml(value).split(" ").filter(Boolean).length;
   const minutes = Math.max(1, Math.ceil(words / 200));
-  return `${minutes} min read`;
+  return t("minRead", { minutes });
 };
 
 interface BlogDetailPageProps {
@@ -50,6 +58,7 @@ export async function generateMetadata({
   params,
 }: BlogDetailPageProps): Promise<Metadata> {
   const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Blog" });
   const langId = await getLanguageIdByCode(locale);
   const idFromSlug = slug.includes("--") ? slug.split("--").pop() : slug;
   const blogs = (
@@ -64,18 +73,19 @@ export async function generateMetadata({
 
   if (!blog) {
     return {
-      title: "Post Not Found",
+      title: t("postNotFound"),
     };
   }
 
   return {
-    title: `${blog.title} | Telenet Blog`,
+    title: `${blog.title} | ${t("metaTitleSuffix")}`,
     description: stripHtml(blog.description),
   };
 }
 
 export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Blog" });
   const langId = await getLanguageIdByCode(locale);
   const idFromSlug = slug.includes("--") ? slug.split("--").pop() : slug;
   const blogs = (
@@ -94,10 +104,10 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   const post = {
     title: blog.title,
     content: blog.description,
-    date: formatDate(blog.createdAt || blog.updatedAt),
-    category: blog.category || "General",
+    date: formatDate(blog.createdAt || blog.updatedAt, locale, t),
+    category: blog.category || t("generalCategory"),
     imageUrl: blog.image || "/banner-blog.svg",
-    readTime: estimateReadTime(blog.description),
+    readTime: estimateReadTime(blog.description, t),
   };
 
   return (
@@ -144,7 +154,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
           >
             <Link href={`/${locale}/blog`} className="flex items-center">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Blog
+              {t("backToBlog")}
             </Link>
           </Button>
 

@@ -28,7 +28,7 @@ export default function VirtualNumberPage({
       <header className="relative w-full h-[13vh] sm:h-[10vh] md:h-[20vh]">
         <Image
           src="/banner-virtual-number.svg"
-          alt="Virtual number banner"
+          alt={t("bannerAlt")}
           fill
           className="object-cover object-top"
           priority

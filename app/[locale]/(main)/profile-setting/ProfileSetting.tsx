@@ -31,6 +31,8 @@ export type User = {
   phone?: string;
   profilePicture?: string;
   location?: string;
+  customerDOB?: string;
+  customerPassportDOB?: string;
   emailAlertEnabled: boolean;
   smsAlertEnabled: boolean;
   pushNotificationEnabled: boolean;
@@ -66,18 +68,18 @@ export default function ProfileSetting({ user }: { user: User }) {
   // Handle password change
   const handlePasswordChange = async () => {
     if (!newPassword.trim()) {
-      toast.error("Please enter a new password");
+      toast.error(t("newPasswordRequired"));
       return;
     }
 
     try {
       const res = await changePassword({ newPassword });
-      toast.success(res?.message || "Password changed successfully!");
+      toast.success(res?.message || t("passwordChanged"));
       setNewPassword("");
     } catch (err) {
       const errorMessage =
         (err as { data?: { message?: string } })?.data?.message ||
-        "Failed to change password";
+        t("passwordChangeFailed");
       toast.error(errorMessage);
     }
   };
@@ -101,11 +103,11 @@ export default function ProfileSetting({ user }: { user: User }) {
 
       await updateProfile(updated);
 
-      toast.success("Notification preferences updated");
+      toast.success(t("notificationUpdated"));
     } catch (error: unknown) {
       const errorMessage =
         (error as { data?: { message?: string } } | null)?.data?.message ??
-        "Failed to change password";
+        t("passwordChangeFailed");
 
       toast.error(errorMessage);
     }
@@ -122,16 +124,16 @@ export default function ProfileSetting({ user }: { user: User }) {
       const fileUrl = uploaded?.data?.httpsUrl;
 
       if (!fileUrl) {
-        toast.error("Failed to upload image");
+        toast.error(t("imageUploadFailed"));
         return;
       }
       await updateProfilePicture(fileUrl);
 
-      toast.success("Profile picture uploaded successfully.");
+      toast.success(t("pictureUploaded"));
 
       setUserData((prev) => ({ ...prev, avatar: fileUrl }));
     } catch {
-      toast.error("Failed to update picture");
+      toast.error(t("pictureUpdateFailed"));
     }
   };
 
@@ -153,7 +155,7 @@ export default function ProfileSetting({ user }: { user: User }) {
           <div className="flex flex-col items-center sm:items-start gap-2">
             <Image
               src={userData?.profilePicture || "/profile-user-avatar.svg"}
-              alt="Profile"
+              alt={t("profileAlt")}
               width={100}
               height={100}
               className="rounded-full object-cover"
@@ -161,7 +163,7 @@ export default function ProfileSetting({ user }: { user: User }) {
             />
 
             <label className="cursor-pointer text-primary text-sm hover:underline text-center w-full">
-              Change Photo
+              {t("changePhoto")}
               <input
                 type="file"
                 accept="image/*"

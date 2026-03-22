@@ -209,37 +209,43 @@ export default function OrderBilling({
     const draw: string[] = [];
 
     /* HEADER */
-    draw.push(text(left, y, 18, "YOUR COMPANY NAME", true));
-    draw.push(text(420, y, 18, "INVOICE", true));
+    draw.push(text(left, y, 18, t("invoiceCompanyName"), true));
+    draw.push(text(420, y, 18, t("invoiceTitle"), true));
 
     y -= 20;
-    draw.push(text(left, y, 9, "123 Business Street, City, State 12345"));
+    draw.push(text(left, y, 9, t("invoiceCompanyAddress")));
     y -= 12;
     draw.push(
       text(
         left,
         y,
         9,
-        "Email: contact@yourcompany.com | Phone: +1 (555) 123-4567",
+        t("invoiceCompanyContact"),
       ),
     );
     y -= 12;
-    draw.push(text(left, y, 9, "Tax ID: XX-XXXXXXX"));
+    draw.push(text(left, y, 9, t("invoiceCompanyTaxId")));
 
-    draw.push(text(360, y + 24, 9, `Invoice #: ${order._id}`));
-    draw.push(text(360, y + 10, 9, `Order #: ${order._id}`));
-    draw.push(text(360, y - 4, 9, `Date: ${invoiceDate}`));
+    draw.push(text(360, y + 24, 9, `${t("invoiceNumber")}: ${order._id}`));
+    draw.push(text(360, y + 10, 9, `${t("orderNumber")}: ${order._id}`));
+    draw.push(text(360, y - 4, 9, `${t("invoiceDate")}: ${invoiceDate}`));
 
     y -= 25;
     draw.push(line(y));
 
     /* BILL TO */
     y -= 30;
-    draw.push(text(left, y, 12, "BILL TO:", true));
+    draw.push(text(left, y, 12, t("billTo"), true));
 
     y -= 18;
     draw.push(
-      text(left, y, 10, order.customerName || order.name || "Customer", true),
+      text(
+        left,
+        y,
+        10,
+        order.customerName || order.name || t("customerFallback"),
+        true,
+      ),
     );
     y -= 14;
     draw.push(text(left, y, 10, order.customerEmail || "-"));
@@ -251,26 +257,26 @@ export default function OrderBilling({
         left,
         y,
         10,
-        `Country: ${order.customerCountry || order.country || "-"}`,
+        `${t("countryLabel")}: ${order.customerCountry || order.country || "-"}`,
       ),
     );
 
     /* ORDER DETAILS */
     y -= 30;
-    draw.push(text(left, y, 12, "ORDER DETAILS:", true));
+    draw.push(text(left, y, 12, t("orderDetails"), true));
 
     y -= 18;
 
     const rows = [
-      ["Package Name", order.package_name],
-      ["Provider", order.providerName || "-"],
-      ["Coverage", order.coverage],
-      ["Data", order.data ?? order.package_data],
-      ["Duration", order.validity ?? order.perioddays],
-      ["ICCID", order.iccid],
-      ["Valid Until", order.validUntil],
-      ["Payment Method", order?.paymentMethodType || "Card"],
-      ["Order Status", order.status?.toUpperCase()],
+      [t("packageName"), order.package_name],
+      [t("providerLabel"), order.providerName || "-"],
+      [t("coverage"), order.coverage],
+      [t("dataLabel"), order.data ?? order.package_data],
+      [t("duration"), order.validity ?? order.perioddays],
+      [t("iccid"), order.iccid],
+      [t("validUntil"), order.validUntil],
+      [t("paymentMethod"), order?.paymentMethodType || t("card")],
+      [t("orderStatus"), order.status?.toUpperCase()],
     ];
 
     rows.forEach(([label, value]) => {
@@ -281,21 +287,21 @@ export default function OrderBilling({
 
     /* PAYMENT SUMMARY */
     y -= 20;
-    draw.push(text(left, y, 12, "PAYMENT SUMMARY:", true));
+    draw.push(text(left, y, 12, t("paymentSummary"), true));
 
     y -= 20;
-    draw.push(text(left, y, 10, "Total Amount"));
+    draw.push(text(left, y, 10, t("totalAmount")));
     draw.push(text(left + 170, y, 10, String(amount)));
 
     y -= 18;
-    draw.push(text(left, y, 10, "Payment Status"));
+    draw.push(text(left, y, 10, t("paymentStatus")));
     draw.push(text(left + 170, y, 10, (order.status || "-").toUpperCase()));
 
     /* FOOTER */
     draw.push(line(100));
-    draw.push(text(220, 80, 9, "Thank you for your business!", true));
+    draw.push(text(220, 80, 9, t("invoiceThanks"), true));
     draw.push(
-      text(180, 65, 8, "For any queries, please contact our support team."),
+      text(180, 65, 8, t("invoiceSupportNote")),
     );
 
     const blob = buildPdfBlob(draw);
@@ -318,7 +324,7 @@ export default function OrderBilling({
       <div className="relative w-full h-[13vh] sm:h-[10vh] md:h-[20vh]">
         <Image
           src="/banner-orders-billing.svg"
-          alt="Orders Banner"
+          alt={t("ordersBannerAlt")}
           fill
           className="object-cover object-top"
           priority
@@ -330,7 +336,7 @@ export default function OrderBilling({
         <div className="flex flex-wrap items-center gap-4 mb-8">
           <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
             <span className="text-sm font-medium">{t("filter")}</span>
-            <Image src="/filter.svg" alt="Filter" height={14} width={15} />
+            <Image src="/filter.svg" alt={t("filterAlt")} height={14} width={15} />
           </div>
 
           {/* Date Range */}
@@ -406,7 +412,7 @@ export default function OrderBilling({
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search order id, plan, provider..."
+            placeholder={t("searchPlaceholder")}
             className="w-[240px] rounded-md text-sm dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700"
           />
 
@@ -460,7 +466,7 @@ export default function OrderBilling({
                       {order?.providerName || "-"}
                     </td>
                     <td className="py-3 px-4 capitalize">
-                      {order?.paymentMethodType || "Card"}
+                      {order?.paymentMethodType || t("card")}
                     </td>
                     <td className="py-3 px-4">
                       <span
@@ -496,7 +502,7 @@ export default function OrderBilling({
                     colSpan={6}
                     className="py-3 px-4 text-center dark:text-gray-300"
                   >
-                    No Order Available
+                    {t("noOrders")}
                   </td>
                 </tr>
               )}
@@ -513,7 +519,7 @@ export default function OrderBilling({
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage === 1 || loading}
           >
-            <ChevronLeft /> Prev
+            <ChevronLeft /> {t("prev")}
           </Button>
 
           {Array.from({ length: totalPages }, (_, i) => (
@@ -535,7 +541,7 @@ export default function OrderBilling({
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             disabled={currentPage === totalPages || loading}
           >
-            Next <ChevronRight />
+            {t("next")} <ChevronRight />
           </Button>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { PlanDetailsModal } from "@/components/modals";
 import { Button } from "@/components/ui/Button";
 import { orderDetails, Plan } from "@/lib/types";
 import { createCheckout } from "@/services/payment";
+import { getProfile } from "@/services/auth";
 import { upsertWishlist } from "@/services/wishlist";
 import {
   ArrowDownUp,
@@ -13,8 +14,9 @@ import {
   Trash2,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import type { User } from "@/app/[locale]/(main)/profile-setting/ProfileSetting";
 
 interface FavoritesProps {
   initialPlans: Plan[];
@@ -26,6 +28,25 @@ export default function Favorites({ initialPlans, isLoggedIn }: FavoritesProps) 
   const [favoritePlans, setFavoritePlans] = useState<Plan[]>(initialPlans);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [orderLoading, setOrderLoading] = useState(false);
+  const [userProfile, setUserProfile] = useState<User | null>(null);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setUserProfile(null);
+      return;
+    }
+
+    const loadProfile = async () => {
+      try {
+        const profile = await getProfile();
+        setUserProfile(profile);
+      } catch {
+        setUserProfile(null);
+      }
+    };
+
+    void loadProfile();
+  }, [isLoggedIn]);
 
   const resolveCountryCode = (plan: Plan): string =>
     plan.countries?.[0]?.countryiso2 ||
@@ -34,37 +55,46 @@ export default function Favorites({ initialPlans, isLoggedIn }: FavoritesProps) 
     plan.country ||
     "";
 
-  const handleBuy = async (promotionId?: string): Promise<void> => {
+  const handleBuy = async (
+    promotionId?: string,
+    travelStartDate?: string,
+    travelEndDate?: string,
+  ): Promise<void> => {
     if (!selectedPlan || orderLoading) return Promise.resolve();
 
     const countryCode = resolveCountryCode(selectedPlan);
     if (!countryCode) {
-      toast.error("Unable to detect plan country.");
+      toast.error(t("countryDetectFailed"));
       return Promise.resolve();
     }
 
     const orderBody: orderDetails = {
       packageId: selectedPlan._id,
       country: countryCode,
+      providerId: selectedPlan?.provider,
+      customerDOB: userProfile?.customerDOB,
+      customerPassportDOB: userProfile?.customerPassportDOB,
+      travelStartDate,
+      travelEndDate,
       ...(promotionId ? { couponId: promotionId } : {}),
     };
 
     try {
       setOrderLoading(true);
       const res = await createCheckout(orderBody);
-      toast.success(res.message || "Order successfully created!");
+      toast.success(res.message || t("orderCreated"));
       setSelectedPlan(null);
 
       if (res?.data?.url) {
         window.location.href = res.data.url;
       } else {
-        toast.error("Checkout URL not found");
+        toast.error(t("checkoutUrlMissing"));
       }
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error("Failed to create order");
+        toast.error(t("orderCreateFailed"));
       }
     } finally {
       setOrderLoading(false);
@@ -86,12 +116,12 @@ export default function Favorites({ initialPlans, isLoggedIn }: FavoritesProps) 
       if (selectedPlan?.package_id === plan.package_id) {
         setSelectedPlan(null);
       }
-      toast.success(response?.message || "Plan removed from favorites.");
+      toast.success(response?.message || t("removedSuccess"));
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error("Failed to remove from favorites.");
+        toast.error(t("removeFailed"));
       }
     }
   };

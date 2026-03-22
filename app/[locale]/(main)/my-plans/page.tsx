@@ -34,11 +34,23 @@ const Page = async ({
     limit,
     status: "expired",
   } as any)) as GetMyPlansResponse | null;
+  const cancelledResponse = (await getMyPlans({
+    page,
+    limit,
+    status: "cancelled",
+  } as any)) as GetMyPlansResponse | null;
 
   const myPlans: Plan[] = response?.result || [];
   const expiredPlans: Plan[] = expiredResponse?.result || [];
+  const cancelledPlans: Plan[] = cancelledResponse?.result || [];
 
-  return <MyPlans plans={myPlans} expiredPlan={expiredPlans} />;
+  return (
+    <MyPlans
+      plans={myPlans}
+      expiredPlan={expiredPlans}
+      cancelledPlan={cancelledPlans}
+    />
+  );
 };
 
 export default Page;

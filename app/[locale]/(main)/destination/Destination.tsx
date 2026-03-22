@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 
@@ -16,19 +17,19 @@ type Props = {
   onSelect?: (country: Country) => void;
 };
 
-const ALPHA_GROUPS = [
-  { key: "All", label: "All" },
-  { key: "A-B", label: "A-B", range: ["A", "B"] },
-  { key: "C-E", label: "C-E", range: ["C", "E"] },
-  { key: "F-H", label: "F-H", range: ["F", "H"] },
-  { key: "I-K", label: "I-K", range: ["I", "K"] },
-  { key: "L-M", label: "L-M", range: ["L", "M"] },
-  { key: "N-Q", label: "N-Q", range: ["N", "Q"] },
-  { key: "R-S", label: "R-S", range: ["R", "S"] },
-  { key: "T-Z", label: "T-Z", range: ["T", "Z"] },
-];
-
 export default function Destination({ countries, onSelect }: Props) {
+  const t = useTranslations("Destination");
+  const alphaGroups = [
+    { key: "All", label: t("all") },
+    { key: "A-B", label: "A-B", range: ["A", "B"] },
+    { key: "C-E", label: "C-E", range: ["C", "E"] },
+    { key: "F-H", label: "F-H", range: ["F", "H"] },
+    { key: "I-K", label: "I-K", range: ["I", "K"] },
+    { key: "L-M", label: "L-M", range: ["L", "M"] },
+    { key: "N-Q", label: "N-Q", range: ["N", "Q"] },
+    { key: "R-S", label: "R-S", range: ["R", "S"] },
+    { key: "T-Z", label: "T-Z", range: ["T", "Z"] },
+  ];
   const [activeAlpha, setActiveAlpha] = useState<string>("All");
   const [query, setQuery] = useState<string>("");
 
@@ -38,7 +39,7 @@ export default function Destination({ countries, onSelect }: Props) {
 
     // alpha filtering
     if (activeAlpha !== "All") {
-      const group = ALPHA_GROUPS.find((g) => g.key === activeAlpha);
+      const group = alphaGroups.find((g) => g.key === activeAlpha);
       if (group?.range) {
         const [start, end] = group.range as [string, string];
         list = list.filter((r) => {
@@ -65,15 +66,15 @@ export default function Destination({ countries, onSelect }: Props) {
       {/* Hero / header */}
       <div className="text-center px-3 mb-10 bg-gradient-to-b from-white via-[#F4F7FF] to-[#E4ECFF] dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 pt-12 pb-16">
         <h1 className="text-4xl md:text-[60px] font-bold tracking-tight text-[#111111] dark:text-white">
-          Search an international <span className="block">destination</span>
+          {t("title")} <span className="block">{t("titleHighlight")}</span>
         </h1>
         <p className="text-sm text-primary dark:text-primary-light mt-2">
-          Find & buy the best eSIMs for your travel.
+          {t("subtitle")}
         </p>
 
         {/* alpha pills */}
         <div className="mt-6 flex flex-wrap justify-center gap-3">
-          {ALPHA_GROUPS.map((g) => (
+          {alphaGroups.map((g) => (
             <button
               key={g.key}
               onClick={() => setActiveAlpha(g.key)}
@@ -92,10 +93,10 @@ export default function Destination({ countries, onSelect }: Props) {
         <div className="mt-6 flex justify-center">
           <div className="w-full md:w-2/3 lg:w-1/2 relative">
             <input
-              aria-label="Search destinations"
+              aria-label={t("searchAria")}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search an International Destination"
+              placeholder={t("searchPlaceholder")}
               className="w-full py-4 px-6 border-2 rounded-full shadow-sm placeholder-gray-400 text-gray-800 outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-300"
             />
             <button
@@ -125,7 +126,7 @@ export default function Destination({ countries, onSelect }: Props) {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 px-5 mx-1 md:mx-10">
         {filtered.length === 0 ? (
           <div className="col-span-full text-center py-12 text-gray-500 dark:text-gray-400">
-            No destinations found.
+            {t("noDestinations")}
           </div>
         ) : null}
 
@@ -147,7 +148,7 @@ export default function Destination({ countries, onSelect }: Props) {
                 />
               ) : (
                 <div className="bg-gray-100 w-full h-full flex items-center justify-center text-gray-400 dark:bg-gray-700 dark:text-gray-300">
-                  No image
+                  {t("noImage")}
                 </div>
               )}
               <div className="absolute bottom-3 left-3 right-3">

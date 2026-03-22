@@ -18,7 +18,11 @@ import { toast } from "sonner";
 interface PlanDetailsModalProps {
   selectedPlan: Plan | null;
   onClose: () => void;
-  onBuy: (promotionId?: string) => void;
+  onBuy: (
+    promotionId?: string,
+    travelStartDate?: string,
+    travelEndDate?: string,
+  ) => void;
   orderLoading: boolean;
   isLoggedIn: boolean;
   onFavoriteChange?: (isFavorite: boolean, plan: Plan) => void;

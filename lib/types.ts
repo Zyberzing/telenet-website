@@ -82,6 +82,7 @@ export type RefundTicketInput = {
   description: string;
   document?: string | null;
   category: string;
+  refundId?: string;
 };
 
 export type UpdateTicketInput = Omit<
@@ -112,6 +113,7 @@ export interface RefundResponseData {
   description?: string;
   document?: string | null;
   category?: string;
+  refundId?: string;
 }
 
 // services/order.ts
@@ -158,6 +160,7 @@ export type Plan = {
   wishlisted?: boolean;
   country?: string;
   country_code?: string;
+  provider?: string;
   package_name: string;
   data: string;
   validity: number;
@@ -197,6 +200,12 @@ export type orderDetails = {
   packageId: string;
   country: string;
   _id?: string;
+  couponId?: string;
+  providerId?: string;
+  customerDOB?: string;
+  customerPassportDOB?: string;
+  travelStartDate?: string;
+  travelEndDate?: string;
 };
 
 export type KycMethod = "sumsub" | "manual";
@@ -208,7 +217,6 @@ export type ManualDocumentType =
 
 export type ManualKycForm = {
   fullName: string;
-  dateOfBirth: string;
   address: string;
   country: string;
   countryCode: string;
@@ -237,7 +245,6 @@ export type ManualFilePreview = {
 
 export const defaultManualForm: ManualKycForm = {
   fullName: "",
-  dateOfBirth: "",
   address: "",
   country: "",
   countryCode: "",
@@ -250,13 +257,16 @@ export interface PromotionSelectionModalProps {
   selectedPlan: Plan | null;
   onBack: () => void;
   onClose: () => void;
-  onBuy: (promotionId?: string) => void;
+  onBuy: (
+    promotionId?: string,
+    travelStartDate?: string,
+    travelEndDate?: string,
+  ) => void;
   orderLoading: boolean;
 }
 
 export type ManualKycSubmitPayload = {
   fullName: string;
-  dateOfBirth: string;
   address: string;
   country: string;
   documentUrls: {

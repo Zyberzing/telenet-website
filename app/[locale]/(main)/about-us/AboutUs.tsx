@@ -62,7 +62,7 @@ export default function AboutUs({ exploreCards, values, stats }: AboutUsProps) {
       <div className="relative">
         <Image
           src="/banner-about-us.svg"
-          alt="banner"
+          alt={t("bannerAlt")}
           width={1500}
           height={1000}
           className="w-full h-auto"
@@ -175,7 +175,7 @@ export default function AboutUs({ exploreCards, values, stats }: AboutUsProps) {
         <div className="flex-1 flex justify-center order-2 md:order-2 mt-8 md:mt-0">
           <Image
             src="/about-impact.svg"
-            alt="Impact Image"
+            alt={t("impactImageAlt")}
             width={1000}
             height={1000}
             className="object-contain w-full max-w-sm md:max-w-md lg:max-w-lg -mb-24 md:-mb-72 lg:-mb-32"
