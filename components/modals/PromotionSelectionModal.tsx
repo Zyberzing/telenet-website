@@ -31,9 +31,19 @@ export default function PromotionSelectionModal({
   );
   const [travelStartDate, setTravelStartDate] = useState("");
   const [travelEndDate, setTravelEndDate] = useState("");
+  const [travelDateErrors, setTravelDateErrors] = useState({
+    travelStartDate: "",
+    travelEndDate: "",
+  });
   const [verifyingPromotionId, setVerifyingPromotionId] = useState<
     string | null
   >(null);
+
+  const today: string = new Date(
+    Date.now() - new Date().getTimezoneOffset() * 60000,
+  )
+    .toISOString()
+    .split("T")[0]!;
 
   useEffect(() => {
     if (!open) {
@@ -41,6 +51,10 @@ export default function PromotionSelectionModal({
       setSearch("");
       setTravelStartDate("");
       setTravelEndDate("");
+      setTravelDateErrors({
+        travelStartDate: "",
+        travelEndDate: "",
+      });
       return;
     }
 
@@ -147,8 +161,23 @@ export default function PromotionSelectionModal({
   if (!selectedPlan) return null;
 
   const handleBuy = () => {
-    if (!travelStartDate || !travelEndDate) {
-      toast.error("Please select travel start and end dates.");
+    const nextErrors = {
+      travelStartDate: !travelStartDate
+        ? "Travel start date is required."
+        : travelStartDate < today
+          ? "Past dates cannot be selected."
+          : "",
+      travelEndDate: !travelEndDate
+        ? "Travel end date is required."
+        : travelEndDate < today
+          ? "Past dates cannot be selected."
+          : "",
+    };
+
+    setTravelDateErrors(nextErrors);
+
+    if (nextErrors.travelStartDate || nextErrors.travelEndDate) {
+      toast.error("Please enter valid travel start and end dates.");
       return;
     }
     if (travelEndDate < travelStartDate) {
@@ -206,10 +235,38 @@ export default function PromotionSelectionModal({
               </label>
               <Input
                 type="date"
-                className="bg-white dark:bg-zinc-900 border-gray-300 dark:border-zinc-700"
+                min={today}
+                className={`bg-white dark:bg-zinc-900 ${
+                  travelDateErrors.travelStartDate
+                    ? "border-red-500 focus-visible:ring-red-500"
+                    : "border-gray-300 dark:border-zinc-700"
+                }`}
                 value={travelStartDate}
-                onChange={(e) => setTravelStartDate(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setTravelStartDate(value);
+                  setTravelDateErrors((prev) => ({
+                    ...prev,
+                    travelStartDate: !value
+                      ? "Travel start date is required."
+                      : value < today
+                        ? "Past dates cannot be selected."
+                        : "",
+                    travelEndDate:
+                      travelEndDate && travelEndDate < value
+                        ? "Travel end date must be on or after the start date."
+                        : prev.travelEndDate ===
+                            "Travel end date must be on or after the start date."
+                          ? ""
+                          : prev.travelEndDate,
+                  }));
+                }}
               />
+              {travelDateErrors.travelStartDate && (
+                <p className="text-xs text-red-500">
+                  {travelDateErrors.travelStartDate}
+                </p>
+              )}
             </div>
             <div className="space-y-1">
               <label className="text-xs text-gray-600 dark:text-gray-300">
@@ -217,10 +274,33 @@ export default function PromotionSelectionModal({
               </label>
               <Input
                 type="date"
-                className="bg-white dark:bg-zinc-900 border-gray-300 dark:border-zinc-700"
+                min={travelStartDate || today}
+                className={`bg-white dark:bg-zinc-900 ${
+                  travelDateErrors.travelEndDate
+                    ? "border-red-500 focus-visible:ring-red-500"
+                    : "border-gray-300 dark:border-zinc-700"
+                }`}
                 value={travelEndDate}
-                onChange={(e) => setTravelEndDate(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setTravelEndDate(value);
+                  setTravelDateErrors((prev) => ({
+                    ...prev,
+                    travelEndDate: !value
+                      ? "Travel end date is required."
+                      : value < today
+                        ? "Past dates cannot be selected."
+                        : travelStartDate && value < travelStartDate
+                          ? "Travel end date must be on or after the start date."
+                          : "",
+                  }));
+                }}
               />
+              {travelDateErrors.travelEndDate && (
+                <p className="text-xs text-red-500">
+                  {travelDateErrors.travelEndDate}
+                </p>
+              )}
             </div>
           </div>
 

@@ -1,14 +1,16 @@
 "use client";
 
+import type { User } from "@/app/[locale]/(main)/profile-setting/ProfileSetting";
 import { PlanDetailsModal } from "@/components/modals";
 import { Button } from "@/components/ui/Button";
 import { orderDetails, Plan } from "@/lib/types";
-import { createCheckout } from "@/services/payment";
 import { getProfile } from "@/services/auth";
+import { createCheckout } from "@/services/payment";
 import { upsertWishlist } from "@/services/wishlist";
 import {
   ArrowDownUp,
   Calendar,
+  ChevronRightIcon,
   MessageCircleMore,
   Phone,
   Trash2,
@@ -16,14 +18,16 @@ import {
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import type { User } from "@/app/[locale]/(main)/profile-setting/ProfileSetting";
 
 interface FavoritesProps {
   initialPlans: Plan[];
   isLoggedIn: boolean;
 }
 
-export default function Favorites({ initialPlans, isLoggedIn }: FavoritesProps) {
+export default function Favorites({
+  initialPlans,
+  isLoggedIn,
+}: FavoritesProps) {
   const t = useTranslations("Favorites");
   const [favoritePlans, setFavoritePlans] = useState<Plan[]>(initialPlans);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
@@ -147,10 +151,10 @@ export default function Favorites({ initialPlans, isLoggedIn }: FavoritesProps) 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {favoritePlans.map((plan) => (
               <div key={plan.package_id}>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="max-w-40 truncate block text-[14px] capitalize font-medium text-white rounded-[7px] px-2 bg-primary cursor-default">
+                <div className="flex justify-end items-center mb-2">
+                  {/* <span className="max-w-40 truncate block text-[14px] capitalize font-medium text-white rounded-[7px] px-2 bg-primary cursor-default">
                     {plan.network}
-                  </span>
+                  </span> */}
                   <button
                     type="button"
                     onClick={() => handleRemove(plan)}
@@ -167,11 +171,9 @@ export default function Favorites({ initialPlans, isLoggedIn }: FavoritesProps) 
                 >
                   <div className="flex justify-between">
                     <h3 className="text-2xl font-[400px] mb-6">
-                      ${plan.finalPrice.toFixed(2)}
+                      ${plan?.finalPrice.toFixed(2)}
                     </h3>
-                    <span className="text-[14px] font-extrabold text-[#A70123] rounded-[7px] px-2">
-                      {plan.coverage}
-                    </span>
+                    <ChevronRightIcon className="cursor-pointer text-primary group-hover:text-[#E49B2C] transition-colors duration-300" />
                   </div>
 
                   <div className="flex justify-between">
