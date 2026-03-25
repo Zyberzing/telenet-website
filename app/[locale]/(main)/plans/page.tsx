@@ -28,6 +28,9 @@ interface PageProps {
   }>;
 }
 
+const DEFAULT_DATA_SIZE = 50;
+const DEFAULT_PLAN_TYPE = 1;
+
 export async function generateMetadata({
   params,
   searchParams,
@@ -61,8 +64,10 @@ export async function generateMetadata({
   };
 }
 
-export default async function Page({ searchParams }: PageProps) {
-  const params = await searchParams;
+export default async function Page({
+  searchParams,
+}: PageProps) {
+  const query = await searchParams;
 
   const [countriesData, regionsData, userProfile] = await Promise.allSettled([
     getCountries(),
@@ -75,13 +80,19 @@ export default async function Page({ searchParams }: PageProps) {
   const regions = regionsData.status === "fulfilled" ? regionsData.value : [];
   const profile = userProfile.status === "fulfilled" ? userProfile.value : null;
 
-  const filterby = params.filterby ?? "Country";
-  const selectedCountryCode = params.country_code ?? "";
-  const selectedRegion = params.region_name ?? "";
-  const selectedDataSize = params.data_size ? Number(params.data_size) : 50;
+  const filterby = query.filterby ?? "Country";
+  const selectedCountryCode =
+    filterby === "Country" ? (query.country_code ?? countries[0]?.iso2 ?? "") : "";
+  const selectedRegion =
+    filterby === "Region" ? (query.region_name ?? regions[0]?.name ?? "") : "";
+  const selectedDataSize = query.data_size
+    ? Number(query.data_size)
+    : DEFAULT_DATA_SIZE;
   const selectedMaxValidity =
-    params.max_validity && Number(params.max_validity);
-  const selectedPlanType = params.plan_name ? Number(params.plan_name) : 1;
+    query.max_validity && Number(query.max_validity);
+  const selectedPlanType = query.plan_name
+    ? Number(query.plan_name)
+    : DEFAULT_PLAN_TYPE;
 
   let initialPlans: Plan[] = [];
 

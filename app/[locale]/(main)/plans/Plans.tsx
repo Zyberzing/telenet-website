@@ -32,19 +32,25 @@ export default function Plans({
   selectedCountry,
   selectedRegion,
   filterby,
+  planType: initialPlanType,
   userProfile,
 }: PlansProps) {
   const t = useTranslations("Plans");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const search = useSearchParams();
   const urlFilterBy =
-    search.get("filterby") === "Region" ? "region" : "country";
-  const urlCountry = search.get("country_code") ?? "";
-  const urlRegion = search.get("region_name") ?? "";
-  const urlDataSize = Number(search.get("data_size") ?? 50);
-  const urlMaxValidity = Number(search.get("max_validity"));
-  const urlPlanType = Number(search.get("plan_name") ?? 1);
+    searchParams.get("filterby") === "Region"
+      ? "region"
+      : filterby === "Region"
+        ? "region"
+        : "country";
+  const urlCountry = searchParams.get("country_code") ?? selectedCountry ?? "";
+  const urlRegion = searchParams.get("region_name") ?? selectedRegion ?? "";
+  const urlDataSize = Number(searchParams.get("data_size") ?? 50);
+  const urlMaxValidity = Number(searchParams.get("max_validity"));
+  const urlPlanType = Number(
+    searchParams.get("plan_name") ?? initialPlanType ?? 1,
+  );
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [plansList, setPlansList] = useState<Plan[]>(result);
   const [orderLoading, setOrderLoading] = useState(false);
@@ -63,12 +69,70 @@ export default function Plans({
   );
   const [isPending, startTransition] = useTransition();
   const [planType, setPlanType] = useState(
-    Number(searchParams.get("plan_name")) || 1,
+    Number(searchParams.get("plan_name")) || initialPlanType || 1,
   );
 
   useEffect(() => {
     setPlansList(result);
   }, [result]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    const hasFilter = Boolean(searchParams.get("filterby"));
+    const hasDataSize = Boolean(searchParams.get("data_size"));
+    const hasPlanType = Boolean(searchParams.get("plan_name"));
+    const hasCountry = Boolean(searchParams.get("country_code"));
+    const hasRegion = Boolean(searchParams.get("region_name"));
+
+    const needsCountryDefaults =
+      urlFilterBy === "country" && (!hasCountry || !hasFilter);
+    const needsRegionDefaults =
+      urlFilterBy === "region" && (!hasRegion || !hasFilter);
+    const needsBaseDefaults = !hasDataSize || !hasPlanType;
+
+    if (
+      !needsCountryDefaults &&
+      !needsRegionDefaults &&
+      !needsBaseDefaults
+    ) {
+      return;
+    }
+
+    params.set("filterby", urlFilterBy === "country" ? "Country" : "Region");
+    params.set("data_size", String(urlDataSize || 50));
+    params.set("plan_name", String(urlPlanType || 1));
+
+    if (urlMaxValidity) {
+      params.set("max_validity", String(urlMaxValidity));
+    } else {
+      params.delete("max_validity");
+    }
+
+    if (urlFilterBy === "country" && urlCountry) {
+      params.set("country_code", urlCountry);
+      params.delete("region_name");
+    }
+
+    if (urlFilterBy === "region" && urlRegion) {
+      params.set("region_name", urlRegion);
+      params.delete("country_code");
+    }
+
+    router.replace(`?${params.toString()}`, { scroll: false });
+  }, [
+    filterby,
+    planType,
+    router,
+    searchParams,
+    selectedCountry,
+    selectedRegion,
+    urlCountry,
+    urlDataSize,
+    urlFilterBy,
+    urlMaxValidity,
+    urlPlanType,
+    urlRegion,
+  ]);
 
   useEffect(() => {
     setFilterType(urlFilterBy);
