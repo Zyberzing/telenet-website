@@ -1,5 +1,6 @@
 "use client";
 
+import { useCurrency } from "@/app/providers/CurrencyProvider";
 import PaymentModal from "@/components/modals/PaymentModal";
 import SuccessModal from "@/components/modals/SuccessModal";
 import { Button } from "@/components/ui/Button";
@@ -84,6 +85,7 @@ const topUpPacks: Pack[] = [
 
 export default function TopUp() {
   const t = useTranslations("TopUp");
+  const { formatAmount } = useCurrency();
   const router = useRouter();
   const locale = useLocale();
   const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
@@ -157,7 +159,7 @@ export default function TopUp() {
                 >
                   <div className="flex justify-between items-start">
                     <h2 className="text-3xl font-[400px] text-gray-900 dark:text-white">
-                      {pack.price}
+                      {formatAmount(pack.price)}
                     </h2>
                     <ChevronRightIcon className="w-5 h-5 text-primary" />
                   </div>

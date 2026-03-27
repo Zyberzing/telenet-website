@@ -1,6 +1,7 @@
 "use client";
 
 import { Plan } from "@/app/[locale]/(main)/my-plans/MyPlansClient";
+import { useCurrency } from "@/app/providers/CurrencyProvider";
 import { Button } from "@/components/ui/Button";
 import {
   Dialog,
@@ -20,6 +21,8 @@ export default function BillingModal({
   plan,
   onClose,
 }: BillingModalProps) {
+  const { formatAmount } = useCurrency();
+
   if (!plan) return null;
 
   return (
@@ -41,8 +44,8 @@ export default function BillingModal({
           <p>SMS: {plan.package_sms}</p>
           <p>Call: {plan.package_call}</p>
           <p>Validity: {plan.perioddays} days</p>
-          <p>Gross Amount: {plan.unit_price_gross_amount}</p>
-          <p>Net Amount: {plan.unit_price_net_amount}</p>
+          <p>Gross Amount: {formatAmount(plan.unit_price_gross_amount)}</p>
+          <p>Net Amount: {formatAmount(plan.unit_price_net_amount)}</p>
         </div>
 
         <div className="flex justify-end mt-6">

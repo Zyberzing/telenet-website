@@ -1,5 +1,6 @@
 "use client";
 
+import { useCurrency } from "@/app/providers/CurrencyProvider";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import {
@@ -23,6 +24,7 @@ export default function PromotionSelectionModal({
   onBuy,
   orderLoading,
 }: PromotionSelectionModalProps) {
+  const { formatAmount } = useCurrency();
   const [promotions, setPromotions] = useState<PromotionItem[]>([]);
   const [loadingPromotions, setLoadingPromotions] = useState(false);
   const [search, setSearch] = useState("");
@@ -151,11 +153,11 @@ export default function PromotionSelectionModal({
 
     if (promotion.discountType === "percentage") {
       const amount = (basePrice * rawValue) / 100;
-      return `${rawValue}% off (-$${amount.toFixed(2)})`;
+      return `${rawValue}% off (-${formatAmount(amount)})`;
     }
 
     const percent = basePrice > 0 ? (rawValue / basePrice) * 100 : 0;
-    return `$${rawValue.toFixed(2)} off (${percent.toFixed(2)}%)`;
+    return `${formatAmount(rawValue)} off (${percent.toFixed(2)}%)`;
   };
 
   if (!selectedPlan) return null;
@@ -206,14 +208,14 @@ export default function PromotionSelectionModal({
               {selectedPlan.package_name}
             </p>
             <p className="text-lg font-bold text-black dark:text-white mt-1">
-              <span>Price:</span> <span>${basePrice.toFixed(2)}</span>
+              <span>Price:</span> <span>{formatAmount(basePrice)}</span>
               {selectedDiscount > 0 && (
                 <>
                   <span className="mx-1">-</span>
-                  <span>${selectedDiscount.toFixed(2)}</span>
+                  <span>{formatAmount(selectedDiscount)}</span>
                   <span className="mx-1">=</span>
                   <span className="font-medium">
-                    ${selectedPayable.toFixed(2)}
+                    {formatAmount(selectedPayable)}
                   </span>
                 </>
               )}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useCurrency } from "@/app/providers/CurrencyProvider";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import LogoutConfirm from "@/components/shared/LogoutConfirm";
 import {
@@ -66,6 +67,7 @@ export default function Header(user: {
   country: string;
   location: string;
 }) {
+  const { currencies, selectedCurrency, setCurrencyByCode } = useCurrency();
   const { toggleTheme, theme } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
@@ -76,33 +78,6 @@ export default function Header(user: {
     useState<LanguageOption[]>(FALLBACK_LANGUAGES);
   const [selectedLanguage, setSelectedLanguage] =
     useState<LanguageOption>(DEFAULT_LANGUAGE);
-
-  // const [currencyList, setCurrencyList] = useState<Currency[]>([]);
-  // const [currencyModalOpen, setCurrencyModalOpen] = useState(false);
-  // const [selectedCurrency, setSelectedCurrency] = useState("USD");
-  // const [selectedCountry, setSelectedCountry] = useState("United States");
-
-  // useEffect(() => {
-  //   (async () => {
-  //     try {
-  //       const data = await getCurrency();
-  //       setCurrencyList(data);
-  //       const savedCurrency = await getCurrencyCookie();
-  //       const savedCountry = await getCountryCookie();
-
-  //       if (savedCountry) {
-  //         setSelectedCountry(savedCountry);
-  //       } else if (savedCurrency) {
-  //         const found = data.find((c) => c.currency === savedCurrency);
-  //         if (found) setSelectedCountry(found.country);
-  //       }
-
-  //       if (savedCurrency) setSelectedCurrency(savedCurrency);
-  //     } catch (error) {
-  //       console.error("Failed to fetch currency:", error);
-  //     }
-  //   })();
-  // }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -205,13 +180,32 @@ export default function Header(user: {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Currency Button */}
-          {/* <button
-            onClick={() => setCurrencyModalOpen(true)}
-            className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition cursor-pointer capitalize"
-          >
-            {selectedCountry}
-          </button> */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition cursor-pointer">
+                <span>{selectedCurrency.currency}</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="max-h-80 min-w-[14rem] overflow-y-auto text-sm cursor-pointer"
+            >
+              {currencies.map((currency) => (
+                <DropdownMenuItem
+                  key={currency._id}
+                  onClick={() => setCurrencyByCode(currency.currency)}
+                  className={cn(
+                    "cursor-pointer",
+                    selectedCurrency.currency === currency.currency &&
+                      "bg-gradient text-white",
+                  )}
+                >
+                  {currency.currency} ({currency.country})
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* Profile / Auth Section */}
           {user?.id ? (
@@ -349,15 +343,35 @@ export default function Header(user: {
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                {/* <button
-                  onClick={() => {
-                    setCurrencyModalOpen(true);
-                    setOpen(false);
-                  }}
-                  className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition cursor-pointer uppercase"
-                >
-                  {selectedCountry}
-                </button> */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-1 text-sm font-medium outline-none hover:opacity-80 transition cursor-pointer">
+                      <span>{selectedCurrency.currency}</span>
+                      <ChevronDown className="h-4 w-4" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    className="max-h-80 min-w-[14rem] overflow-y-auto text-sm cursor-pointer"
+                  >
+                    {currencies.map((currency) => (
+                      <DropdownMenuItem
+                        key={currency._id}
+                        className={cn(
+                          "cursor-pointer",
+                          selectedCurrency.currency === currency.currency &&
+                            "bg-gradient text-white",
+                        )}
+                        onClick={() => {
+                          setCurrencyByCode(currency.currency);
+                          setOpen(false);
+                        }}
+                      >
+                        {currency.currency} ({currency.country})
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
                 {user?.id ? (
                   <DropdownMenu>
@@ -443,20 +457,6 @@ export default function Header(user: {
           </nav>
         </div>
       )}
-
-      {/* <CurrencyModal
-        open={currencyModalOpen}
-        onOpenChange={setCurrencyModalOpen}
-        currencies={currencyList}
-        selectedCurrency={selectedCurrency}
-        onSelect={async (currency) => {
-          setSelectedCurrency(currency.currency);
-          setSelectedCountry(currency.country);
-          await setCurrencyCookie(currency.currency);
-          await setCountryCookie(currency.country);
-          router.refresh();
-        }}
-      /> */}
     </header>
   );
 }

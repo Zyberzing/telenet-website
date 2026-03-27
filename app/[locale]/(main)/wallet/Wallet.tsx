@@ -1,6 +1,7 @@
 // app/wallet/WalletClient.tsx
 "use client";
 
+import { useCurrency } from "@/app/providers/CurrencyProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
@@ -29,6 +30,7 @@ export default function Wallet({
   transactions: Transaction[];
 }) {
   const t = useTranslations("Wallet");
+  const { formatAmount } = useCurrency();
 
   const [filterDate, setFilterDate] = useState("All");
   const [filterMethod, setFilterMethod] = useState("All");
@@ -70,7 +72,7 @@ export default function Wallet({
             <div>
               <p className="text-gray-700 text-sm">{t("walletBalance")}</p>
               <p className="text-3xl sm:text-4xl font-[400px] text-primary mt-2">
-                $50
+                {formatAmount(50)}
               </p>
             </div>
             <Button className="rounded-full px-10 mx-6">{t("addMoney")}</Button>
@@ -161,7 +163,7 @@ export default function Wallet({
                     className="border-b last:border-0 hover:bg-gray-50 transition-colors"
                   >
                     <td className="py-3 px-4">{tx.date}</td>
-                    <td className="py-3 px-4">${tx.amount}</td>
+                    <td className="py-3 px-4">{formatAmount(tx.amount)}</td>
                     <td className="py-3 px-4">{tx.method}</td>
                     <td className="py-3 px-4">
                       <span

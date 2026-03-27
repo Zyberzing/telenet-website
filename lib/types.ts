@@ -151,8 +151,19 @@ export interface Currency {
   _id: string;
   country: string;
   currency: string;
-  rate?: number;
+  rate: number;
+  symbol?: string;
 }
+
+export type CurrencyListResponse = {
+  status?: string;
+  message?: string;
+  data?:
+    | Currency[]
+    | {
+        result?: Currency[];
+      };
+};
 
 export type Plan = {
   _id: string;

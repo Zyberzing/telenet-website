@@ -1,5 +1,6 @@
 "use client";
 
+import { useCurrency } from "@/app/providers/CurrencyProvider";
 import CompatibilityCheckModal from "@/components/modals/CompatibilityCheckModal";
 import PromotionSelectionModal from "@/components/modals/PromotionSelectionModal";
 import { Button } from "@/components/ui/Button";
@@ -36,6 +37,7 @@ export default function PlanDetailsModal({
   isLoggedIn,
   onFavoriteChange,
 }: PlanDetailsModalProps) {
+  const { formatAmount } = useCurrency();
   const [openCompatibilityModal, setOpenCompatibilityModal] = useState(false);
   const [openPromotionModal, setOpenPromotionModal] = useState(false);
   const [refundCheckLoading, setRefundCheckLoading] = useState(false);
@@ -240,11 +242,10 @@ export default function PlanDetailsModal({
                   Price
                 </span>
                 <span className="text-start bg-[#F1F8FE] dark:bg-zinc-800 w-full p-2 rounded-tr-xl">
-                  ${" "}
-                  {(
+                  {formatAmount(
                     (selectedPlan.basePrice ?? 0) +
-                    (selectedPlan.markupAmount ?? 0)
-                  ).toFixed(2)}
+                      (selectedPlan.markupAmount ?? 0),
+                  )}
                 </span>
               </div>
               <div className="flex justify-between text-sm gap-1 mb-1">
@@ -252,7 +253,7 @@ export default function PlanDetailsModal({
                   Tax
                 </span>
                 <span className="text-start bg-[#F1F8FE] dark:bg-zinc-800 w-full p-2">
-                  ${selectedPlan.taxAmount?.toFixed(2) || "0.00"}
+                  {formatAmount(selectedPlan.taxAmount ?? 0)}
                 </span>
               </div>
               <div className="flex justify-between text-sm gap-1">
@@ -260,13 +261,13 @@ export default function PlanDetailsModal({
                   Stripe
                 </span>
                 <span className="text-start bg-[#F1F8FE] dark:bg-zinc-800 w-full p-2 rounded-br-xl">
-                  ${selectedPlan.stripe?.toFixed(2) || "0.00"}
+                  {formatAmount(selectedPlan.stripe ?? 0)}
                 </span>
               </div>
               <div className="flex justify-between font-[400] text-sm border border-primary dark:border-primary-dark rounded-xl px-3 text-center py-2 gap-1 mt-2">
                 <span className="w-full text-start px-2">Final Price</span>
                 <span className="text-start w-full px-2">
-                  ${selectedPlan.finalPrice.toFixed(2)}
+                  {formatAmount(selectedPlan.finalPrice)}
                 </span>
               </div>
             </div>

@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { IoIosArrowForward } from "react-icons/io";
 import { getCmsBanners } from "@/services/cms";
+import CurrencyAmount from "../shared/CurrencyAmount";
 import { Button } from "../ui/Button";
 
 export default async function Features({ locale }: { locale: string }) {
@@ -16,13 +17,13 @@ export default async function Features({ locale }: { locale: string }) {
   ];
 
   const popularCountries = [
-    { flag: "/flags/usa2.svg", name: t("popularCountries.us"), price: "$0.7" },
-    { flag: "/flags/uk2.svg", name: t("popularCountries.uk"), price: "$0.7" },
-    { flag: "/flags/uae2.svg", name: t("popularCountries.uae"), price: "$0.7" },
+    { flag: "/flags/usa2.svg", name: t("popularCountries.us"), price: 0.7 },
+    { flag: "/flags/uk2.svg", name: t("popularCountries.uk"), price: 0.7 },
+    { flag: "/flags/uae2.svg", name: t("popularCountries.uae"), price: 0.7 },
     {
       flag: "/flags/canada.svg",
       name: t("popularCountries.canada"),
-      price: "$0.7",
+      price: 0.7,
     },
   ];
 
@@ -218,7 +219,7 @@ export default async function Features({ locale }: { locale: string }) {
                 {c.name}
               </h3>
               <p className="text-[17.34px] text-[#8606D0] mt-2">
-                {t("popularCountries.startsAt")} {c.price}{" "}
+                {t("popularCountries.startsAt")} <CurrencyAmount amount={c.price} />{" "}
                 {t("popularCountries.onwards")}
               </p>
             </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useCurrency } from "@/app/providers/CurrencyProvider";
 import QRModal from "@/components/modals/QRModal";
 import RefundModal from "@/components/modals/RefundModal";
 import BillingModal from "@/components/modals/ViewBillingModal";
@@ -61,6 +62,7 @@ export default function MyPlans({
   cancelledPlan,
 }: MyPlansClientProps) {
   const t = useTranslations("MyPlans");
+  const { formatAmount } = useCurrency();
   const [tab, setTab] = useState<"active" | "expired" | "cancelled">("active");
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const router = useRouter();
@@ -381,7 +383,7 @@ export default function MyPlans({
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       {t("lastPlan")}: {plan.lastPlan} •{" "}
-                      {plan.order?.finalPrice}
+                      {formatAmount(plan.order?.finalPrice)}
                     </p>
                   </div>
 
@@ -456,7 +458,7 @@ export default function MyPlans({
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       {t("lastPlan")}: {plan.lastPlan} •{" "}
-                      {plan.order?.finalPrice}
+                      {formatAmount(plan.order?.finalPrice)}
                     </p>
                   </div>
 

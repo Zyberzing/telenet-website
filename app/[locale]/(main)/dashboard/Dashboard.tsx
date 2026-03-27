@@ -1,5 +1,6 @@
 "use client";
 
+import { useCurrency } from "@/app/providers/CurrencyProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useTranslations } from "next-intl";
@@ -34,6 +35,7 @@ export default function Dashboard({
   userData,
 }: DashboardProps) {
   const t = useTranslations("Dashboard");
+  const { formatAmount } = useCurrency();
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -107,7 +109,7 @@ export default function Dashboard({
                     {t("walletBalance")}
                   </p>
                   <p className="text-2xl sm:text-3xl font-[400] text-primary mt-3">
-                    ${userData?.walletBalance || 0}
+                    {formatAmount(userData?.walletBalance || 0)}
                   </p>
                 </div>
               </Card>
@@ -116,7 +118,7 @@ export default function Dashboard({
               <Card className="p-4 bg-card shadow-sm border border-border rounded-xl">
                 <div>
                   <p className="text-2xl sm:text-3xl font-[400] text-primary">
-                    ${userData?.lastTransaction?.amount || 0}
+                    {formatAmount(userData?.lastTransaction?.amount || 0)}
                   </p>
                   <div className="flex justify-between text-[12px]">
                     <div>
@@ -157,7 +159,7 @@ export default function Dashboard({
               >
                 <div className="mb-4">
                   <p className="text-3xl font-[400] text-primary">
-                    ${plan.price}
+                    {formatAmount(plan.price)}
                   </p>
                 </div>
 

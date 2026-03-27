@@ -1,6 +1,7 @@
 "use client";
 
 import type { User } from "@/app/[locale]/(main)/profile-setting/ProfileSetting";
+import { useCurrency } from "@/app/providers/CurrencyProvider";
 import { PlanDetailsModal } from "@/components/modals";
 import { Button } from "@/components/ui/Button";
 import { orderDetails, Plan } from "@/lib/types";
@@ -29,6 +30,7 @@ export default function Favorites({
   isLoggedIn,
 }: FavoritesProps) {
   const t = useTranslations("Favorites");
+  const { formatAmount } = useCurrency();
   const [favoritePlans, setFavoritePlans] = useState<Plan[]>(initialPlans);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [orderLoading, setOrderLoading] = useState(false);
@@ -171,7 +173,7 @@ export default function Favorites({
                 >
                   <div className="flex justify-between">
                     <h3 className="text-2xl font-[400px] mb-6">
-                      ${plan?.finalPrice.toFixed(2)}
+                      {formatAmount(plan?.finalPrice)}
                     </h3>
                     <ChevronRightIcon className="cursor-pointer text-primary group-hover:text-[#E49B2C] transition-colors duration-300" />
                   </div>

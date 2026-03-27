@@ -1,5 +1,6 @@
 "use client";
 
+import { useCurrency } from "@/app/providers/CurrencyProvider";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
@@ -55,6 +56,8 @@ export default function PaymentModal({
   onConfirm,
   t,
 }: PaymentDialogProps) {
+  const { formatAmount } = useCurrency();
+
   if (!selectedPack) return null;
 
   return (
@@ -130,7 +133,7 @@ export default function PaymentModal({
             <hr className="border-[1px] border-dashed border-[#E6E6E6]" />
             <div className="flex justify-between font-[400px] text-base pt-2">
               <span>{t("total")}</span>
-              <span>{selectedPack?.total}</span>
+              <span>{formatAmount(selectedPack?.total)}</span>
             </div>
           </div>
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useCurrency } from "@/app/providers/CurrencyProvider";
 import { Button } from "@/components/ui/Button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/Card";
@@ -57,6 +58,7 @@ export default function OrderBilling({
   limit: number;
 }) {
   const t = useTranslations("OrderBilling");
+  const { formatAmount } = useCurrency();
   const [orders, setOrders] = useState<Order[]>(initialOrders);
   const [pagination, setPagination] = useState(initialPagination);
   const [currentPage, setCurrentPage] = useState(1);
@@ -190,6 +192,7 @@ export default function OrderBilling({
 
     const amount =
       order.totalAmount ?? order.amount ?? order.unit_price_gross_amount ?? "-";
+    const formattedAmount = amount === "-" ? "-" : formatAmount(amount);
 
     let y = 800;
     const left = 60;
@@ -291,7 +294,7 @@ export default function OrderBilling({
 
     y -= 20;
     draw.push(text(left, y, 10, t("totalAmount")));
-    draw.push(text(left + 170, y, 10, String(amount)));
+    draw.push(text(left + 170, y, 10, formattedAmount));
 
     y -= 18;
     draw.push(text(left, y, 10, t("paymentStatus")));

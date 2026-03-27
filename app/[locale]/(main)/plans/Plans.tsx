@@ -1,5 +1,6 @@
 "use client";
 
+import { useCurrency } from "@/app/providers/CurrencyProvider";
 import { PlanDetailsModal } from "@/components/modals";
 import { PlanFilters } from "@/components/plans";
 import { PlanCardSkeleton } from "@/components/skeletons";
@@ -36,6 +37,7 @@ export default function Plans({
   userProfile,
 }: PlansProps) {
   const t = useTranslations("Plans");
+  const { formatAmount } = useCurrency();
   const router = useRouter();
   const searchParams = useSearchParams();
   const urlFilterBy =
@@ -352,11 +354,11 @@ export default function Plans({
 
                       <div
                         className="rounded-2xl p-5 shadow-sm border border-gray-100 bg-[#F1F8FE] hover:bg-[#FFF2E0] transition-all duration-300 flex flex-col justify-between cursor-pointer group dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
-                        onClick={() => setSelectedPlan(plan)}
+                          onClick={() => setSelectedPlan(plan)}
                       >
                         <div className="flex justify-between">
                           <h3 className="text-2xl font-[400px] mb-6">
-                            ${plan.finalPrice.toFixed(2)}
+                            {formatAmount(plan.finalPrice)}
                           </h3>
                           <ChevronRightIcon className="cursor-pointer text-primary group-hover:text-[#E49B2C] transition-colors duration-300" />
                         </div>

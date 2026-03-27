@@ -4,6 +4,7 @@ import { Outfit } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 import GoogleProvider from "./providers/GoogleProvider";
+import { CurrencyProvider } from "./providers/CurrencyProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 
 const outfit = Outfit({
@@ -26,7 +27,9 @@ export default function RootLayout({
       <body className="antialiased">
         <StoreProvider>
           <GoogleProvider>
-            <ThemeProvider>{children}</ThemeProvider>
+            <ThemeProvider>
+              <CurrencyProvider>{children}</CurrencyProvider>
+            </ThemeProvider>
           </GoogleProvider>
           <Toaster richColors />
         </StoreProvider>
