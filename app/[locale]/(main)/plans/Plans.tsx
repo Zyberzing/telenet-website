@@ -5,12 +5,6 @@ import { PlanDetailsModal } from "@/components/modals";
 import { PlanFilters } from "@/components/plans";
 import { PlanCardSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/Button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { orderDetails, Plan, PlansProps } from "@/lib/types";
 import { createCheckout } from "@/services/payment";
 import {
@@ -23,13 +17,26 @@ import {
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
+
+const DEFAULT_DATA_SIZE = 50;
+
+const toPositiveInt = (value: string | null | undefined, fallback: number) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : fallback;
+};
+
+const toOptionalPositiveInt = (value: string | null | undefined) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : undefined;
+};
 
 export default function Plans({
   countries,
   regions,
   result = [],
+  pagination,
   selectedCountry,
   selectedRegion,
   filterby,
@@ -40,6 +47,8 @@ export default function Plans({
   const { formatAmount } = useCurrency();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const listContainerRef = useRef<HTMLElement | null>(null);
+  const hasMountedRef = useRef(false);
   const urlFilterBy =
     searchParams.get("filterby") === "Region"
       ? "region"
@@ -48,11 +57,21 @@ export default function Plans({
         : "country";
   const urlCountry = searchParams.get("country_code") ?? selectedCountry ?? "";
   const urlRegion = searchParams.get("region_name") ?? selectedRegion ?? "";
+  const urlPage = toPositiveInt(
+    searchParams.get("page"),
+    pagination?.currentPage ?? 1,
+  );
   const urlDataSize = Number(searchParams.get("data_size") ?? 50);
-  const urlMaxValidity = Number(searchParams.get("max_validity"));
+  const urlMinValidity = toOptionalPositiveInt(
+    searchParams.get("min_validity"),
+  );
+  const urlMaxValidity = toOptionalPositiveInt(
+    searchParams.get("max_validity"),
+  );
   const urlPlanType = Number(
     searchParams.get("plan_name") ?? initialPlanType ?? 1,
   );
+
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [plansList, setPlansList] = useState<Plan[]>(result);
   const [orderLoading, setOrderLoading] = useState(false);
@@ -66,17 +85,29 @@ export default function Plans({
   const [dataSize, setDataSize] = useState([
     Number(searchParams.get("data_size")) || 50,
   ]);
-  const [maxValidity, setMaxValidity] = useState(
-    Number(searchParams.get("max_validity")) || undefined,
-  );
+  const [minValidity, setMinValidity] = useState(urlMinValidity);
+  const [maxValidity, setMaxValidity] = useState(urlMaxValidity);
   const [isPending, startTransition] = useTransition();
   const [planType, setPlanType] = useState(
     Number(searchParams.get("plan_name")) || initialPlanType || 1,
   );
 
+  const smoothScrollToTop = () => {
+    listContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   useEffect(() => {
     setPlansList(result);
   }, [result]);
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
+    smoothScrollToTop();
+  }, [pagination?.currentPage, result.length]);
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -85,26 +116,30 @@ export default function Plans({
     const hasPlanType = Boolean(searchParams.get("plan_name"));
     const hasCountry = Boolean(searchParams.get("country_code"));
     const hasRegion = Boolean(searchParams.get("region_name"));
+    const hasPage = Boolean(searchParams.get("page"));
 
     const needsCountryDefaults =
       urlFilterBy === "country" && (!hasCountry || !hasFilter);
     const needsRegionDefaults =
       urlFilterBy === "region" && (!hasRegion || !hasFilter);
-    const needsBaseDefaults = !hasDataSize || !hasPlanType;
+    const needsBaseDefaults = !hasDataSize || !hasPlanType || !hasPage;
 
-    if (
-      !needsCountryDefaults &&
-      !needsRegionDefaults &&
-      !needsBaseDefaults
-    ) {
+    if (!needsCountryDefaults && !needsRegionDefaults && !needsBaseDefaults) {
       return;
     }
 
     params.set("filterby", urlFilterBy === "country" ? "Country" : "Region");
-    params.set("data_size", String(urlDataSize || 50));
+    params.set("data_size", String(urlDataSize || DEFAULT_DATA_SIZE));
+    params.set("page", String(urlPage || 1));
     params.set("plan_name", String(urlPlanType || 1));
 
-    if (urlMaxValidity) {
+    if (typeof urlMinValidity === "number" && urlMinValidity > 0) {
+      params.set("min_validity", String(urlMinValidity));
+    } else {
+      params.delete("min_validity");
+    }
+
+    if (typeof urlMaxValidity === "number" && urlMaxValidity > 0) {
       params.set("max_validity", String(urlMaxValidity));
     } else {
       params.delete("max_validity");
@@ -122,16 +157,14 @@ export default function Plans({
 
     router.replace(`?${params.toString()}`, { scroll: false });
   }, [
-    filterby,
-    planType,
     router,
     searchParams,
-    selectedCountry,
-    selectedRegion,
     urlCountry,
     urlDataSize,
     urlFilterBy,
     urlMaxValidity,
+    urlMinValidity,
+    urlPage,
     urlPlanType,
     urlRegion,
   ]);
@@ -141,52 +174,72 @@ export default function Plans({
     setInternalSelectedCountry(urlCountry);
     setInternalSelectedRegion(urlRegion);
     setDataSize([urlDataSize]);
-    setMaxValidity(urlMaxValidity || undefined);
+    setMinValidity(urlMinValidity);
+    setMaxValidity(urlMaxValidity);
     setPlanType(urlPlanType);
   }, [
     urlFilterBy,
     urlCountry,
-    urlRegion,
     urlDataSize,
+    urlRegion,
+    urlMinValidity,
     urlMaxValidity,
     urlPlanType,
   ]);
 
-  const selectedDataSize = dataSize?.[0] ?? 0;
-  const selectedMaxValidity = maxValidity;
-
   const updateUrlAndReload = ({
     newDataSize,
+    newMinValidity,
     newMaxValidity,
     newCountry,
     newRegion,
     newFilterType,
     newPlanType,
+    newPage,
   }: {
     newDataSize?: number;
+    newMinValidity?: number;
     newMaxValidity?: number;
     newCountry?: string;
     newRegion?: string;
     newFilterType?: "country" | "region";
     newPlanType?: number;
+    newPage?: number;
   }) => {
     const params = new URLSearchParams(searchParams.toString());
     const filter = newFilterType ?? filterType;
-    const size = newDataSize ?? selectedDataSize;
-    const maxValidityValue = newMaxValidity ?? selectedMaxValidity;
+    const dataSizeValue = newDataSize ?? dataSize[0] ?? DEFAULT_DATA_SIZE;
+    const minValidityValue = newMinValidity ?? minValidity;
+    const maxValidityValue = newMaxValidity ?? maxValidity;
     const country = newCountry ?? internalSelectedCountry;
     const region = newRegion ?? internalSelectedRegion;
+    const page = newPage ?? 1;
 
     params.set("filterby", filter === "country" ? "Country" : "Region");
     params.set("plan_name", (newPlanType ?? planType).toString());
-    params.set("data_size", size.toString());
-    params.set("max_validity", maxValidityValue?.toString() || "");
+    params.set("data_size", String(dataSizeValue));
+    params.set("page", page.toString());
+
+    if (typeof minValidityValue === "number" && minValidityValue > 0) {
+      params.set("min_validity", minValidityValue.toString());
+    } else {
+      params.delete("min_validity");
+    }
+
+    if (typeof maxValidityValue === "number" && maxValidityValue > 0) {
+      params.set("max_validity", maxValidityValue.toString());
+    } else {
+      params.delete("max_validity");
+    }
+
     params.delete("country_code");
     params.delete("region_name");
 
-    if (filter === "country") {
+    if (filter === "country" && country) {
       params.set("country_code", country);
-    } else {
+    }
+
+    if (filter === "region" && region) {
       params.set("region_name", region);
     }
 
@@ -194,6 +247,9 @@ export default function Plans({
       router.replace(`?${params.toString()}`, { scroll: false });
     });
   };
+
+  const totalPages = pagination?.totalPages || 1;
+  const currentPage = pagination?.currentPage || urlPage;
 
   const handleBuy = async (
     promotionId?: string,
@@ -249,7 +305,6 @@ export default function Plans({
 
   return (
     <section className="w-full min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
-      {/* Banner */}
       <div className="relative w-full h-[22.6vh]">
         <Image
           src="/banner-plans.svg"
@@ -260,10 +315,8 @@ export default function Plans({
         />
       </div>
 
-      {/* Main Section */}
       <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:h-[calc(100vh)-88px-22.6vh]">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:h-full">
-          {/* Filter Component */}
           <PlanFilters
             filterType={filterType}
             setFilterType={setFilterType}
@@ -298,6 +351,11 @@ export default function Plans({
             onDataSizeCommit={(v) => {
               updateUrlAndReload({ newDataSize: v[0] });
             }}
+            minValidity={minValidity}
+            onMinValidityChange={setMinValidity}
+            onMinValidityCommit={(v) => {
+              updateUrlAndReload({ newMinValidity: v });
+            }}
             maxValidity={maxValidity}
             onMaxValidityChange={setMaxValidity}
             onMaxValidityCommit={(v) => {
@@ -313,8 +371,10 @@ export default function Plans({
             filterTitle={t("filterTitle")}
           />
 
-          {/* Plans - Scrollable */}
-          <main className="lg:col-span-4 lg:overflow-y-auto lg:h-full lg:pr-2 scrollbar-thin">
+          <main
+            ref={listContainerRef}
+            className="lg:col-span-4 lg:overflow-y-auto lg:h-full lg:pr-2 scrollbar-thin"
+          >
             <div className="pb-6">
               <h1 className="text-start text-2xl md:text-3xl font-[400px] mb-6 sticky top-0 bg-white z-10 pb-2 dark:bg-gray-900">
                 {t("popularPlans")}
@@ -327,69 +387,88 @@ export default function Plans({
                   ))}
                 </div>
               ) : plansList.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {plansList.map((plan) => (
-                    <div key={plan.package_id}>
-                      {/* <div className="flex justify-between items-center mb-1">
-                        {plan.network && (
-                          <TooltipProvider delayDuration={100}>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <span className="max-w-40 truncate block text-[14px] capitalize font-medium text-white rounded-[7px] px-2 bg-primary cursor-default">
-                                  {plan.network}
-                                </span>
-                              </TooltipTrigger>
-
-                              <TooltipContent className="bg-black text-white px-3 py-2 text-xs rounded-lg max-w-[250px] break-words">
-                                {plan.network}
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
-
-                        <span className="text-[14px] font-extrabold text-[#A70123] rounded-[7px] px-2 ">
-                          {plan.coverage}
-                        </span>
-                      </div> */}
-
-                      <div
-                        className="rounded-2xl p-5 shadow-sm border border-gray-100 bg-[#F1F8FE] hover:bg-[#FFF2E0] transition-all duration-300 flex flex-col justify-between cursor-pointer group dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {plansList.map((plan) => (
+                      <div key={plan.package_id}>
+                        <div
+                          className="rounded-2xl p-5 shadow-sm border border-gray-100 bg-[#F1F8FE] hover:bg-[#FFF2E0] transition-all duration-300 flex flex-col justify-between cursor-pointer group dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
                           onClick={() => setSelectedPlan(plan)}
-                      >
-                        <div className="flex justify-between">
-                          <h3 className="text-2xl font-[400px] mb-6">
-                            {formatAmount(plan.finalPrice)}
-                          </h3>
-                          <ChevronRightIcon className="cursor-pointer text-primary group-hover:text-[#E49B2C] transition-colors duration-300" />
-                        </div>
-
-                        <div className="flex justify-between">
-                          <div className="gap-4">
-                            <p className="flex gap-2 items-center">
-                              <ArrowDownUp size={15} /> {plan.data}
-                            </p>
-                            <p className="flex gap-2 items-center">
-                              <Phone size={15} /> {plan.call}
-                            </p>
+                        >
+                          <div className="flex justify-between">
+                            <h3 className="text-2xl font-[400px] mb-6">
+                              {formatAmount(plan.finalPrice)}
+                            </h3>
+                            <ChevronRightIcon className="cursor-pointer text-primary group-hover:text-[#E49B2C] transition-colors duration-300" />
                           </div>
-                          <div className="gap-4">
-                            <p className="flex gap-2 items-center">
-                              <Calendar size={15} />
-                              {plan.validity} {t("days")}
-                            </p>
-                            <p className="flex gap-2 items-center">
-                              <MessageCircleMore size={15} /> {plan.sms}
-                            </p>
-                          </div>
-                        </div>
 
-                        <Button className="text-white mt-6 text-sm rounded-full w-full transition-all duration-300 group-hover:[background:#E49B2C] group-hover:text-black dark:group-hover:text-white hover:[background:#E49B2C_!important] hover:text-black dark:hover:text-white bg-gradient">
-                          {t("buy")}
-                        </Button>
+                          <div className="flex justify-between">
+                            <div className="gap-4">
+                              <p className="flex gap-2 items-center">
+                                <ArrowDownUp size={15} /> {plan.data}
+                              </p>
+                              <p className="flex gap-2 items-center">
+                                <Phone size={15} /> {plan.call}
+                              </p>
+                            </div>
+                            <div className="gap-4">
+                              <p className="flex gap-2 items-center">
+                                <Calendar size={15} />
+                                {plan.validity} {t("days")}
+                              </p>
+                              <p className="flex gap-2 items-center">
+                                <MessageCircleMore size={15} /> {plan.sms}
+                              </p>
+                            </div>
+                          </div>
+
+                          <Button className="text-white mt-6 text-sm rounded-full w-full transition-all duration-300 group-hover:[background:#E49B2C] group-hover:text-black dark:group-hover:text-white hover:[background:#E49B2C_!important] hover:text-black dark:hover:text-white bg-gradient">
+                            {t("buy")}
+                          </Button>
+                        </div>
                       </div>
+                    ))}
+                  </div>
+
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-2 mt-8">
+                      <Button
+                        variant="outline"
+                        onClick={() =>
+                          updateUrlAndReload({ newPage: currentPage - 1 })
+                        }
+                        disabled={currentPage <= 1 || isPending}
+                      >
+                        Prev
+                      </Button>
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                        (page) => (
+                          <Button
+                            key={page}
+                            variant={
+                              currentPage === page ? "default" : "outline"
+                            }
+                            onClick={() =>
+                              updateUrlAndReload({ newPage: page })
+                            }
+                            disabled={isPending}
+                          >
+                            {page}
+                          </Button>
+                        ),
+                      )}
+                      <Button
+                        variant="outline"
+                        onClick={() =>
+                          updateUrlAndReload({ newPage: currentPage + 1 })
+                        }
+                        disabled={currentPage >= totalPages || isPending}
+                      >
+                        Next
+                      </Button>
                     </div>
-                  ))}
-                </div>
+                  )}
+                </>
               ) : (
                 <p className="text-[20px]">{t("noPlans")}</p>
               )}
@@ -398,7 +477,6 @@ export default function Plans({
         </div>
       </div>
 
-      {/* Plan Details Modal */}
       <PlanDetailsModal
         selectedPlan={selectedPlan}
         onClose={() => setSelectedPlan(null)}

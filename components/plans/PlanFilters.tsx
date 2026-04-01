@@ -103,6 +103,9 @@ interface PlanFiltersProps {
   dataSize: number[];
   onDataSizeChange: (value: number[]) => void;
   onDataSizeCommit: (value: number[]) => void;
+  minValidity?: number;
+  onMinValidityChange: (value: number | undefined) => void;
+  onMinValidityCommit: (value: number | undefined) => void;
   maxValidity?: number;
   onMaxValidityChange: (value: number | undefined) => void;
   onMaxValidityCommit: (value: number | undefined) => void;
@@ -125,6 +128,9 @@ export function PlanFilters({
   dataSize,
   onDataSizeChange,
   onDataSizeCommit,
+  minValidity,
+  onMinValidityChange,
+  onMinValidityCommit,
   maxValidity,
   onMaxValidityChange,
   onMaxValidityCommit,
@@ -135,6 +141,15 @@ export function PlanFilters({
   filterTitle,
 }: PlanFiltersProps) {
   const [showTooltip, setShowTooltip] = useState(false);
+  const validityOptions: { label: string; value: number | undefined }[] = [
+    { label: "All", value: undefined },
+    { label: "1 day", value: 1 },
+    { label: "7 days", value: 7 },
+    { label: "30 days", value: 30 },
+    { label: "90 days", value: 90 },
+    { label: "180 days", value: 180 },
+    { label: "365 days", value: 365 },
+  ];
 
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
@@ -310,6 +325,64 @@ export function PlanFilters({
         </div>
 
         <hr className="border-gray-200 dark:border-gray-700" />
+        {/* MIN VALIDITY */}
+        <div>
+          <p className="text-[14px] font-medium text-gray-700 dark:text-gray-200">
+            Min Validity (days)
+          </p>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full mt-2 flex justify-between items-center text-sm font-normal text-left min-h-[42px]"
+              >
+                <span className="truncate">
+                  {typeof minValidity === "number"
+                    ? `${minValidity} days`
+                    : "Select validity..."}
+                </span>
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+              <Command>
+                <CommandList>
+                  <CommandGroup>
+                    {validityOptions.map((item) => (
+                      <CommandItem
+                        key={item.label}
+                        value={
+                          typeof item.value === "number"
+                            ? item.value.toString()
+                            : "all"
+                        }
+                        onSelect={() => {
+                          onMinValidityChange(item.value);
+                          onMinValidityCommit(item.value);
+                        }}
+                        className={cn(
+                          minValidity === item.value && "bg-gradient text-white"
+                        )}
+                      >
+                        {item.label}
+                        <Check
+                          className={cn(
+                            "ml-auto h-4 w-4",
+                            minValidity === item.value
+                              ? "opacity-100 text-white"
+                              : "opacity-0"
+                          )}
+                        />
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        <hr className="border-gray-200 dark:border-gray-700" />
         {/* MAX VALIDITY */}
         <div>
           <p className="text-[14px] font-medium text-gray-700 dark:text-gray-200">
@@ -331,31 +404,17 @@ export function PlanFilters({
               <Command>
                 <CommandList>
                   <CommandGroup>
-                    {[
-                      { label: "All", value: "" },
-                      { label: "1 day", value: 1 },
-                      { label: "7 days", value: 7 },
-                      { label: "30 days", value: 30 },
-                      { label: "90 days", value: 90 },
-                      { label: "180 days", value: 180 },
-                      { label: "365 days", value: 365 },
-                    ].map((item) => (
+                    {validityOptions.map((item) => (
                       <CommandItem
-                        key={item.value}
-                        value={String(item.value)}
+                        key={item.label}
+                        value={
+                          typeof item.value === "number"
+                            ? item.value.toString()
+                            : "all"
+                        }
                         onSelect={() => {
-                          onMaxValidityChange(
-                            typeof item.value === "number"
-                              ? item.value
-                              : Number(item.value)
-                          );
-                          onMaxValidityCommit(
-                            typeof item.value === "number"
-                              ? item.value
-                              : item.value === ""
-                              ? undefined
-                              : Number(item.value)
-                          );
+                          onMaxValidityChange(item.value);
+                          onMaxValidityCommit(item.value);
                         }}
                         className={cn(
                           maxValidity === item.value && "bg-gradient text-white"

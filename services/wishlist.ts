@@ -1,6 +1,6 @@
 "use server";
 
-import { Plan } from "@/lib/types";
+import { Pagination, Plan } from "@/lib/types";
 import { authFetcher } from "@/lib/authFetcher";
 
 type WishlistAction = "ADD" | "REMOVE";
@@ -15,7 +15,13 @@ type WishlistListResponse = {
   message?: string;
   data?: {
     result?: unknown[];
+    pagination?: Pagination;
   };
+};
+
+type WishlistListResult = {
+  plans: Plan[];
+  pagination: Pagination | null;
 };
 
 const normalizeWishlistPlan = (item: unknown): Plan | null => {
@@ -126,7 +132,7 @@ export const getWishlist = async ({
 }: {
   page?: number;
   limit?: number;
-} = {}): Promise<Plan[]> => {
+} = {}): Promise<WishlistListResult> => {
   const response = await authFetcher<WishlistListResponse>(
     `/wishlist/list?limit=${limit}&page=${page}`,
   );
@@ -136,9 +142,14 @@ export const getWishlist = async ({
   }
 
   const rows = response?.data?.result ?? [];
-  if (!Array.isArray(rows)) return [];
+  if (!Array.isArray(rows)) {
+    return { plans: [], pagination: response?.data?.pagination || null };
+  }
 
-  return rows
+  return {
+    plans: rows
     .map((item) => normalizeWishlistPlan(item))
-    .filter((item): item is Plan => Boolean(item));
+    .filter((item): item is Plan => Boolean(item)),
+    pagination: response?.data?.pagination || null,
+  };
 };

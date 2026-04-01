@@ -200,6 +200,7 @@ export interface PlansProps {
   countries: { iso2: string; code: string; name: string }[];
   regions: { name: string }[];
   result: Plan[];
+  pagination?: Pagination | null;
   selectedCountry: string;
   selectedRegion: string;
   filterby: "Country" | "Region";

@@ -4,7 +4,7 @@ import type { User } from "@/app/[locale]/(main)/profile-setting/ProfileSetting"
 import { useCurrency } from "@/app/providers/CurrencyProvider";
 import { PlanDetailsModal } from "@/components/modals";
 import { Button } from "@/components/ui/Button";
-import { orderDetails, Plan } from "@/lib/types";
+import { orderDetails, Pagination, Plan } from "@/lib/types";
 import { getProfile } from "@/services/auth";
 import { createCheckout } from "@/services/payment";
 import { upsertWishlist } from "@/services/wishlist";
@@ -17,24 +17,48 @@ import {
   Trash2,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 interface FavoritesProps {
   initialPlans: Plan[];
   isLoggedIn: boolean;
+  currentPage: number;
+  pagination: Pagination | null;
 }
 
 export default function Favorites({
   initialPlans,
   isLoggedIn,
+  currentPage,
+  pagination,
 }: FavoritesProps) {
   const t = useTranslations("Favorites");
   const { formatAmount } = useCurrency();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const hasMountedRef = useRef(false);
   const [favoritePlans, setFavoritePlans] = useState<Plan[]>(initialPlans);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [orderLoading, setOrderLoading] = useState(false);
   const [userProfile, setUserProfile] = useState<User | null>(null);
+  const totalPages = pagination?.totalPages || 1;
+
+  useEffect(() => {
+    setFavoritePlans(initialPlans);
+  }, [initialPlans]);
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      return;
+    }
+    sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentPage, initialPlans.length]);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -132,8 +156,19 @@ export default function Favorites({
     }
   };
 
+  const handlePageChange = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", String(page));
+    startTransition(() => {
+      router.replace(`?${params.toString()}`, { scroll: false });
+    });
+  };
+
   return (
-    <section className="w-full min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+    <section
+      ref={sectionRef}
+      className="w-full min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100"
+    >
       {/* <div className="relative w-full h-[22.6vh]">
         <Image
           src="/banner-plans.svg"
@@ -150,61 +185,95 @@ export default function Favorites({
         </h1>
 
         {favoritePlans.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {favoritePlans.map((plan) => (
-              <div key={plan.package_id}>
-                <div className="flex justify-end items-center mb-2">
-                  {/* <span className="max-w-40 truncate block text-[14px] capitalize font-medium text-white rounded-[7px] px-2 bg-primary cursor-default">
-                    {plan.network}
-                  </span> */}
-                  <button
-                    type="button"
-                    onClick={() => handleRemove(plan)}
-                    className="text-red-600 dark:text-red-400 hover:opacity-80 cursor-pointer"
-                    aria-label={t("remove")}
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {favoritePlans.map((plan) => (
+                <div key={plan.package_id}>
+                  <div className="flex justify-end items-center mb-2">
+                    <button
+                      type="button"
+                      onClick={() => handleRemove(plan)}
+                      className="text-red-600 dark:text-red-400 hover:opacity-80 cursor-pointer"
+                      aria-label={t("remove")}
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+
+                  <div
+                    className="rounded-2xl p-5 shadow-sm border border-gray-100 bg-[#F1F8FE] hover:bg-[#FFF2E0] transition-all duration-300 flex flex-col justify-between cursor-pointer group dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+                    onClick={() => setSelectedPlan(plan)}
                   >
-                    <Trash2 size={18} />
-                  </button>
+                    <div className="flex justify-between">
+                      <h3 className="text-2xl font-[400px] mb-6">
+                        {formatAmount(plan?.finalPrice)}
+                      </h3>
+                      <ChevronRightIcon className="cursor-pointer text-primary group-hover:text-[#E49B2C] transition-colors duration-300" />
+                    </div>
+
+                    <div className="flex justify-between">
+                      <div className="gap-4">
+                        <p className="flex gap-2 items-center">
+                          <ArrowDownUp size={15} /> {plan.data}
+                        </p>
+                        <p className="flex gap-2 items-center">
+                          <Phone size={15} /> {plan.call}
+                        </p>
+                      </div>
+                      <div className="gap-4">
+                        <p className="flex gap-2 items-center">
+                          <Calendar size={15} />
+                          {plan.validity} {t("days")}
+                        </p>
+                        <p className="flex gap-2 items-center">
+                          <MessageCircleMore size={15} /> {plan.sms}
+                        </p>
+                      </div>
+                    </div>
+
+                    <Button className="text-white mt-6 text-sm rounded-full w-full transition-all duration-300 group-hover:[background:#E49B2C] group-hover:text-black dark:group-hover:text-white hover:[background:#E49B2C_!important] hover:text-black dark:hover:text-white bg-gradient">
+                      {t("buy")}
+                    </Button>
+                  </div>
                 </div>
+              ))}
+            </div>
 
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-8">
                 <div
-                  className="rounded-2xl p-5 shadow-sm border border-gray-100 bg-[#F1F8FE] hover:bg-[#FFF2E0] transition-all duration-300 flex flex-col justify-between cursor-pointer group dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
-                  onClick={() => setSelectedPlan(plan)}
+                  className="inline-flex items-center justify-center gap-2"
                 >
-                  <div className="flex justify-between">
-                    <h3 className="text-2xl font-[400px] mb-6">
-                      {formatAmount(plan?.finalPrice)}
-                    </h3>
-                    <ChevronRightIcon className="cursor-pointer text-primary group-hover:text-[#E49B2C] transition-colors duration-300" />
-                  </div>
-
-                  <div className="flex justify-between">
-                    <div className="gap-4">
-                      <p className="flex gap-2 items-center">
-                        <ArrowDownUp size={15} /> {plan.data}
-                      </p>
-                      <p className="flex gap-2 items-center">
-                        <Phone size={15} /> {plan.call}
-                      </p>
-                    </div>
-                    <div className="gap-4">
-                      <p className="flex gap-2 items-center">
-                        <Calendar size={15} />
-                        {plan.validity} {t("days")}
-                      </p>
-                      <p className="flex gap-2 items-center">
-                        <MessageCircleMore size={15} /> {plan.sms}
-                      </p>
-                    </div>
-                  </div>
-
-                  <Button className="text-white mt-6 text-sm rounded-full w-full transition-all duration-300 group-hover:[background:#E49B2C] group-hover:text-black dark:group-hover:text-white hover:[background:#E49B2C_!important] hover:text-black dark:hover:text-white bg-gradient">
-                    {t("buy")}
+                  <Button
+                    variant="outline"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage <= 1 || isPending}
+                  >
+                    Prev
+                  </Button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (page) => (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? "default" : "outline"}
+                        onClick={() => handlePageChange(page)}
+                        disabled={isPending}
+                      >
+                        {page}
+                      </Button>
+                    ),
+                  )}
+                  <Button
+                    variant="outline"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage >= totalPages || isPending}
+                  >
+                    Next
                   </Button>
                 </div>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         ) : (
           <p className="text-base text-gray-600 dark:text-gray-300">
             {t("empty")}
