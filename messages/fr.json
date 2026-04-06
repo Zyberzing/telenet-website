@@ -1,849 +1,862 @@
 {
-  "Header": {
-    "plans": "Plans",
-    "topUp": "Recharger",
-    "about": "À propos de nous",
-    "installGuide": "Guide d'installation",
-    "contact": "Contactez-nous",
-    "signIn": "Se connecter",
-    "dashboard": "Tableau de bord",
-    "myPlans": "Mes projets",
-    "favorites": "Favoris",
-    "wallet": "Portefeuille",
-    "ordersBilling": "Commandes et facturation",
-    "profileSettings": "Profil et paramètres",
-    "support": "Soutien",
-    "buyNewPlan": "Acheter un nouveau plan",
-    "logout": "Déconnexion"
-  },
-  "HeaderAuth": {
-    "logoAlt": "Logo Telenet",
-    "userName": "Alex",
-    "toggleTheme": "Changer le thème",
-    "dashboard": "Tableau de bord",
-    "myPlans": "Mes projets",
-    "favorites": "Favoris",
-    "wallet": "Portefeuille",
-    "ordersBilling": "Commandes et facturation",
-    "profileSettings": "Profil et paramètres",
-    "support": "Soutien",
-    "buyNewPlan": "Acheter un nouveau plan"
-  },
-  "Footer": {
-    "logoAlt": "Logo Telenet",
-    "aboutText": "Telenet Global aide les voyageurs à rester connectés avec les eSIM dans plus de 170 pays. Paiements sécurisés, activation instantanée, support global.",
-    "purchase": "Achat",
-    "destinations": "Destinations",
-    "regions": "Régions",
-    "topUp": "Recharger maintenant",
-    "downloadApp": "Télécharger l'application",
-    "topDestinations": "Destinations principales",
-    "countries": {
-      "AU": "Australie",
-      "GB": "Royaume-Uni",
-      "TH": "Thaïlande",
-      "US": "États-Unis",
-      "CA": "Canada",
-      "AE": "Émirats arabes unis"
-    },
-    "company": "Telenet Global",
-    "aboutUs": "À propos",
-    "contactUs": "Contactez-nous",
-    "partner": "Partenaire",
-    "resources": "Ressources",
-    "blog": "Blog",
-    "helpCenter": "Centre d'aide",
-    "events": "Événements",
-    "copyright": "Copyright ©",
-    "footerlink": "www.Telnet.com",
-    "reserved": "Tous droits réservés. v1.0.3A",
-    "cookie": "Préférences des cookies",
-    "terms": "Termes et conditions",
-    "privacy": "Politique de confidentialité"
-  },
-  "LoginPage": {
-    "imageAlt": "Illustration de connexion"
-  },
-  "LoginForm": {
-    "welcomeText": "Bon retour ! 👋",
-    "loginTitle": "Connectez-vous à votre compte",
-    "emailLabel": "E-mail",
-    "emailPlaceholder": "Veuillez entrer votre e-mail",
-    "passwordLabel": "Mot de passe",
-    "passwordPlaceholder": "Entrez le mot de passe",
-    "loginButton": "Connexion",
-    "forgotPassword": "Mot de passe oublié ?",
-    "or": "ou",
-    "loginWithGoogle": "Se connecter avec Google",
-    "loginWithApple": "Se connecter avec Apple",
-    "loginWithFacebook": "Se connecter avec Facebook",
-    "notRegistered": "Pas encore inscrit ?",
-    "createAccount": "Créer un compte",
-    "emailRequired": "Adresse e-mail invalide",
-    "passwordRequired": "Un mot de passe est requis.",
-    "loading": "Chargement",
-    "filterAlt": "Filtre",
-    "action": "Action",
-    "noTickets": "Aucun ticket trouve"
-  },
-  "RegisterForm": {
-    "welcomeText": "Bienvenue ! Créez votre compte ci-dessous.",
-    "registerTitle": "S'inscrire",
-    "registerButton": "Créer un compte",
-    "success": "Inscription réussie !",
-    "error": "Une erreur s'est produite. Veuillez réessayer.",
-
-    "fields": {
-      "name": "Nom",
-      "email": "E-mail",
-      "password": "Mot de passe",
-      "passportNo": "Numero de passeport",
-      "dateOfBirth": "Date de naissance",
-      "phone": "Téléphone",
-      "countryCode": "Code du pays"
-    },
-
-    "placeholders": {
-      "name": "Entrez votre nom complet",
-      "email": "Entrez votre e-mail",
-      "password": "Entrez votre mot de passe",
-      "passportNo": "Entrez votre numero de passeport",
-      "dateOfBirth": "Selectionnez votre date de naissance",
-      "phone": "Entrez votre numéro de téléphone",
-      "countryCode": "Entrez le code du pays (ex. +33)"
-    },
-
-    "validation": {
-      "nameRequired": "Le nom est requis",
-      "emailInvalid": "Veuillez entrer un e-mail valide",
-      "passwordMin": "Le mot de passe doit comporter au moins 6 caractères",
-      "phoneInvalid": "Entrez un numéro de téléphone valide",
-      "countryCodeRequired": "Le code du pays est requis"
-    },
-    "searchCountry": "Rechercher un pays...",
-    "noCountryFound": "Aucun pays trouvé",
-    "or": "ou",
-    "registerWithGoogle": "S'inscrire avec Google",
-    "loading": "Chargement",
-    "filterAlt": "Filtre",
-    "action": "Action",
-    "noTickets": "Aucun ticket trouve"
-  },
-  "ForgotPassword": {
-    "title": "Mot de passe oublie",
-    "emailLabel": "Email",
-    "emailPlaceholder": "Entrez votre email enregistre",
-    "sending": "Envoi...",
-    "sendOtp": "Envoyer OTP",
-    "invalidEmail": "Email invalide",
-    "otpSent": "OTP envoye a votre email!",
-    "sendFailed": "Echec de l'envoi de l'email de reinitialisation!"
-  },
-  "ResetPassword": {
-    "title": "Reinitialiser votre mot de passe",
-    "emailLabel": "Email",
-    "otpLabel": "Entrer OTP",
-    "newPasswordLabel": "Nouveau mot de passe",
-    "newPasswordPlaceholder": "Entrez votre nouveau mot de passe",
-    "sending": "Envoi...",
-    "resendOtp": "Renvoyer OTP",
-    "resetting": "Reinitialisation...",
-    "resetButton": "Reinitialiser le mot de passe",
-    "invalidEmail": "Email invalide",
-    "otpLength": "OTP doit contenir 6 chiffres",
-    "passwordMin": "Le mot de passe doit avoir au moins 6 caracteres",
-    "passwordMax": "Mot de passe trop long",
-    "resetSuccess": "Mot de passe reinitialise avec succes!",
-    "resetFailed": "Echec de la reinitialisation du mot de passe!",
-    "emailNotFound": "Email introuvable",
-    "otpResent": "OTP renvoye avec succes",
-    "otpResendFailed": "Echec de l'envoi de l'OTP"
-  },
-  "OTPVerification": {
-    "title": "Verifiez votre email",
-    "emailLabel": "Email",
-    "otpLabel": "Entrer OTP",
-    "sending": "Envoi...",
-    "resendOtp": "Renvoyer OTP",
-    "verifying": "Verification...",
-    "verifyAndLogin": "Verifier et aller a la connexion",
-    "invalidEmail": "Email invalide",
-    "otpLength": "OTP doit contenir 6 chiffres",
-    "otpNumeric": "OTP doit etre numerique",
-    "otpVerified": "OTP verifie avec succes!",
-    "otpVerifyFailed": "Echec de la verification OTP!",
-    "emailNotFound": "Email introuvable",
-    "otpResent": "OTP renvoye avec succes",
-    "otpResendFailed": "Echec de l'envoi de l'OTP"
-  },
-  "Kyc": {
-    "sumsubTitle": "Verification Sumsub",
-    "manualTitle": "Verification KYC manuelle",
-    "chooseMethodTitle": "Choisir la methode de verification",
-    "statusPending": "En attente",
-    "kycFailed": "Echec KYC. Veuillez reessayer.",
-    "invalidFormat": "Format invalide. Autorise: JPG, PNG, JPEG, WEBP, HEIC, PDF.",
-    "fileTooLarge": "Chaque fichier doit faire 10MB ou moins.",
-    "maxFiles": "Vous pouvez televerser un maximum de 3 fichiers.",
-    "sessionExpired": "Session KYC expiree. Veuillez verifier l'OTP a nouveau.",
-    "uploadFailed": "Echec du televersement du document.",
-    "manualSubmitSuccess": "KYC manuel soumis. Votre statut est en attente d'examen.",
-    "manualSubmitFailed": "Echec de la soumission KYC manuelle.",
-    "kycInProgressTitle": "Verification KYC en cours",
-    "kycInProgressBody": "Vos documents sont soumis et en cours d'examen. Nous vous avertirons une fois la verification terminee.",
-    "currentStatus": "Statut actuel",
-    "registeredEmail": "Email enregistre",
-    "notAvailable": "Non disponible",
-    "nameLabel": "Nom",
-    "mobileNumber": "Numero de mobile",
-    "reviewerNote": "Note du relecteur",
-    "backToLogin": "Retour a la connexion",
-    "manualKycTitle": "KYC manuel",
-    "manualKycBody": "Televersez votre document et soumettez les details pour examen.",
-    "sumsubCardTitle": "Utiliser Sumsub",
-    "sumsubCardBody": "Continuer avec le flux de verification Sumsub existant.",
-    "rejectionReason": "Raison du refus",
-    "fullNameLabel": "Nom complet",
-    "fullNamePlaceholder": "Entrez le nom complet",
-    "dobLabel": "Date de naissance",
-    "addressLabel": "Adresse",
-    "addressPlaceholder": "Entrez l'adresse",
-    "countryLabel": "Pays",
-    "selectCountry": "Selectionner un pays",
-    "searchCountry": "Rechercher un pays...",
-    "noCountryFound": "Aucun pays trouve",
-    "documentTypeLabel": "Type de document",
-    "selectDocumentType": "Selectionner le type de document",
-    "passport": "Passeport",
-    "nationalId": "Carte nationale",
-    "drivingLicense": "Permis de conduire",
-    "other": "Autre",
-    "uploadDocument": "Televerser un document KYC",
-    "uploadHelp": "Autorise: JPG, PNG, JPEG, WEBP, HEIC, PDF. Taille max: 10MB chacun. Maximum 3 fichiers.",
-    "remove": "Supprimer",
-    "preview": "Apercu",
-    "back": "Retour",
-    "submitting": "Soumission...",
-    "submitManual": "Soumettre KYC manuel",
-    "loadingProfile": "Chargement du profil pour auto-remplissage...",
-    "sumsubPreparing": "Preparation de la verification Sumsub...",
-    "sumsubTokenMissing": "Jeton Sumsub non disponible. Veuillez vous reconnecter si necessaire pour continuer le KYC Sumsub.",
-    "continueToLogin": "Continuer vers la connexion",
-    "fullNameRequired": "Le nom complet est requis.",
-    "dobRequired": "La date de naissance est requise.",
-    "addressRequired": "L'adresse est requise.",
-    "countryRequired": "Le pays est requis.",
-    "documentRequired": "Au moins un document est requis."
-  },
-  "AboutUs": {
-    "explore": {
-      "title": "Explorez le",
-      "highlight": "monde des eSIMs",
-      "subtitle": "Comportements et croyances qui nous relient.",
-      "cards": [
-        {
-          "title": "Focus sur le voyageur",
-          "desc": "Des forfaits adaptés aux touristes, aux voyageurs d’affaires et aux étudiants."
-        },
-        {
-          "title": "Expérience premium",
-          "desc": "Approuvé par plus de 80 000 utilisateurs dans plus de 170 destinations."
-        },
-        {
-          "title": "Autonomisant",
-          "desc": "Changez d'opérateur en toute transparence sans carte SIM physique."
-        }
-      ]
-    },
-    "values": {
-      "title": "Nos",
-      "highlight": "Valeurs",
-      "subtitle": "Des relations basées sur la confiance et la transparence.",
-      "list": [
-        {
-          "title": "Innovation Inlassable",
-          "desc": "Libérez votre esprit de perturbateur ! Nous croyons en une évolution constante, où la curiosité alimente l’innovation et où le statu quo n’est qu’un point de départ."
-        },
-        {
-          "title": "Responsabilité Radicale",
-          "desc": "Appropriez-vous les choses comme si vous les aviez inventées ! Au cœur de notre culture réside la conviction que prendre une responsabilité audacieuse conduit à des résultats extraordinaires."
-        },
-        {
-          "title": "Exploration Sans Peur",
-          "desc": "Embrassez l’inconnu, car c’est là que la magie opère. Nous célébrons les esprits courageux qui osent explorer des territoires inexplorés, tant sur le plan personnel que professionnel."
-        },
-        {
-          "title": "Décisions Basées sur les Données, Humanité Authentique",
-          "desc": "Exploitez la puissance des données, mais n’oubliez jamais la touche humaine. Nous prenons des décisions avec précision et empathie, pour qu’elles résonnent à la fois avec la logique et le cœur."
-        }
-      ]
-    },
-    "impact": {
-      "title": "Impact chez,",
-      "highlight": "Telenet",
-      "subtitle": "Nous pensons que les voyageurs sont audacieux. Telenet vise à renforcer leur audace avec des exaoctets de connectivité.",
-      "stats": [
-        { "label": "Customers Worldwide" },
-        { "label": "Au service des pays" },
-        { "label": "Des années d'expertise en télécommunications" },
-        { "label": "Téléchargements d'applications sur iOS et Android" }
-      ],
-      "content": "Besoin de plus d informations pour la section impact."
-    },
-    "bannerAlt": "Banniere a propos",
-    "impactImageAlt": "Image d impact"
-  },
-  "ContactUs": {
-    "heroAlt": "Contactez-nous",
-    "getInTouch": "Entrer en contact",
-    "introText": "Vous souhaitez nous contacter ? Nous serions ravis d’avoir de vos nouvelles. Voici comment nous joindre.",
-    "emailTitle": "Nous sommes toujours heureux d’aider.",
-    "emailAddress": "ask@retro.ai.com",
-    "phoneTitle": "Notre numéro de hotline",
-    "phoneNumbers": "+757 889 4478, +21 377 9731",
-    "chatTitle": "Chat en direct",
-    "chatLink": "www.retrolivechat.com",
-    "form": {
-      "nameLabel": "Nom",
-      "emailLabel": "E-mail",
-      "messageLabel": "Votre message",
-      "namePlaceholder": "Rashed Kabir",
-      "emailPlaceholder": "rshdkabir@gmail.com",
-      "submit": "ENVOYER LE MESSAGE"
-    },
-    "messageSent": "Message envoye avec succes!",
-    "messageFailed": "Echec de envoi du message",
-    "mailAlt": "Email",
-    "phoneAlt": "Telephone",
-    "chatAlt": "Chat en direct"
-  },
-  "PartnerWithUs": {
-    "partnerTitle": "Devenez Partenaire",
-    "introText": "Lorem Ipsum n cdsjn wdjdjnd wjjdn wuwjjwjf rwjrdjr.",
-    "title1": "Intégration des Points de Contact",
-    "description1": "Améliorez la connectivité en intégrant des forfaits de données pour offrir des solutions eSIM personnalisées à vos clients.",
-    "title2": "Vos Clients Achètent",
-    "description2": "Les clients achètent des eSIMs avec vos produits et services principaux.",
-    "title3": "Vous Gagnez le Profit",
-    "description3": "Augmentez les revenus additionnels en vendant des eSIM.",
-    "form": {
-      "nameLabel": "Nom",
-      "emailLabel": "E-mail",
-      "phoneLabel": "Votre Téléphone",
-      "phonePlaceholder": "Saisissez votre numéro de téléphone",
-      "messageLabel": "Votre Message",
-      "namePlaceholder": "Rashed Kabir",
-      "emailPlaceholder": "rshdkabir@gmail.com",
-      "submit": "ENVOYER LE MESSAGE"
-    },
-    "messageSent": "Message envoye avec succes!",
-    "messageFailed": "Echec de envoi du message",
-    "mailAlt": "Email",
-    "phoneAlt": "Telephone",
-    "chatAlt": "Chat en direct",
-    "code": "Code",
-    "searchCountry": "Rechercher un pays...",
-    "noCountryFound": "Aucun pays trouve"
-  },
-  "Plans": {
-    "bannerAlt": "Bannière des forfaits",
-    "filterTitle": "Filtrer",
-    "country": "Pays",
-    "region": "Région",
-    "dataSize": "Taille des données",
-    "validity": "Validité",
-    "priceRange": "Plage de prix",
-    "network": "Réseau",
-    "provider": "Fournisseur",
-    "reset": "Réinitialiser",
-    "popularPlans": "Forfaits populaires",
-    "filters": {
-      "cheapest": "Le moins cher",
-      "mostPopular": "Le plus populaire",
-      "fiveGPlans": "Forfaits 5G",
-      "yearly": "365 jours",
-      "daily": "2.5 Go/Jour"
-    },
-    "searchPlaceholder": "Rechercher des forfaits",
-    "providerLogo": "Fournisseur",
-    "bestSeller": "Meilleure vente",
-    "trending": "Tendance",
-    "validityLabel": "Validité",
-    "data": "Données",
-    "buy": "Acheter",
-    "countries": {
-      "us": "États-Unis",
-      "uk": "Royaume-Uni",
-      "ca": "Canada",
-      "au": "Australie"
-    },
-    "regions": {
-      "west": "Ouest",
-      "east": "Est",
-      "north": "Nord",
-      "south": "Sud"
-    }
-  },
-  "Hero": {
-    "rating": "Noté 4,75 avec plus de 500K téléchargements",
-    "title": "Voyagez",
-    "titleHighlight": "eSIM",
-    "titleCountries": "dans plus de 170 pays",
-    "subtitle": "Restez connecté partout. Activation instantanée de l'eSIM avec paiement sécurisé.",
-    "getStarted": "Commencer",
-    "country": "Pays",
-    "likeTravel": "Où aimeriez-vous voyager?",
-    "region": "Région",
-    "searchPlaceholder": "Rechercher Royaume-Uni",
-    "browsePlans": "Voir les plans"
-  },
-  "Features": {
-    "awards": {
-      "title": "Presse, Médias & Récompenses",
-      "award1": "Meilleur Produit de Technologie de Voyage à IITM Chennai, Hyderabad & Bengaluru",
-      "award2": "Produit le Plus Innovant de l'Année au BLTM, Delhi",
-      "award3": "Top 5 Meilleur Fournisseur eSIM au MVNO World 2025, Vienne, Autriche"
-    },
-    "downloadBanner": {
-      "titleLine1": "Téléchargez Telenet",
-      "titleLine2": "-25%",
-      "googlePlay": {
-        "getItOn": "OBTENEZ-LE SUR",
-        "name": "Google Play"
-      },
-      "appStore": {
-        "downloadOn": "Téléchargez sur l'",
-        "name": "App Store"
-      }
-    },
-    "popularCountries": {
-      "title": "Pays Populaires",
-      "us": "États-Unis d'Amérique",
-      "uk": "Royaume-Uni",
-      "uae": "Émirats Arabes Unis",
-      "canada": "Canada",
-      "startsAt": "À partir de",
-      "onwards": "Et plus",
-      "viewAll": "Voir Tout"
-    },
-    "whyChooseUs": {
-      "title": "Pourquoi Nous Choisir",
-      "instantActivation": {
-        "title": "Activation Instantanée",
-        "desc": "Activez votre eSIM instantanément en scannant un code QR. Profitez d'une connectivité fluide sans avoir besoin d'une carte SIM physique."
-      },
-      "globalCoverage": {
-        "title": "Couverture Mondiale",
-        "desc": "Restez connecté avec un seul appareil à travers les frontières, peu importe où vos voyages vous mènent."
-      },
-      "securePayments": {
-        "title": "Paiements Sécurisés",
-        "desc": "Profitez d'une configuration sans tracas et protégée, éliminant le besoin de manipuler une carte physique."
-      },
-      "support": {
-        "title": "Support 24/7",
-        "desc": "Notre équipe de support dédiée 24/7 est toujours disponible pour vous aider. Nous vous guiderons dans le processus, garantissant une configuration fluide et réussie."
-      }
-    },
-    "howItWorks": {
-      "title": "Comment Ça Marche",
-      "step1": {
-        "title": "Parcourez un Plan",
-        "desc": "Choisissez le plan de données dont vous avez besoin pour votre voyage."
-      },
-      "step2": {
-        "title": "Achetez un Plan",
-        "desc": "Votre plan s'active automatiquement lorsque vous atterrissez, pas besoin de changer de SIM."
-      },
-      "step3": {
-        "title": "Commencez à Naviguer",
-        "desc": "Recevez un code QR, scannez-le, et votre eSIM est instantanément installée."
-      }
-    },
-    "videoTutorial": {
-      "title": "Regardez le Tutoriel Vidéo",
-      "alt": "Lire la Vidéo"
-    }
-  },
-  "Testimonials": {
-    "title": "Nos voyageurs le disent tous - ils ont choisi le meilleur réseau !",
-    "testimonials": {
-      "testimonial1": "Des solutions rapides couplées à des performances extraordinaires - une recommandation sans équivoque.",
-      "testimonial2": "Je recommande fortement ce fournisseur SaaS fiable pour une optimisation fluide du flux de travail.",
-      "testimonial3": "Excellent service et support client incroyable tout au long de mon voyage !",
-      "testimonial4": "Connexion fiable dans tous les pays. Totalement recommandé !"
-    },
-    "bottom": {
-      "title": "Profitez d'une navigation illimitée",
-      "desc": "Restez connecté sur WhatsApp, Instagram et YouTube sans frais d'itinérance.",
-      "noVpn": "VPN non requis"
-    }
-  },
-  "FAQ": {
-    "title": "Questions Fréquemment Posées",
-    "faq": {
-      "q1": "Qu'est-ce qu'un eSIM ?",
-      "a1": "Un eSIM (SIM intégrée) est une SIM numérique qui vous permet d'activer un forfait de données mobiles sans avoir besoin d'une carte SIM physique. Elle fonctionne comme une SIM normale mais est intégrée à votre appareil.",
-      "q2": "Comment activer un eSIM après l'achat ?",
-      "a2": "Vous pouvez activer votre eSIM en scannant le code QR fourni par votre opérateur ou en suivant leurs étapes d'activation dans les paramètres de votre appareil.",
-      "q3": "Puis-je garder ma SIM régulière et utiliser l'eSIM en même temps ?",
-      "a3": "Oui, de nombreux appareils prennent en charge la fonctionnalité double SIM, vous permettant d'utiliser une SIM physique et un eSIM simultanément.",
-      "q4": "Ai-je besoin d'internet pour installer l'eSIM ?",
-      "a4": "Oui, une connexion internet est généralement requise pour télécharger et installer le profil eSIM sur votre appareil.",
-      "q5": "Quels appareils supportent l'eSIM ?",
-      "a5": "La plupart des smartphones modernes, tablettes et certaines montres connectées prennent en charge la technologie eSIM. Vérifiez les paramètres de votre appareil ou les détails du fabricant.",
-      "q6": "Puis-je utiliser les eSIMs lors de voyages à l'étranger ?",
-      "a6": "Oui, les eSIMs sont parfaits pour les voyages. Vous pouvez facilement passer d'un opérateur local à un autre sans changer de carte SIM physique.",
-      "q7": "Combien de temps faut-il pour activer ?",
-      "a7": "L'activation prend généralement quelques minutes, selon votre opérateur et votre appareil.",
-      "q8": "Quels modes de paiement sont acceptés ?",
-      "a8": "La plupart des fournisseurs acceptent les cartes de crédit, cartes de débit, PayPal et autres méthodes de paiement en ligne populaires.",
-      "q9": "Puis-je recharger mon plan eSIM ?",
-      "a9": "Oui, vous pouvez recharger ou recharger votre plan eSIM via l'application ou le site web de votre fournisseur.",
-      "q10": "Que faire si je rencontre des problèmes lors de l'installation ?",
-      "a10": "Si vous rencontrez des problèmes, contactez l'équipe d'assistance de votre fournisseur. Ils vous guideront étape par étape pour résoudre le problème."
-    },
-    "notFound": "Aucune foire aux questions trouvée."
-  },
-  "InstallationGuide": {
-    "title": "Guide d'",
-    "highlight": "Installation",
-    "downloadPDF": "Télécharger le guide PDF",
-    "stepsTitle": "Débloquez nos fonctionnalités de connectivité en suivant ces étapes :",
-    "step": "Étape",
-    "ios": {
-      "steps": [
-        "Installez l’eSIM sur votre appareil.",
-        "Activez le forfait une fois arrivé à destination."
-      ]
-    },
-    "android": {
-      "steps": [
-        "Installez l’eSIM sur votre appareil Android.",
-        "Activez le forfait à votre arrivée à destination."
-      ]
-    },
-    "step_suggestion": "Accédez à Paramètres → Données mobiles → Ajouter une eSIM",
-    "troubleshooting": {
-      "title": "Dépannage",
-      "qr": {
-        "title": "Le code QR ne se scanne pas ?",
-        "desc": "Assurez-vous d’avoir un bon éclairage et une caméra propre."
-      },
-      "activation": {
-        "title": "Échec de l’activation ?",
-        "desc": "Vérifiez la connexion Wi-Fi et redémarrez l’appareil."
-      },
-      "support": {
-        "title": "Toujours bloqué ?",
-        "desc": "Contactez le support à"
-      }
-    }
-  },
-  "profile": {
-    "headerAlt": "Bannière de profil",
-    "name": "Alex Johnson",
-    "email": "alex.j@example.com",
-    "phone": "+1 555-123-4567",
-    "location": "USA, ENG, USD",
-    "editProfile": "Modifier le profil",
-    "settingsTitle": "Paramètres",
-    "changePassword": "Changer le mot de passe",
-    "changeButton": "Changer",
-    "notificationPreferences": "Préférences de notification",
-    "emailAlerts": "Alertes par e-mail",
-    "smsAlerts": "Alertes SMS",
-    "pushNotifications": "Notifications Push",
-    "deleteAccount": "Supprimer votre compte",
-    "privacyPolicy": "Politique de confidentialité et conditions d'utilisation",
-    "newPasswordRequired": "Veuillez entrer un nouveau mot de passe",
-    "passwordChanged": "Mot de passe change avec succes!",
-    "passwordChangeFailed": "Echec de changement du mot de passe",
-    "notificationUpdated": "Preferences de notification mises a jour",
-    "imageUploadFailed": "Echec du televersement de l image",
-    "pictureUploaded": "Photo de profil televersee avec succes.",
-    "pictureUpdateFailed": "Echec de mise a jour de la photo",
-    "profileAlt": "Profil",
-    "changePhoto": "Changer la photo",
-    "modal": {
-      "delete": {
-        "title": "Êtes-vous sûr ?",
-        "description": "Voulez-vous supprimer ces enregistrements ? Ce processus est irréversible.",
-        "cancel": "Annuler",
-        "deleteButton": "Supprimer"
-      },
-      "edit": {
-        "title": "Modifier le profil",
-        "name": "Nom",
-        "phone": "Téléphone",
-        "email": "Email",
-        "country": "Pays",
-        "language": "Langue",
-        "currency": "Devise",
-        "cancel": "Annuler",
-        "submit": "Soumettre",
-        "loading": "Chargement..."
-      }
-    }
-  },
-  "TopUp": {
-    "bannerAlt": "Banniere de recharge",
-    "enterNumber": "12358000",
-    "availablePacks": "Forfaits de recharge disponibles",
-    "providerLogo": "LogoFournisseur",
-    "trueSG": "TRUESG",
-    "validity": "Validité",
-    "data": "Données",
-    "selectPack": "Sélectionner le forfait",
-    "rechargeNow": "Recharger maintenant",
-    "provider": "Fournisseur",
-    "selectNumber": "Sélectionnez le numéro virtuel",
-    "virtualNumber": "4451 0275",
-    "startDate": "Date de début",
-    "plan": "Forfait",
-    "type": "Type",
-    "duration": "Durée",
-    "taxCountry": "Pays de taxe",
-    "total": "Total",
-    "selectPayment": "Sélectionnez un mode de paiement",
-    "creditCard": "Carte de crédit ou débit",
-    "googlePay": "Google Pay",
-    "applePay": "Apple Pay",
-    "cardNumber": "Numéro de carte",
-    "expiry": "Date d'expiration",
-    "cvv": "CVV",
-    "saveCard": "Enregistrer les détails de la carte",
-    "cancel": "Annuler",
-    "confirm": "Confirmer"
-  },
-  "VirtualNumber": {
-    "bannerAlt": "Banniere de numero virtuel",
-    "numbers": "Nombres"
-  },
-  "Dashboard": {
-    "greeting": "Salut",
-    "readyForTrip": "Prêt pour votre prochain voyage ?",
-    "activePlans": "Forfaits Actifs",
-    "walletBalance": "Solde du Portefeuille",
-    "lastTransaction": "Dernière Transaction",
-    "date": "12 sept. 2025",
-    "suggestedPlans": "Forfaits Sugérés",
-    "validity": "Validité",
-    "data": "Données",
-    "buyNow": "Acheter maintenant",
-    "decorativeCurveLeft": "Courbe decorative gauche",
-    "decorativeCurveRight": "Courbe decorative droite"
-  },
-  "Wallet": {
-    "title": "Portefeuille",
-    "autoTopUp": "Rechargement Automatique",
-    "addMoney": "Ajouter de l’Argent",
-    "walletBalance": "Solde du Portefeuille",
-    "transactionHistory": "Historique des Transactions",
-    "filter": "Filtrer",
-    "date": "Date",
-    "amount": "Montant",
-    "method": "Méthode",
-    "status": "Statut",
-    "invoice": "Facture",
-    "download": "Télécharger",
-    "export": "Exporter",
-    "completed": "Terminé",
-    "pending": "En attente",
-    "all": "Tous",
-    "sep": "Sept",
-    "aug": "Août",
-    "bannerAlt": "Banniere du portefeuille",
-    "filterAlt": "Filtre",
-    "googlePay": "Google Pay",
-    "creditCard": "Carte de credit",
-    "applePay": "Apple Pay",
-    "walletAuto": "Portefeuille auto"
-  },
-  "OrderBilling": {
-    "filter": "Filtrer",
-    "dateRange": "Plage de dates",
-    "status": "Statut",
-    "provider": "Fournisseur",
-    "resetFilters": "Réinitialiser les filtres",
-    "orderId": "ID de commande",
-    "planName": "Nom du forfait",
-    "paymentOption": "Mode de paiement",
-    "invoice": "Facture",
-    "action": "Action",
-    "failed": "Échoué",
-    "cancelled": "Annulé",
-    "completed": "Terminé",
-    "download": "Télécharger",
-    "invoiceCompanyName": "NOM DE LA SOCIETE",
-    "invoiceTitle": "FACTURE",
-    "invoiceCompanyAddress": "123 Business Street, City, State 12345",
-    "invoiceCompanyContact": "Email: contact@yourcompany.com | Phone: +1 (555) 123-4567",
-    "invoiceCompanyTaxId": "Tax ID: XX-XXXXXXX",
-    "invoiceNumber": "Facture #",
-    "orderNumber": "Commande #",
-    "invoiceDate": "Date",
-    "billTo": "FACTURER A:",
-    "customerFallback": "Client",
-    "countryLabel": "Pays",
-    "orderDetails": "DETAILS DE COMMANDE:",
-    "packageName": "Nom du forfait",
-    "providerLabel": "Fournisseur",
-    "coverage": "Couverture",
-    "dataLabel": "Donnees",
-    "duration": "Duree",
-    "iccid": "ICCID",
-    "validUntil": "Valide jusqu au",
-    "paymentMethod": "Methode de paiement",
-    "orderStatus": "Statut de commande",
-    "paymentSummary": "RESUME DE PAIEMENT:",
-    "totalAmount": "Montant total",
-    "paymentStatus": "Statut de paiement",
-    "invoiceThanks": "Merci pour votre achat!",
-    "invoiceSupportNote": "Pour toute question, contactez notre support.",
-    "ordersBannerAlt": "Banniere des commandes",
-    "filterAlt": "Filtre",
-    "searchPlaceholder": "Rechercher id de commande, forfait, fournisseur...",
-    "card": "Carte",
-    "noOrders": "Aucune commande",
-    "prev": "Precedent",
-    "next": "Suivant"
-  },
-  "MyPlans": {
-    "title": "Mes",
-    "active": "Plans actifs",
-    "expired": "Plans expirés",
-    "cancelled": "Plans annulés",
-    "addNew": "Ajouter un nouveau plan",
-    "dataLeft": "données restantes",
-    "validUntil": "Valide jusqu’au",
-    "renew": "Renouveler",
-    "topUp": "Recharger",
-    "viewQR": "Voir le QR",
-    "refund": "Rembourser",
-    "expiredOn": "Expiré le",
-    "cancelledOn": "Annulé le",
-    "lastPlan": "Dernier plan",
-    "viewSimilar": "Voir un plan similaire",
-    "repurchase": "Racheter",
-    "noActivePlans": "Aucun plan actif",
-    "noExpiredPlans": "Aucun plan expire",
-    "noCancelledPlans": "Aucun plan annule",
-    "howToInstall": "Comment installer",
-    "refundStatusHint": "Consultez le statut du remboursement dans la page support de votre profil",
-    "viewBilling": "Voir la facture",
-    "refundRequested": "Remboursement demande",
-    "refundApproved": "Remboursement approuve",
-    "refundRejected": "Remboursement rejete",
-    "refundFailed": "Remboursement echoue"
-  },
-  "Favorites": {
-    "bannerAlt": "Bannière des favoris",
-    "title": "Mes forfaits favoris",
-    "remove": "Supprimer",
-    "buy": "Acheter",
-    "days": "jours",
-    "empty": "Aucun forfait favori pour le moment. Ajoutez des forfaits depuis la page des forfaits.",
-    "countryDetectFailed": "Impossible de detecter le pays du forfait.",
-    "orderCreated": "Commande creee avec succes!",
-    "checkoutUrlMissing": "URL de paiement introuvable",
-    "orderCreateFailed": "Echec de creation de commande",
-    "removedSuccess": "Forfait retire des favoris.",
-    "removeFailed": "Echec de suppression des favoris."
-  },
-  "Support": {
-    "title": "Support",
-    "open": "Ouvert",
-    "pending": "En attente",
-    "closed": "Fermé",
-    "raiseTicket": "Créer un nouveau ticket",
-    "search": "Rechercher l’ID du ticket...",
-    "filterDate": "Date",
-    "newest": "Plus récent",
-    "oldest": "Plus ancien",
-    "priority": "Priorité",
-    "subject": "Sujet",
-    "keywords": "Mots-clés",
-    "provider": "Fournisseur",
-    "filter": "Filtrer",
-    "ticketList": "Liste des tickets",
-    "ticketID": "ID du ticket",
-    "createdOn": "Créé le",
-    "lastUpdate": "Dernière mise à jour",
-    "status": "Statut",
-    "ticketDetails": "Détails du ticket",
-    "description": "Description",
-    "writeComment": "Écrire un commentaire",
-    "writeDescription": "Écrire une description",
-    "attachFile": "Joindre un fichier",
-    "saveChanges": "Enregistrer",
-    "cancel": "Annuler",
-    "upload": "Téléverser",
-    "name": "Nom",
-    "placeholderName": "Entrer le nom",
-    "email": "Email",
-    "placeholderEmail": "Entrer l’email",
-    "phone": "Numéro de téléphone",
-    "placeholderPhone": "Entrer le numéro de téléphone",
-    "placeholderSubject": "Impossible d’activer mon forfait",
-    "category": "Catégorie",
-    "selectCategory": "Sélectionner une catégorie",
-    "activation": "Activation",
-    "refund": "Remboursement",
-    "billing": "Facturation",
-    "low": "Faible",
-    "medium": "Moyenne",
-    "high": "Élevée",
-    "submitTicket": "Soumettre le ticket",
-    "submittingTicket": "Soumission...",
-    "countryCodePlaceholder": "Sélectionner le code pays",
-    "countryCodeLabel": "Code pays",
-    "noCountryFound": "Aucun pays trouvé",
-    "searchCountry": "Rechercher un pays...",
-    "loading": "Chargement",
-    "filterAlt": "Filtre",
-    "action": "Action",
-    "noTickets": "Aucun ticket trouve"
-  },
-  "Destination": {
-    "all": "Tous",
-    "title": "Rechercher une",
-    "titleHighlight": "destination",
-    "subtitle": "Trouvez et achetez les meilleurs eSIMs pour votre voyage.",
-    "searchAria": "Rechercher des destinations",
-    "searchPlaceholder": "Rechercher une destination internationale",
-    "noDestinations": "Aucune destination trouvee.",
-    "noImage": "Pas d image"
-  },
-  "Region": {
-    "all": "Tous",
-    "title": "Rechercher des",
-    "titleHighlight": "regions",
-    "subtitle": "Trouvez et achetez les meilleurs eSIMs pour votre voyage.",
-    "searchAria": "Rechercher des regions",
-    "searchPlaceholder": "Rechercher une region internationale",
-    "noRegions": "Aucune region trouvee.",
-    "noImage": "Pas d image"
-  },
-  "Blog": {
-    "metaTitle": "Blog | Telenet",
-    "metaTitleSuffix": "Blog Telenet",
-    "metaDescription": "Dernieres nouvelles, mises a jour et insights de Telenet.",
-    "unknownDate": "Date inconnue",
-    "minRead": "{minutes} min lecture",
-    "generalCategory": "General",
-    "bannerAlt": "Banniere du blog",
-    "postNotFound": "Article introuvable",
-    "backToBlog": "Retour au blog"
-  },
-  "Success": {
-    "title": "Paiement reussi!",
-    "subtitle": "Votre commande a ete traitee avec succes.",
-    "backHome": "Retour a l accueil"
-  },
-  "Cancel": {
-    "title": "Paiement annule",
-    "subtitle": "Votre paiement n a pas ete complete. Vous pouvez reessayer ou contacter le support.",
-    "backHome": "Retour a l accueil"
-  }
+    "Header":  {
+                   "plans":  "Plans",
+                   "topUp":  "Recharger",
+                   "about":  "À propos de nous",
+                   "installGuide":  "Guide d\u0027installation",
+                   "contact":  "Contactez-nous",
+                   "signIn":  "Se connecter",
+                   "dashboard":  "Tableau de bord",
+                   "myPlans":  "Mes projets",
+                   "favorites":  "Favoris",
+                   "wallet":  "Portefeuille",
+                   "ordersBilling":  "Commandes et facturation",
+                   "profileSettings":  "Profil et paramètres",
+                   "support":  "Soutien",
+                   "buyNewPlan":  "Acheter un nouveau plan",
+                   "logout":  "Déconnexion"
+               },
+    "HeaderAuth":  {
+                       "logoAlt":  "Logo Telenet",
+                       "userName":  "Alex",
+                       "toggleTheme":  "Changer le thème",
+                       "dashboard":  "Tableau de bord",
+                       "myPlans":  "Mes projets",
+                       "favorites":  "Favoris",
+                       "wallet":  "Portefeuille",
+                       "ordersBilling":  "Commandes et facturation",
+                       "profileSettings":  "Profil et paramètres",
+                       "support":  "Soutien",
+                       "buyNewPlan":  "Acheter un nouveau plan"
+                   },
+    "Footer":  {
+                   "logoAlt":  "Logo Telenet",
+                   "aboutText":  "Telenet Global aide les voyageurs à rester connectés avec les eSIM dans plus de 170 pays. Paiements sécurisés, activation instantanée, support global.",
+                   "purchase":  "Achat",
+                   "destinations":  "Destinations",
+                   "regions":  "Régions",
+                   "topUp":  "Recharger maintenant",
+                   "downloadApp":  "Télécharger l\u0027application",
+                   "topDestinations":  "Destinations principales",
+                   "countries":  {
+                                     "AU":  "Australie",
+                                     "GB":  "Royaume-Uni",
+                                     "TH":  "Thaïlande",
+                                     "US":  "États-Unis",
+                                     "CA":  "Canada",
+                                     "AE":  "Émirats arabes unis"
+                                 },
+                   "company":  "Telenet Global",
+                   "aboutUs":  "À propos",
+                   "contactUs":  "Contactez-nous",
+                   "partner":  "Partenaire",
+                   "resources":  "Ressources",
+                   "blog":  "Blog",
+                   "helpCenter":  "Centre d\u0027aide",
+                   "events":  "Événements",
+                   "copyright":  "Copyright ©",
+                   "footerlink":  "www.Telnet.com",
+                   "reserved":  "Tous droits réservés. v1.0.3A",
+                   "cookie":  "Préférences des cookies",
+                   "terms":  "Termes et conditions",
+                   "privacy":  "Politique de confidentialité"
+               },
+    "LoginPage":  {
+                      "imageAlt":  "Illustration de connexion"
+                  },
+    "LoginForm":  {
+                      "welcomeText":  "Bon retour ! 👋",
+                      "loginTitle":  "Connectez-vous à votre compte",
+                      "emailLabel":  "E-mail",
+                      "emailPlaceholder":  "Veuillez entrer votre e-mail",
+                      "passwordLabel":  "Mot de passe",
+                      "passwordPlaceholder":  "Entrez le mot de passe",
+                      "loginButton":  "Connexion",
+                      "forgotPassword":  "Mot de passe oublié ?",
+                      "or":  "ou",
+                      "loginWithGoogle":  "Se connecter avec Google",
+                      "loginWithApple":  "Se connecter avec Apple",
+                      "loginWithFacebook":  "Se connecter avec Facebook",
+                      "notRegistered":  "Pas encore inscrit ?",
+                      "createAccount":  "Créer un compte",
+                      "emailRequired":  "Adresse e-mail invalide",
+                      "passwordRequired":  "Un mot de passe est requis.",
+                      "loading":  "Chargement",
+                      "filterAlt":  "Filtre",
+                      "action":  "Action",
+                      "noTickets":  "Aucun ticket trouve"
+                  },
+    "RegisterForm":  {
+                         "welcomeText":  "Bienvenue ! Créez votre compte ci-dessous.",
+                         "registerTitle":  "S\u0027inscrire",
+                         "registerButton":  "Créer un compte",
+                         "success":  "Inscription réussie !",
+                         "error":  "Une erreur s\u0027est produite. Veuillez réessayer.",
+                         "fields":  {
+                                        "name":  "Nom",
+                                        "email":  "E-mail",
+                                        "password":  "Mot de passe",
+                                        "passportNo":  "Numero de passeport",
+                                        "dateOfBirth":  "Date de naissance",
+                                        "phone":  "Téléphone",
+                                        "countryCode":  "Code du pays"
+                                    },
+                         "placeholders":  {
+                                              "name":  "Entrez votre nom complet",
+                                              "email":  "Entrez votre e-mail",
+                                              "password":  "Entrez votre mot de passe",
+                                              "passportNo":  "Entrez votre numero de passeport",
+                                              "dateOfBirth":  "Selectionnez votre date de naissance",
+                                              "phone":  "Entrez votre numéro de téléphone",
+                                              "countryCode":  "Entrez le code du pays (ex. +33)"
+                                          },
+                         "validation":  {
+                                            "nameRequired":  "Le nom est requis",
+                                            "emailInvalid":  "Veuillez entrer un e-mail valide",
+                                            "passwordMin":  "Le mot de passe doit comporter au moins 6 caractères",
+                                            "phoneInvalid":  "Entrez un numéro de téléphone valide",
+                                            "countryCodeRequired":  "Le code du pays est requis"
+                                        },
+                         "searchCountry":  "Rechercher un pays...",
+                         "noCountryFound":  "Aucun pays trouvé",
+                         "or":  "ou",
+                         "registerWithGoogle":  "S\u0027inscrire avec Google",
+                         "loading":  "Chargement",
+                         "filterAlt":  "Filtre",
+                         "action":  "Action",
+                         "noTickets":  "Aucun ticket trouve"
+                     },
+    "ForgotPassword":  {
+                           "title":  "Mot de passe oublie",
+                           "emailLabel":  "Email",
+                           "emailPlaceholder":  "Entrez votre email enregistre",
+                           "sending":  "Envoi...",
+                           "sendOtp":  "Envoyer OTP",
+                           "invalidEmail":  "Email invalide",
+                           "otpSent":  "OTP envoye a votre email!",
+                           "sendFailed":  "Echec de l\u0027envoi de l\u0027email de reinitialisation!"
+                       },
+    "ResetPassword":  {
+                          "title":  "Reinitialiser votre mot de passe",
+                          "emailLabel":  "Email",
+                          "otpLabel":  "Entrer OTP",
+                          "newPasswordLabel":  "Nouveau mot de passe",
+                          "newPasswordPlaceholder":  "Entrez votre nouveau mot de passe",
+                          "sending":  "Envoi...",
+                          "resendOtp":  "Renvoyer OTP",
+                          "resetting":  "Reinitialisation...",
+                          "resetButton":  "Reinitialiser le mot de passe",
+                          "invalidEmail":  "Email invalide",
+                          "otpLength":  "OTP doit contenir 6 chiffres",
+                          "passwordMin":  "Le mot de passe doit avoir au moins 6 caracteres",
+                          "passwordMax":  "Mot de passe trop long",
+                          "resetSuccess":  "Mot de passe reinitialise avec succes!",
+                          "resetFailed":  "Echec de la reinitialisation du mot de passe!",
+                          "emailNotFound":  "Email introuvable",
+                          "otpResent":  "OTP renvoye avec succes",
+                          "otpResendFailed":  "Echec de l\u0027envoi de l\u0027OTP"
+                      },
+    "OTPVerification":  {
+                            "title":  "Verifiez votre email",
+                            "emailLabel":  "Email",
+                            "otpLabel":  "Entrer OTP",
+                            "sending":  "Envoi...",
+                            "resendOtp":  "Renvoyer OTP",
+                            "verifying":  "Verification...",
+                            "verifyAndLogin":  "Verifier et aller a la connexion",
+                            "invalidEmail":  "Email invalide",
+                            "otpLength":  "OTP doit contenir 6 chiffres",
+                            "otpNumeric":  "OTP doit etre numerique",
+                            "otpVerified":  "OTP verifie avec succes!",
+                            "otpVerifyFailed":  "Echec de la verification OTP!",
+                            "emailNotFound":  "Email introuvable",
+                            "otpResent":  "OTP renvoye avec succes",
+                            "otpResendFailed":  "Echec de l\u0027envoi de l\u0027OTP"
+                        },
+    "Kyc":  {
+                "sumsubTitle":  "Verification Sumsub",
+                "manualTitle":  "Verification KYC manuelle",
+                "chooseMethodTitle":  "Choisir la methode de verification",
+                "statusPending":  "En attente",
+                "kycFailed":  "Echec KYC. Veuillez reessayer.",
+                "invalidFormat":  "Format invalide. Autorise: JPG, PNG, JPEG, WEBP, HEIC, PDF.",
+                "fileTooLarge":  "Chaque fichier doit faire 10MB ou moins.",
+                "maxFiles":  "Vous pouvez televerser un maximum de 3 fichiers.",
+                "sessionExpired":  "Session KYC expiree. Veuillez verifier l\u0027OTP a nouveau.",
+                "uploadFailed":  "Echec du televersement du document.",
+                "manualSubmitSuccess":  "KYC manuel soumis. Votre statut est en attente d\u0027examen.",
+                "manualSubmitFailed":  "Echec de la soumission KYC manuelle.",
+                "kycInProgressTitle":  "Verification KYC en cours",
+                "kycInProgressBody":  "Vos documents sont soumis et en cours d\u0027examen. Nous vous avertirons une fois la verification terminee.",
+                "currentStatus":  "Statut actuel",
+                "registeredEmail":  "Email enregistre",
+                "notAvailable":  "Non disponible",
+                "nameLabel":  "Nom",
+                "mobileNumber":  "Numero de mobile",
+                "reviewerNote":  "Note du relecteur",
+                "backToLogin":  "Retour a la connexion",
+                "manualKycTitle":  "KYC manuel",
+                "manualKycBody":  "Televersez votre document et soumettez les details pour examen.",
+                "sumsubCardTitle":  "Utiliser Sumsub",
+                "sumsubCardBody":  "Continuer avec le flux de verification Sumsub existant.",
+                "rejectionReason":  "Raison du refus",
+                "fullNameLabel":  "Nom complet",
+                "fullNamePlaceholder":  "Entrez le nom complet",
+                "dobLabel":  "Date de naissance",
+                "addressLabel":  "Adresse",
+                "addressPlaceholder":  "Entrez l\u0027adresse",
+                "countryLabel":  "Pays",
+                "selectCountry":  "Selectionner un pays",
+                "searchCountry":  "Rechercher un pays...",
+                "noCountryFound":  "Aucun pays trouve",
+                "documentTypeLabel":  "Type de document",
+                "selectDocumentType":  "Selectionner le type de document",
+                "passport":  "Passeport",
+                "nationalId":  "Carte nationale",
+                "drivingLicense":  "Permis de conduire",
+                "other":  "Autre",
+                "uploadDocument":  "Televerser un document KYC",
+                "uploadHelp":  "Autorise: JPG, PNG, JPEG, WEBP, HEIC, PDF. Taille max: 10MB chacun. Maximum 3 fichiers.",
+                "remove":  "Supprimer",
+                "preview":  "Apercu",
+                "back":  "Retour",
+                "submitting":  "Soumission...",
+                "submitManual":  "Soumettre KYC manuel",
+                "loadingProfile":  "Chargement du profil pour auto-remplissage...",
+                "sumsubPreparing":  "Preparation de la verification Sumsub...",
+                "sumsubTokenMissing":  "Jeton Sumsub non disponible. Veuillez vous reconnecter si necessaire pour continuer le KYC Sumsub.",
+                "continueToLogin":  "Continuer vers la connexion",
+                "fullNameRequired":  "Le nom complet est requis.",
+                "dobRequired":  "La date de naissance est requise.",
+                "addressRequired":  "L\u0027adresse est requise.",
+                "countryRequired":  "Le pays est requis.",
+                "documentRequired":  "Au moins un document est requis."
+            },
+    "AboutUs":  {
+                    "explore":  {
+                                    "title":  "Explorez le",
+                                    "highlight":  "monde des eSIMs",
+                                    "subtitle":  "Comportements et croyances qui nous relient.",
+                                    "cards":  [
+                                                  {
+                                                      "title":  "Focus sur le voyageur",
+                                                      "desc":  "Des forfaits adaptés aux touristes, aux voyageurs d’affaires et aux étudiants."
+                                                  },
+                                                  {
+                                                      "title":  "Expérience premium",
+                                                      "desc":  "Approuvé par plus de 80 000 utilisateurs dans plus de 170 destinations."
+                                                  },
+                                                  {
+                                                      "title":  "Autonomisant",
+                                                      "desc":  "Changez d\u0027opérateur en toute transparence sans carte SIM physique."
+                                                  }
+                                              ]
+                                },
+                    "values":  {
+                                   "title":  "Nos",
+                                   "highlight":  "Valeurs",
+                                   "subtitle":  "Des relations basées sur la confiance et la transparence.",
+                                   "list":  [
+                                                {
+                                                    "title":  "Innovation Inlassable",
+                                                    "desc":  "Libérez votre esprit de perturbateur ! Nous croyons en une évolution constante, où la curiosité alimente l’innovation et où le statu quo n’est qu’un point de départ."
+                                                },
+                                                {
+                                                    "title":  "Responsabilité Radicale",
+                                                    "desc":  "Appropriez-vous les choses comme si vous les aviez inventées ! Au cœur de notre culture réside la conviction que prendre une responsabilité audacieuse conduit à des résultats extraordinaires."
+                                                },
+                                                {
+                                                    "title":  "Exploration Sans Peur",
+                                                    "desc":  "Embrassez l’inconnu, car c’est là que la magie opère. Nous célébrons les esprits courageux qui osent explorer des territoires inexplorés, tant sur le plan personnel que professionnel."
+                                                },
+                                                {
+                                                    "title":  "Décisions Basées sur les Données, Humanité Authentique",
+                                                    "desc":  "Exploitez la puissance des données, mais n’oubliez jamais la touche humaine. Nous prenons des décisions avec précision et empathie, pour qu’elles résonnent à la fois avec la logique et le cœur."
+                                                }
+                                            ]
+                               },
+                    "impact":  {
+                                   "title":  "Impact chez,",
+                                   "highlight":  "Telenet",
+                                   "subtitle":  "Nous pensons que les voyageurs sont audacieux. Telenet vise à renforcer leur audace avec des exaoctets de connectivité.",
+                                   "stats":  [
+                                                 {
+                                                     "label":  "Customers Worldwide"
+                                                 },
+                                                 {
+                                                     "label":  "Au service des pays"
+                                                 },
+                                                 {
+                                                     "label":  "Des années d\u0027expertise en télécommunications"
+                                                 },
+                                                 {
+                                                     "label":  "Téléchargements d\u0027applications sur iOS et Android"
+                                                 }
+                                             ],
+                                   "content":  "Besoin de plus d informations pour la section impact."
+                               },
+                    "bannerAlt":  "Banniere a propos",
+                    "impactImageAlt":  "Image d impact"
+                },
+    "ContactUs":  {
+                      "heroAlt":  "Contactez-nous",
+                      "getInTouch":  "Entrer en contact",
+                      "introText":  "Vous souhaitez nous contacter ? Nous serions ravis d’avoir de vos nouvelles. Voici comment nous joindre.",
+                      "emailTitle":  "Nous sommes toujours heureux d’aider.",
+                      "emailAddress":  "ask@retro.ai.com",
+                      "phoneTitle":  "Notre numéro de hotline",
+                      "phoneNumbers":  "+757 889 4478, +21 377 9731",
+                      "chatTitle":  "Chat en direct",
+                      "chatLink":  "www.retrolivechat.com",
+                      "form":  {
+                                   "nameLabel":  "Nom",
+                                   "emailLabel":  "E-mail",
+                                   "messageLabel":  "Votre message",
+                                   "namePlaceholder":  "Rashed Kabir",
+                                   "emailPlaceholder":  "rshdkabir@gmail.com",
+                                   "submit":  "ENVOYER LE MESSAGE"
+                               },
+                      "messageSent":  "Message envoye avec succes!",
+                      "messageFailed":  "Echec de envoi du message",
+                      "mailAlt":  "Email",
+                      "phoneAlt":  "Telephone",
+                      "chatAlt":  "Chat en direct"
+                  },
+    "PartnerWithUs":  {
+                          "partnerTitle":  "Devenez Partenaire",
+                          "introText":  "Lorem Ipsum n cdsjn wdjdjnd wjjdn wuwjjwjf rwjrdjr.",
+                          "title1":  "Intégration des Points de Contact",
+                          "description1":  "Améliorez la connectivité en intégrant des forfaits de données pour offrir des solutions eSIM personnalisées à vos clients.",
+                          "title2":  "Vos Clients Achètent",
+                          "description2":  "Les clients achètent des eSIMs avec vos produits et services principaux.",
+                          "title3":  "Vous Gagnez le Profit",
+                          "description3":  "Augmentez les revenus additionnels en vendant des eSIM.",
+                          "form":  {
+                                       "nameLabel":  "Nom",
+                                       "emailLabel":  "E-mail",
+                                       "phoneLabel":  "Votre Téléphone",
+                                       "phonePlaceholder":  "Saisissez votre numéro de téléphone",
+                                       "messageLabel":  "Votre Message",
+                                       "namePlaceholder":  "Rashed Kabir",
+                                       "emailPlaceholder":  "rshdkabir@gmail.com",
+                                       "submit":  "ENVOYER LE MESSAGE"
+                                   },
+                          "messageSent":  "Message envoye avec succes!",
+                          "messageFailed":  "Echec de envoi du message",
+                          "mailAlt":  "Email",
+                          "phoneAlt":  "Telephone",
+                          "chatAlt":  "Chat en direct",
+                          "code":  "Code",
+                          "searchCountry":  "Rechercher un pays...",
+                          "noCountryFound":  "Aucun pays trouve"
+                      },
+    "Plans":  {
+                  "bannerAlt":  "Bannière des forfaits",
+                  "filterTitle":  "Filtrer",
+                  "country":  "Pays",
+                  "region":  "Région",
+                  "dataSize":  "Taille des données",
+                  "validity":  "Validité",
+                  "priceRange":  "Plage de prix",
+                  "network":  "Réseau",
+                  "provider":  "Fournisseur",
+                  "reset":  "Réinitialiser",
+                  "popularPlans":  "Forfaits populaires",
+                  "filters":  {
+                                  "cheapest":  "Le moins cher",
+                                  "mostPopular":  "Le plus populaire",
+                                  "fiveGPlans":  "Forfaits 5G",
+                                  "yearly":  "365 jours",
+                                  "daily":  "2.5 Go/Jour"
+                              },
+                  "searchPlaceholder":  "Rechercher des forfaits",
+                  "providerLogo":  "Fournisseur",
+                  "bestSeller":  "Meilleure vente",
+                  "trending":  "Tendance",
+                  "validityLabel":  "Validité",
+                  "data":  "Données",
+                  "buy":  "Acheter",
+                  "countries":  {
+                                    "us":  "États-Unis",
+                                    "uk":  "Royaume-Uni",
+                                    "ca":  "Canada",
+                                    "au":  "Australie"
+                                },
+                  "regions":  {
+                                  "west":  "Ouest",
+                                  "east":  "Est",
+                                  "north":  "Nord",
+                                  "south":  "Sud"
+                              }
+              },
+    "Hero":  {
+                 "rating":  "Noté 4,75 avec plus de 500K téléchargements",
+                 "title":  "Voyagez",
+                 "titleHighlight":  "eSIM",
+                 "titleCountries":  "dans plus de 170 pays",
+                 "subtitle":  "Restez connecté partout. Activation instantanée de l\u0027eSIM avec paiement sécurisé.",
+                 "getStarted":  "Commencer",
+                 "country":  "Pays",
+                 "likeTravel":  "Où aimeriez-vous voyager?",
+                 "region":  "Région",
+                 "searchPlaceholder":  "Rechercher Royaume-Uni",
+                 "browsePlans":  "Voir les plans"
+             },
+    "Features":  {
+                     "awards":  {
+                                    "title":  "Presse, Médias \u0026 Récompenses",
+                                    "award1":  "Meilleur Produit de Technologie de Voyage à IITM Chennai, Hyderabad \u0026 Bengaluru",
+                                    "award2":  "Produit le Plus Innovant de l\u0027Année au BLTM, Delhi",
+                                    "award3":  "Top 5 Meilleur Fournisseur eSIM au MVNO World 2025, Vienne, Autriche"
+                                },
+                     "downloadBanner":  {
+                                            "titleLine1":  "Téléchargez Telenet",
+                                            "titleLine2":  "-25%",
+                                            "googlePlay":  {
+                                                               "getItOn":  "OBTENEZ-LE SUR",
+                                                               "name":  "Google Play"
+                                                           },
+                                            "appStore":  {
+                                                             "downloadOn":  "Téléchargez sur l\u0027",
+                                                             "name":  "App Store"
+                                                         }
+                                        },
+                     "popularCountries":  {
+                                              "title":  "Pays Populaires",
+                                              "us":  "États-Unis d\u0027Amérique",
+                                              "uk":  "Royaume-Uni",
+                                              "uae":  "Émirats Arabes Unis",
+                                              "canada":  "Canada",
+                                              "startsAt":  "À partir de",
+                                              "onwards":  "Et plus",
+                                              "viewAll":  "Voir Tout"
+                                          },
+                     "whyChooseUs":  {
+                                         "title":  "Pourquoi Nous Choisir",
+                                         "instantActivation":  {
+                                                                   "title":  "Activation Instantanée",
+                                                                   "desc":  "Activez votre eSIM instantanément en scannant un code QR. Profitez d\u0027une connectivité fluide sans avoir besoin d\u0027une carte SIM physique."
+                                                               },
+                                         "globalCoverage":  {
+                                                                "title":  "Couverture Mondiale",
+                                                                "desc":  "Restez connecté avec un seul appareil à travers les frontières, peu importe où vos voyages vous mènent."
+                                                            },
+                                         "securePayments":  {
+                                                                "title":  "Paiements Sécurisés",
+                                                                "desc":  "Profitez d\u0027une configuration sans tracas et protégée, éliminant le besoin de manipuler une carte physique."
+                                                            },
+                                         "support":  {
+                                                         "title":  "Support 24/7",
+                                                         "desc":  "Notre équipe de support dédiée 24/7 est toujours disponible pour vous aider. Nous vous guiderons dans le processus, garantissant une configuration fluide et réussie."
+                                                     }
+                                     },
+                     "howItWorks":  {
+                                        "title":  "Comment Ça Marche",
+                                        "step1":  {
+                                                      "title":  "Parcourez un Plan",
+                                                      "desc":  "Choisissez le plan de données dont vous avez besoin pour votre voyage."
+                                                  },
+                                        "step2":  {
+                                                      "title":  "Achetez un Plan",
+                                                      "desc":  "Votre plan s\u0027active automatiquement lorsque vous atterrissez, pas besoin de changer de SIM."
+                                                  },
+                                        "step3":  {
+                                                      "title":  "Commencez à Naviguer",
+                                                      "desc":  "Recevez un code QR, scannez-le, et votre eSIM est instantanément installée."
+                                                  }
+                                    },
+                     "videoTutorial":  {
+                                           "title":  "Regardez le Tutoriel Vidéo",
+                                           "alt":  "Lire la Vidéo"
+                                       }
+                 },
+    "Testimonials":  {
+                         "title":  "Nos voyageurs le disent tous - ils ont choisi le meilleur réseau !",
+                         "testimonials":  {
+                                              "testimonial1":  "Des solutions rapides couplées à des performances extraordinaires - une recommandation sans équivoque.",
+                                              "testimonial2":  "Je recommande fortement ce fournisseur SaaS fiable pour une optimisation fluide du flux de travail.",
+                                              "testimonial3":  "Excellent service et support client incroyable tout au long de mon voyage !",
+                                              "testimonial4":  "Connexion fiable dans tous les pays. Totalement recommandé !"
+                                          },
+                         "bottom":  {
+                                        "title":  "Profitez d\u0027une navigation illimitée",
+                                        "desc":  "Restez connecté sur WhatsApp, Instagram et YouTube sans frais d\u0027itinérance.",
+                                        "noVpn":  "VPN non requis"
+                                    }
+                     },
+    "FAQ":  {
+                "title":  "Questions Fréquemment Posées",
+                "faq":  {
+                            "q1":  "Qu\u0027est-ce qu\u0027un eSIM ?",
+                            "a1":  "Un eSIM (SIM intégrée) est une SIM numérique qui vous permet d\u0027activer un forfait de données mobiles sans avoir besoin d\u0027une carte SIM physique. Elle fonctionne comme une SIM normale mais est intégrée à votre appareil.",
+                            "q2":  "Comment activer un eSIM après l\u0027achat ?",
+                            "a2":  "Vous pouvez activer votre eSIM en scannant le code QR fourni par votre opérateur ou en suivant leurs étapes d\u0027activation dans les paramètres de votre appareil.",
+                            "q3":  "Puis-je garder ma SIM régulière et utiliser l\u0027eSIM en même temps ?",
+                            "a3":  "Oui, de nombreux appareils prennent en charge la fonctionnalité double SIM, vous permettant d\u0027utiliser une SIM physique et un eSIM simultanément.",
+                            "q4":  "Ai-je besoin d\u0027internet pour installer l\u0027eSIM ?",
+                            "a4":  "Oui, une connexion internet est généralement requise pour télécharger et installer le profil eSIM sur votre appareil.",
+                            "q5":  "Quels appareils supportent l\u0027eSIM ?",
+                            "a5":  "La plupart des smartphones modernes, tablettes et certaines montres connectées prennent en charge la technologie eSIM. Vérifiez les paramètres de votre appareil ou les détails du fabricant.",
+                            "q6":  "Puis-je utiliser les eSIMs lors de voyages à l\u0027étranger ?",
+                            "a6":  "Oui, les eSIMs sont parfaits pour les voyages. Vous pouvez facilement passer d\u0027un opérateur local à un autre sans changer de carte SIM physique.",
+                            "q7":  "Combien de temps faut-il pour activer ?",
+                            "a7":  "L\u0027activation prend généralement quelques minutes, selon votre opérateur et votre appareil.",
+                            "q8":  "Quels modes de paiement sont acceptés ?",
+                            "a8":  "La plupart des fournisseurs acceptent les cartes de crédit, cartes de débit, PayPal et autres méthodes de paiement en ligne populaires.",
+                            "q9":  "Puis-je recharger mon plan eSIM ?",
+                            "a9":  "Oui, vous pouvez recharger ou recharger votre plan eSIM via l\u0027application ou le site web de votre fournisseur.",
+                            "q10":  "Que faire si je rencontre des problèmes lors de l\u0027installation ?",
+                            "a10":  "Si vous rencontrez des problèmes, contactez l\u0027équipe d\u0027assistance de votre fournisseur. Ils vous guideront étape par étape pour résoudre le problème."
+                        },
+                "notFound":  "Aucune foire aux questions trouvée."
+            },
+    "InstallationGuide":  {
+                              "title":  "Guide d\u0027",
+                              "highlight":  "Installation",
+                              "downloadPDF":  "Télécharger le guide PDF",
+                              "stepsTitle":  "Débloquez nos fonctionnalités de connectivité en suivant ces étapes :",
+                              "step":  "Étape",
+                              "ios":  {
+                                          "steps":  [
+                                                        "Installez l’eSIM sur votre appareil.",
+                                                        "Activez le forfait une fois arrivé à destination."
+                                                    ]
+                                      },
+                              "android":  {
+                                              "steps":  [
+                                                            "Installez l’eSIM sur votre appareil Android.",
+                                                            "Activez le forfait à votre arrivée à destination."
+                                                        ]
+                                          },
+                              "step_suggestion":  "Accédez à Paramètres → Données mobiles → Ajouter une eSIM",
+                              "troubleshooting":  {
+                                                      "title":  "Dépannage",
+                                                      "qr":  {
+                                                                 "title":  "Le code QR ne se scanne pas ?",
+                                                                 "desc":  "Assurez-vous d’avoir un bon éclairage et une caméra propre."
+                                                             },
+                                                      "activation":  {
+                                                                         "title":  "Échec de l’activation ?",
+                                                                         "desc":  "Vérifiez la connexion Wi-Fi et redémarrez l’appareil."
+                                                                     },
+                                                      "support":  {
+                                                                      "title":  "Toujours bloqué ?",
+                                                                      "desc":  "Contactez le support à"
+                                                                  }
+                                                  }
+                          },
+    "profile":  {
+                    "headerAlt":  "Bannière de profil",
+                    "name":  "Alex Johnson",
+                    "email":  "alex.j@example.com",
+                    "phone":  "+1 555-123-4567",
+                    "location":  "USA, ENG, USD",
+                    "editProfile":  "Modifier le profil",
+                    "settingsTitle":  "Paramètres",
+                    "changePassword":  "Changer le mot de passe",
+                    "changeButton":  "Changer",
+                    "notificationPreferences":  "Préférences de notification",
+                    "emailAlerts":  "Alertes par e-mail",
+                    "smsAlerts":  "Alertes SMS",
+                    "pushNotifications":  "Notifications Push",
+                    "deleteAccount":  "Supprimer votre compte",
+                    "privacyPolicy":  "Politique de confidentialité et conditions d\u0027utilisation",
+                    "newPasswordRequired":  "Veuillez entrer un nouveau mot de passe",
+                    "passwordChanged":  "Mot de passe change avec succes!",
+                    "passwordChangeFailed":  "Echec de changement du mot de passe",
+                    "notificationUpdated":  "Preferences de notification mises a jour",
+                    "imageUploadFailed":  "Echec du televersement de l image",
+                    "pictureUploaded":  "Photo de profil televersee avec succes.",
+                    "pictureUpdateFailed":  "Echec de mise a jour de la photo",
+                    "profileAlt":  "Profil",
+                    "changePhoto":  "Changer la photo",
+                    "modal":  {
+                                  "delete":  {
+                                                 "title":  "Êtes-vous sûr ?",
+                                                 "description":  "Voulez-vous supprimer ces enregistrements ? Ce processus est irréversible.",
+                                                 "cancel":  "Annuler",
+                                                 "deleteButton":  "Supprimer"
+                                             },
+                                  "edit":  {
+                                               "title":  "Modifier le profil",
+                                               "name":  "Nom",
+                                               "phone":  "Téléphone",
+                                               "email":  "Email",
+                                               "country":  "Pays",
+                                               "language":  "Langue",
+                                               "currency":  "Devise",
+                                               "cancel":  "Annuler",
+                                               "submit":  "Soumettre",
+                                               "loading":  "Chargement..."
+                                           }
+                              }
+                },
+    "TopUp":  {
+                  "bannerAlt":  "Banniere de recharge",
+                  "enterNumber":  "12358000",
+                  "availablePacks":  "Forfaits de recharge disponibles",
+                  "providerLogo":  "LogoFournisseur",
+                  "trueSG":  "TRUESG",
+                  "validity":  "Validité",
+                  "data":  "Données",
+                  "selectPack":  "Sélectionner le forfait",
+                  "rechargeNow":  "Recharger maintenant",
+                  "provider":  "Fournisseur",
+                  "selectNumber":  "Sélectionnez le numéro virtuel",
+                  "virtualNumber":  "4451 0275",
+                  "startDate":  "Date de début",
+                  "plan":  "Forfait",
+                  "type":  "Type",
+                  "duration":  "Durée",
+                  "taxCountry":  "Pays de taxe",
+                  "total":  "Total",
+                  "selectPayment":  "Sélectionnez un mode de paiement",
+                  "creditCard":  "Carte de crédit ou débit",
+                  "googlePay":  "Google Pay",
+                  "applePay":  "Apple Pay",
+                  "cardNumber":  "Numéro de carte",
+                  "expiry":  "Date d\u0027expiration",
+                  "cvv":  "CVV",
+                  "saveCard":  "Enregistrer les détails de la carte",
+                  "cancel":  "Annuler",
+                  "confirm":  "Confirmer"
+              },
+    "VirtualNumber":  {
+                          "bannerAlt":  "Banniere de numero virtuel",
+                          "numbers":  "Nombres"
+                      },
+    "Dashboard":  {
+                      "greeting":  "Salut",
+                      "readyForTrip":  "Prêt pour votre prochain voyage ?",
+                      "activePlans":  "Forfaits Actifs",
+                      "walletBalance":  "Solde du Portefeuille",
+                      "lastTransaction":  "Dernière Transaction",
+                      "date":  "12 sept. 2025",
+                      "suggestedPlans":  "Forfaits Sugérés",
+                      "validity":  "Validité",
+                      "data":  "Données",
+                      "buyNow":  "Acheter maintenant",
+                      "decorativeCurveLeft":  "Courbe decorative gauche",
+                      "decorativeCurveRight":  "Courbe decorative droite"
+                  },
+    "Wallet":  {
+                   "title":  "Portefeuille",
+                   "autoTopUp":  "Rechargement Automatique",
+                   "addMoney":  "Ajouter de l’Argent",
+                   "walletBalance":  "Solde du Portefeuille",
+                   "transactionHistory":  "Historique des Transactions",
+                   "filter":  "Filtrer",
+                   "date":  "Date",
+                   "amount":  "Montant",
+                   "method":  "Méthode",
+                   "status":  "Statut",
+                   "invoice":  "Facture",
+                   "download":  "Télécharger",
+                   "export":  "Exporter",
+                   "completed":  "Terminé",
+                   "pending":  "En attente",
+                   "all":  "Tous",
+                   "sep":  "Sept",
+                   "aug":  "Août",
+                   "bannerAlt":  "Banniere du portefeuille",
+                   "filterAlt":  "Filtre",
+                   "googlePay":  "Google Pay",
+                   "creditCard":  "Carte de credit",
+                   "applePay":  "Apple Pay",
+                   "walletAuto":  "Portefeuille auto"
+               },
+    "OrderBilling":  {
+                         "filter":  "Filtrer",
+                         "dateRange":  "Plage de dates",
+                         "status":  "Statut",
+                         "provider":  "Fournisseur",
+                         "resetFilters":  "Réinitialiser les filtres",
+                         "orderId":  "ID de commande",
+                         "planName":  "Nom du forfait",
+                         "paymentOption":  "Mode de paiement",
+                         "invoice":  "Facture",
+                         "action":  "Action",
+                         "failed":  "Échoué",
+                         "cancelled":  "Annulé",
+                         "completed":  "Terminé",
+                         "download":  "Télécharger",
+                         "invoiceCompanyName":  "NOM DE LA SOCIETE",
+                         "invoiceTitle":  "FACTURE",
+                         "invoiceCompanyAddress":  "123 Business Street, City, State 12345",
+                         "invoiceCompanyContact":  "Email: contact@yourcompany.com | Phone: +1 (555) 123-4567",
+                         "invoiceCompanyTaxId":  "Tax ID: XX-XXXXXXX",
+                         "invoiceNumber":  "Facture #",
+                         "orderNumber":  "Commande #",
+                         "invoiceDate":  "Date",
+                         "billTo":  "FACTURER A:",
+                         "customerFallback":  "Client",
+                         "countryLabel":  "Pays",
+                         "orderDetails":  "DETAILS DE COMMANDE:",
+                         "packageName":  "Nom du forfait",
+                         "providerLabel":  "Fournisseur",
+                         "coverage":  "Couverture",
+                         "dataLabel":  "Donnees",
+                         "duration":  "Duree",
+                         "iccid":  "ICCID",
+                         "validUntil":  "Valide jusqu au",
+                         "paymentMethod":  "Methode de paiement",
+                         "orderStatus":  "Statut de commande",
+                         "paymentSummary":  "RESUME DE PAIEMENT:",
+                         "totalAmount":  "Montant total",
+                         "paymentStatus":  "Statut de paiement",
+                         "invoiceThanks":  "Merci pour votre achat!",
+                         "invoiceSupportNote":  "Pour toute question, contactez notre support.",
+                         "ordersBannerAlt":  "Banniere des commandes",
+                         "filterAlt":  "Filtre",
+                         "searchPlaceholder":  "Rechercher id de commande, forfait, fournisseur...",
+                         "card":  "Carte",
+                         "noOrders":  "Aucune commande",
+                         "prev":  "Precedent",
+                         "next":  "Suivant"
+                     },
+    "MyPlans":  {
+                    "title":  "Mes",
+                    "active":  "Plans actifs",
+                    "expired":  "Plans expirés",
+                    "cancelled":  "Plans annulés",
+                    "addNew":  "Ajouter un nouveau plan",
+                    "dataLeft":  "données restantes",
+                    "validUntil":  "Valide jusqu’au",
+                    "renew":  "Renouveler",
+                    "topUp":  "Recharger",
+                    "viewQR":  "Voir le QR",
+                    "refund":  "Rembourser",
+                    "expiredOn":  "Expiré le",
+                    "cancelledOn":  "Annulé le",
+                    "lastPlan":  "Dernier plan",
+                    "viewSimilar":  "Voir un plan similaire",
+                    "repurchase":  "Racheter",
+                    "noActivePlans":  "Aucun plan actif",
+                    "noExpiredPlans":  "Aucun plan expire",
+                    "noCancelledPlans":  "Aucun plan annule",
+                    "howToInstall":  "Comment installer",
+                    "refundStatusHint":  "Consultez le statut du remboursement dans la page support de votre profil",
+                    "viewBilling":  "Voir la facture",
+                    "refundRequested":  "Remboursement demande",
+                    "refundApproved":  "Remboursement approuve",
+                    "refundRejected":  "Remboursement rejete",
+                    "refundFailed":  "Remboursement echoue"
+                },
+    "Favorites":  {
+                      "bannerAlt":  "Bannière des favoris",
+                      "title":  "Mes forfaits favoris",
+                      "remove":  "Supprimer",
+                      "buy":  "Acheter",
+                      "days":  "jours",
+                      "empty":  "Aucun forfait favori pour le moment. Ajoutez des forfaits depuis la page des forfaits.",
+                      "countryDetectFailed":  "Impossible de detecter le pays du forfait.",
+                      "orderCreated":  "Commande creee avec succes!",
+                      "checkoutUrlMissing":  "URL de paiement introuvable",
+                      "orderCreateFailed":  "Echec de creation de commande",
+                      "removedSuccess":  "Forfait retire des favoris.",
+                      "removeFailed":  "Echec de suppression des favoris."
+                  },
+    "Support":  {
+                    "title":  "Support",
+                    "open":  "Ouvert",
+                    "pending":  "En attente",
+                    "closed":  "Fermé",
+                    "raiseTicket":  "Créer un nouveau ticket",
+                    "search":  "Rechercher l’ID du ticket...",
+                    "filterDate":  "Date",
+                    "newest":  "Plus récent",
+                    "oldest":  "Plus ancien",
+                    "priority":  "Priorité",
+                    "subject":  "Sujet",
+                    "keywords":  "Mots-clés",
+                    "provider":  "Fournisseur",
+                    "filter":  "Filtrer",
+                    "ticketList":  "Liste des tickets",
+                    "ticketID":  "ID du ticket",
+                    "createdOn":  "Créé le",
+                    "lastUpdate":  "Dernière mise à jour",
+                    "status":  "Statut",
+                    "ticketDetails":  "Détails du ticket",
+                    "description":  "Description",
+                    "writeComment":  "Écrire un commentaire",
+                    "writeDescription":  "Écrire une description",
+                    "attachFile":  "Joindre un fichier",
+                    "saveChanges":  "Enregistrer",
+                    "cancel":  "Annuler",
+                    "upload":  "Téléverser",
+                    "name":  "Nom",
+                    "placeholderName":  "Entrer le nom",
+                    "email":  "Email",
+                    "placeholderEmail":  "Entrer l’email",
+                    "phone":  "Numéro de téléphone",
+                    "placeholderPhone":  "Entrer le numéro de téléphone",
+                    "placeholderSubject":  "Impossible d’activer mon forfait",
+                    "category":  "Catégorie",
+                    "selectCategory":  "Sélectionner une catégorie",
+                    "activation":  "Activation",
+                    "refund":  "Remboursement",
+                    "billing":  "Facturation",
+                    "low":  "Faible",
+                    "medium":  "Moyenne",
+                    "high":  "Élevée",
+                    "submitTicket":  "Soumettre le ticket",
+                    "submittingTicket":  "Soumission...",
+                    "countryCodePlaceholder":  "Sélectionner le code pays",
+                    "countryCodeLabel":  "Code pays",
+                    "noCountryFound":  "Aucun pays trouvé",
+                    "searchCountry":  "Rechercher un pays...",
+                    "loading":  "Chargement",
+                    "filterAlt":  "Filtre",
+                    "action":  "Action",
+                    "noTickets":  "Aucun ticket trouve",
+                    "orderId":  "ID de commande",
+                    "selectOrder":  "S�lectionner une commande",
+                    "searchOrder":  "Rechercher une commande...",
+                    "noOrderFound":  "Aucune commande trouv�e",
+                    "loadingOrders":  "Chargement des commandes...",
+                    "ordersLoadFailed":  "Impossible de charger les commandes",
+                    "ticketCreatedSuccessfully":  "Ticket cr�� avec succ�s",
+                    "ticketCreateFailed":  "�chec de la cr�ation du ticket"
+                },
+    "Destination":  {
+                        "all":  "Tous",
+                        "title":  "Rechercher une",
+                        "titleHighlight":  "destination",
+                        "subtitle":  "Trouvez et achetez les meilleurs eSIMs pour votre voyage.",
+                        "searchAria":  "Rechercher des destinations",
+                        "searchPlaceholder":  "Rechercher une destination internationale",
+                        "noDestinations":  "Aucune destination trouvee.",
+                        "noImage":  "Pas d image"
+                    },
+    "Region":  {
+                   "all":  "Tous",
+                   "title":  "Rechercher des",
+                   "titleHighlight":  "regions",
+                   "subtitle":  "Trouvez et achetez les meilleurs eSIMs pour votre voyage.",
+                   "searchAria":  "Rechercher des regions",
+                   "searchPlaceholder":  "Rechercher une region internationale",
+                   "noRegions":  "Aucune region trouvee.",
+                   "noImage":  "Pas d image"
+               },
+    "Blog":  {
+                 "metaTitle":  "Blog | Telenet",
+                 "metaTitleSuffix":  "Blog Telenet",
+                 "metaDescription":  "Dernieres nouvelles, mises a jour et insights de Telenet.",
+                 "unknownDate":  "Date inconnue",
+                 "minRead":  "{minutes} min lecture",
+                 "generalCategory":  "General",
+                 "bannerAlt":  "Banniere du blog",
+                 "postNotFound":  "Article introuvable",
+                 "backToBlog":  "Retour au blog"
+             },
+    "Success":  {
+                    "title":  "Paiement reussi!",
+                    "subtitle":  "Votre commande a ete traitee avec succes.",
+                    "backHome":  "Retour a l accueil"
+                },
+    "Cancel":  {
+                   "title":  "Paiement annule",
+                   "subtitle":  "Votre paiement n a pas ete complete. Vous pouvez reessayer ou contacter le support.",
+                   "backHome":  "Retour a l accueil"
+               }
 }

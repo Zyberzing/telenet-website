@@ -39,7 +39,7 @@ import { useEffect, useState } from "react";
 
 const NAV_ITEMS = [
   { key: "plans", href: "/plans" },
-  { key: "topUp", href: "/top-up" },
+  // { key: "topUp", href: "/top-up" },
   { key: "about", href: "/about-us" },
   { key: "installGuide", href: "/installation-guide" },
   { key: "blog", href: "/blog" },

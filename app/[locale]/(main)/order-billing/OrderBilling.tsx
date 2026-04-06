@@ -100,6 +100,7 @@ export default function OrderBilling({
           setOrders(res.result || []);
           setPagination(res.pagination);
         }
+        console.log("Fetched orders:", res);
       } catch (e) {
         console.error("Pagination fetch error", e);
       } finally {
@@ -218,14 +219,7 @@ export default function OrderBilling({
     y -= 20;
     draw.push(text(left, y, 9, t("invoiceCompanyAddress")));
     y -= 12;
-    draw.push(
-      text(
-        left,
-        y,
-        9,
-        t("invoiceCompanyContact"),
-      ),
-    );
+    draw.push(text(left, y, 9, t("invoiceCompanyContact")));
     y -= 12;
     draw.push(text(left, y, 9, t("invoiceCompanyTaxId")));
 
@@ -303,9 +297,7 @@ export default function OrderBilling({
     /* FOOTER */
     draw.push(line(100));
     draw.push(text(220, 80, 9, t("invoiceThanks"), true));
-    draw.push(
-      text(180, 65, 8, t("invoiceSupportNote")),
-    );
+    draw.push(text(180, 65, 8, t("invoiceSupportNote")));
 
     const blob = buildPdfBlob(draw);
 
@@ -339,7 +331,12 @@ export default function OrderBilling({
         <div className="flex flex-wrap items-center gap-4 mb-8">
           <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
             <span className="text-sm font-medium">{t("filter")}</span>
-            <Image src="/filter.svg" alt={t("filterAlt")} height={14} width={15} />
+            <Image
+              src="/filter.svg"
+              alt={t("filterAlt")}
+              height={14}
+              width={15}
+            />
           </div>
 
           {/* Date Range */}
@@ -389,7 +386,7 @@ export default function OrderBilling({
           </Select>
 
           {/* Provider Filter */}
-          <Select onValueChange={setProviderFilter} value={providerFilter}>
+          {/* <Select onValueChange={setProviderFilter} value={providerFilter}>
             <SelectTrigger className="w-[140px] text-sm rounded-md dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 cursor-pointer">
               <SelectValue placeholder={t("provider")} />
             </SelectTrigger>
@@ -410,7 +407,7 @@ export default function OrderBilling({
                 </SelectItem>
               )}
             </SelectContent>
-          </Select>
+          </Select> */}
 
           <Input
             value={search}
@@ -440,11 +437,17 @@ export default function OrderBilling({
                 <th className="py-3 px-4 text-left font-medium">
                   {t("planName")}
                 </th>
-                <th className="py-3 px-4 text-left font-medium">
+                {/* <th className="py-3 px-4 text-left font-medium">
                   {t("provider")}
-                </th>
+                </th> */}
                 <th className="py-3 px-4 text-left font-medium whitespace-nowrap">
                   {t("paymentOption")}
+                </th>
+                <th className="py-3 px-4 text-left font-medium whitespace-nowrap">
+                  {t("paymentDate")}
+                </th>
+                <th className="py-3 px-4 text-left font-medium whitespace-nowrap">
+                  {t("amount")}
                 </th>
                 <th className="py-3 px-4 text-left font-medium">
                   {t("status")}
@@ -465,11 +468,19 @@ export default function OrderBilling({
                     <td className="py-3 px-4 whitespace-nowrap">
                       {order?.package_name}
                     </td>
-                    <td className="py-3 px-4 whitespace-nowrap">
+                    {/* <td className="py-3 px-4 whitespace-nowrap">
                       {order?.providerName || "-"}
-                    </td>
+                    </td> */}
                     <td className="py-3 px-4 capitalize">
                       {order?.paymentMethodType || t("card")}
+                    </td>
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      {order?.createdAt
+                        ? format(new Date(order.createdAt), "dd MMM yyyy")
+                        : "-"}
+                    </td>
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      {order?.finalPrice ? formatAmount(order.finalPrice) : "-"}
                     </td>
                     <td className="py-3 px-4">
                       <span

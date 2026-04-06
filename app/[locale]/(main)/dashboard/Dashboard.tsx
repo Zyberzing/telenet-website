@@ -85,7 +85,7 @@ export default function Dashboard({
             {/* Subheader */}
             <div className="mt-6 flex flex-col sm:flex-row sm:justify-between gap-3 sm:gap-0">
               <p className="text-base sm:text-lg">{t("readyForTrip")}</p>
-              <p className="text-base sm:text-lg">{t("lastTransaction")}</p>
+              {/* <p className="text-base sm:text-lg">{t("lastTransaction")}</p> */}
             </div>
 
             {/* Stats Cards */}
@@ -103,7 +103,7 @@ export default function Dashboard({
               </Card>
 
               {/* Wallet Balance */}
-              <Card className="p-4 bg-card shadow-sm border border-border rounded-xl">
+              {/* <Card className="p-4 bg-card shadow-sm border border-border rounded-xl">
                 <div>
                   <p className="text-sm text-muted-foreground">
                     {t("walletBalance")}
@@ -112,10 +112,10 @@ export default function Dashboard({
                     {formatAmount(userData?.walletBalance || 0)}
                   </p>
                 </div>
-              </Card>
+              </Card> */}
 
               {/* Last Transaction */}
-              <Card className="p-4 bg-card shadow-sm border border-border rounded-xl">
+              {/* <Card className="p-4 bg-card shadow-sm border border-border rounded-xl">
                 <div>
                   <p className="text-2xl sm:text-3xl font-[400] text-primary">
                     {formatAmount(userData?.lastTransaction?.amount || 0)}
@@ -135,7 +135,7 @@ export default function Dashboard({
                     </div>
                   </div>
                 </div>
-              </Card>
+              </Card> */}
             </div>
           </div>
         </div>

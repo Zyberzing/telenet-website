@@ -1,7 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +23,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/Input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -23,24 +36,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { getMyPlans } from "@/services/order";
 import { crateTicket } from "@/services/ticket";
-import { uploadMedia } from "@/services/upload";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 const schema = z.object({
-  // name: z.string().min(1),
-  // email: z.string().email(),
-  // phoneNumber: z.string().min(5),
-  // countryCode: z.string().min(1),
+  orderId: z.string().min(1),
   subject: z.string().min(1),
   category: z.string().min(1),
-  // priority: z.string().min(1),
   description: z.string().min(1),
 });
 
@@ -49,69 +59,196 @@ interface CreateTicketModalProps {
   setIsNewTicketOpen: (open: boolean) => void;
 }
 
+type OrderStatus = "active" | "expired" | "cancelled";
+
+type OrderOption = {
+  _id: string;
+  orderId?: string;
+  package_name?: string;
+  status?: string;
+};
+
+const ORDER_STATUSES: OrderStatus[] = ["active", "expired", "cancelled"];
+const ORDER_LIMIT = 20;
+type MyPlansResponse = {
+  result?: OrderOption[];
+  pagination?: {
+    totalPages?: number;
+  };
+} | null;
+
 export default function CreateTicketModal({
   isNewTicketOpen,
   setIsNewTicketOpen,
 }: CreateTicketModalProps) {
   const t = useTranslations("Support");
-  // const [openCountry, setOpenCountry] = useState(false);
-  // const countryCodes = getCountries().map((country) => ({
-  //   code: `+${getCountryCallingCode(country)}`,
-  //   country,
-  // }));
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema as any),
     defaultValues: {
-      // name: "",
-      // email: "",
-      // phoneNumber: "",
-      // countryCode: "",
+      orderId: "",
       subject: "",
       category: "",
-      // priority: "",
       description: "",
     },
   });
 
-  const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openOrders, setOpenOrders] = useState(false);
+  const [orderSearch, setOrderSearch] = useState("");
+  const [orders, setOrders] = useState<OrderOption[]>([]);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(false);
+  const [isLoadingMoreOrders, setIsLoadingMoreOrders] = useState(false);
+  const [hasMoreOrders, setHasMoreOrders] = useState(true);
+
+  const pageByStatusRef = useRef<Record<OrderStatus, number>>({
+    active: 1,
+    expired: 1,
+    cancelled: 1,
+  });
+
+  const hasMoreByStatusRef = useRef<Record<OrderStatus, boolean>>({
+    active: true,
+    expired: true,
+    cancelled: true,
+  });
+
+  const mergeOrders = useCallback(
+    (prev: OrderOption[], next: OrderOption[]) => {
+      const map = new Map<string, OrderOption>();
+      [...prev, ...next].forEach((order) => {
+        const key = order?.orderId || order?._id;
+        if (!key) return;
+        map.set(key, order);
+      });
+      return Array.from(map.values());
+    },
+    [],
+  );
+
+  const resetOrderState = useCallback(() => {
+    setOpenOrders(false);
+    setOrderSearch("");
+    setOrders([]);
+    setHasMoreOrders(true);
+    pageByStatusRef.current = {
+      active: 1,
+      expired: 1,
+      cancelled: 1,
+    };
+    hasMoreByStatusRef.current = {
+      active: true,
+      expired: true,
+      cancelled: true,
+    };
+  }, []);
+
+  const fetchOrderPage = useCallback(
+    async (isLoadMore: boolean) => {
+      if (isLoadMore) {
+        setIsLoadingMoreOrders(true);
+      } else {
+        setIsLoadingOrders(true);
+      }
+
+      try {
+        const statusesToFetch = ORDER_STATUSES.filter(
+          (status) => hasMoreByStatusRef.current[status],
+        );
+
+        if (statusesToFetch.length === 0) {
+          setHasMoreOrders(false);
+          return;
+        }
+
+        const responses = await Promise.all(
+          statusesToFetch.map(async (status) => {
+            const currentPage = pageByStatusRef.current[status];
+            const response = (await getMyPlans({
+              page: String(currentPage),
+              limit: String(ORDER_LIMIT),
+              status: status === "active" ? undefined : status,
+            })) as MyPlansResponse;
+            return { status, response, currentPage };
+          }),
+        );
+
+        const fetchedOrders: OrderOption[] = [];
+
+        responses.forEach(({ status, response, currentPage }) => {
+          const result = response?.result || [];
+          const pagination = response?.pagination;
+          fetchedOrders.push(...result);
+
+          const totalPages = pagination?.totalPages ?? currentPage;
+          hasMoreByStatusRef.current[status] = currentPage < totalPages;
+          pageByStatusRef.current[status] = currentPage + 1;
+        });
+
+        setOrders((prev) => mergeOrders(prev, fetchedOrders));
+        setHasMoreOrders(
+          ORDER_STATUSES.some((status) => hasMoreByStatusRef.current[status]),
+        );
+      } catch {
+        toast.error(t("ordersLoadFailed"));
+      } finally {
+        if (isLoadMore) {
+          setIsLoadingMoreOrders(false);
+        } else {
+          setIsLoadingOrders(false);
+        }
+      }
+    },
+    [mergeOrders, t],
+  );
 
   useEffect(() => {
     if (!isNewTicketOpen) {
       form.reset();
-      setFile(null);
+      resetOrderState();
+      return;
     }
-  }, [isNewTicketOpen, form]);
 
+    resetOrderState();
+    void fetchOrderPage(false);
+  }, [isNewTicketOpen, fetchOrderPage, form, resetOrderState]);
+
+  const filteredOrders = useMemo(() => {
+    const keyword = orderSearch.trim().toLowerCase();
+    if (!keyword) return orders;
+
+    return orders.filter((order) => {
+      const orderId = order.orderId?.toLowerCase() || "";
+      const id = order._id?.toLowerCase() || "";
+      const packageName = order.package_name?.toLowerCase() || "";
+      const status = order.status?.toLowerCase() || "";
+      return (
+        orderId.includes(keyword) ||
+        id.includes(keyword) ||
+        packageName.includes(keyword) ||
+        status.includes(keyword)
+      );
+    });
+  }, [orderSearch, orders]);
+  console.log("filteredOrders", filteredOrders);
   const onSubmit = async (values: z.infer<typeof schema>) => {
     try {
       setIsSubmitting(true);
 
-      let fileUrl: string | null = null;
-
-      if (file) {
-        const fd = new FormData();
-        fd.append("file", file);
-
-        const uploaded = await uploadMedia(fd);
-        fileUrl = uploaded?.data?.httpsUrl ?? null;
-      }
-
       const payload = {
-        // name: values.name,
-        // email: values.email,
-        // countryCode: values.countryCode,
-        // phoneNumber: values.phoneNumber,
+        orderId: values.orderId,
         subject: values.subject,
         description: values.description,
         category: values.category,
-        // priority: values.priority,
-        // document: fileUrl,
       };
+
       const response = await crateTicket(payload);
       toast.success(response.message || "Ticket created successfully");
       setIsNewTicketOpen(false);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : t("ticketCreateFailed");
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -140,132 +277,114 @@ export default function CreateTicketModal({
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-4 overflow-y-auto px-2"
           >
-            {/* NAME */}
-            {/* <FormField
+            <FormField
               control={form.control}
-              name="name"
+              name="orderId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("name")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("placeholderName")} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
+                  <FormLabel>{t("orderName")}</FormLabel>
+                  <Popover open={openOrders} onOpenChange={setOpenOrders}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        {(() => {
+                          const selectedOrder = orders.find(
+                            (order) =>
+                              (order.orderId || order._id) === field.value,
+                          );
 
-            {/* EMAIL */}
-            {/* <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("email")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("placeholderEmail")} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
-
-            {/* PHONE + COUNTRY CODE */}
-            {/* <div className="flex gap-3">
-              <FormField
-                control={form.control}
-                name="countryCode"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel>{t("countryCodeLabel")}</FormLabel>
-                    <Popover
-                      modal={true}
-                      open={openCountry}
-                      onOpenChange={setOpenCountry}
+                          return (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "w-full justify-between border-input bg-white hover:bg-white text-left font-normal",
+                                !field.value && "text-muted-foreground",
+                              )}
+                            >
+                              {selectedOrder?.package_name ||
+                                field.value ||
+                                t("selectOrder")}
+                              <ChevronsUpDown className="h-4 w-4 opacity-50" />
+                            </Button>
+                          );
+                        })()}
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-(--radix-popover-trigger-width) p-0"
+                      align="start"
                     >
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            className={cn(
-                              "w-full justify-between",
-                              !field.value && "text-muted-foreground",
-                            )}
-                          >
-                            {field.value ? (
-                              <span>
-                                {
-                                  countryCodes.find(
-                                    (item) => item.code === field.value,
-                                  )?.country
-                                }{" "}
-                                {field.value}
-                              </span>
-                            ) : (
-                              <span>{t("countryCodePlaceholder")}</span>
-                            )}
+                      <Command>
+                        <CommandInput
+                          placeholder={t("searchOrder")}
+                          value={orderSearch}
+                          onValueChange={setOrderSearch}
+                        />
+                        <CommandList
+                          className="max-h-64 overflow-y-auto"
+                          onScroll={(event) => {
+                            const target = event.currentTarget;
+                            const isNearBottom =
+                              target.scrollTop + target.clientHeight >=
+                              target.scrollHeight - 24;
 
-                            <ChevronsUpDown className="h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-
-                      <PopoverContent className="w-(--radix-popover-trigger-width) h-56 p-0">
-                        <Command>
-                          <CommandInput placeholder={t("searchCountry")} />
-                          <CommandEmpty>{t("noCountryFound")}</CommandEmpty>
-                          <CommandGroup className="max-h-[300px] overflow-y-auto">
-                            {countryCodes.map(({ country, code }) => (
+                            if (
+                              isNearBottom &&
+                              hasMoreOrders &&
+                              !isLoadingOrders &&
+                              !isLoadingMoreOrders
+                            ) {
+                              void fetchOrderPage(true);
+                            }
+                          }}
+                        >
+                          {!isLoadingOrders && filteredOrders.length === 0 && (
+                            <CommandEmpty>{t("noOrderFound")}</CommandEmpty>
+                          )}
+                          <CommandGroup>
+                            {filteredOrders.map((order) => (
                               <CommandItem
-                                key={country}
-                                value={`${country} ${code}`} // <-- SEARCH WORKS BY NAME & CODE
+                                key={order.orderId || order._id}
+                                value={`${order.orderId || ""} ${order._id} ${order.package_name || ""} ${order.status || ""}`}
                                 onSelect={() => {
-                                  field.onChange(code); // form value stays just +91
-                                  setOpenCountry(false); // <-- AUTO CLOSE FIX
+                                  field.onChange(order.orderId || order._id);
+                                  setOpenOrders(false);
                                 }}
                               >
-                                <ReactCountryFlag
-                                  svg
-                                  countryCode={country}
-                                  // className="mr-2"
-                                />
-                                {country} ({code})
                                 <Check
                                   className={cn(
-                                    "ml-auto h-4 w-4",
-                                    field.value === code
+                                    "mr-2 h-4 w-4",
+                                    field.value === (order.orderId || order._id)
                                       ? "opacity-100"
                                       : "opacity-0",
                                   )}
                                 />
+                                <div className="flex w-full items-center justify-between gap-2">
+                                  <span className="truncate">
+                                    {order?.package_name || ""}
+                                  </span>
+                                  <span className="text-xs capitalize text-gray-500">
+                                    {order.status || "-"}
+                                  </span>
+                                </div>
                               </CommandItem>
                             ))}
                           </CommandGroup>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                          {(isLoadingOrders || isLoadingMoreOrders) && (
+                            <div className="py-2 text-center text-xs text-gray-500">
+                              {t("loadingOrders")}
+                            </div>
+                          )}
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem className="flex-[2]">
-                    <FormLabel>{t("phone")}</FormLabel>
-                    <FormControl>
-                      <Input placeholder={t("placeholderPhone")} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div> */}
-
-            {/* SUBJECT */}
             <FormField
               control={form.control}
               name="subject"
@@ -280,7 +399,6 @@ export default function CreateTicketModal({
               )}
             />
 
-            {/* CATEGORY */}
             <div className="flex gap-2">
               <div className="flex-1">
                 <FormField
@@ -289,7 +407,10 @@ export default function CreateTicketModal({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t("category")}</FormLabel>
-                      <Select onValueChange={field.onChange}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder={t("selectCategory")} />
@@ -310,33 +431,8 @@ export default function CreateTicketModal({
                   )}
                 />
               </div>
-              {/* <div className="flex-1">
-                <FormField
-                  control={form.control}
-                  name="priority"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("priority")}</FormLabel>
-                      <Select onValueChange={field.onChange}>
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder={t("low")} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="low">{t("low")}</SelectItem>
-                          <SelectItem value="medium">{t("medium")}</SelectItem>
-                          <SelectItem value="high">{t("high")}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div> */}
             </div>
 
-            {/* DESCRIPTION */}
             <FormField
               control={form.control}
               name="description"
@@ -355,58 +451,6 @@ export default function CreateTicketModal({
               )}
             />
 
-            {/* FILE UPLOAD */}
-            {/* <div>
-              <Label className="block mb-1">{t("attachFile")}</Label>
-
-              <div className="flex gap-3">
-                <div>
-                  <input
-                    key={file ? file.name : "empty"}
-                    type="file"
-                    id="file-upload"
-                    className="hidden"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
-                  />
-                  <Button
-                    type="button"
-                    onClick={() =>
-                      document.getElementById("file-upload")?.click()
-                    }
-                  >
-                    {file ? file.name : t("upload")}
-                  </Button>
-                </div>
-
-                {file && (
-                  <div className="relative border rounded-md p-2 max-w-[50%] max-h-[50%] overflow-hidden">
-                    <button
-                      onClick={() => setFile(null)}
-                      className="absolute top-0.5 right-0.5 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs shadow cursor-pointer z-10"
-                    >
-                      ✕
-                    </button>
-
-                    {file.type.startsWith("image/") ? (
-                      <Image
-                        src={URL.createObjectURL(file)}
-                        alt="preview"
-                        width={200}
-                        height={200}
-                        unoptimized
-                        className="w-full h-full object-cover rounded"
-                      />
-                    ) : (
-                      <div className="text-xs text-center break-words">
-                        <p className="font-semibold">{file.name}</p>
-                        <p className="text-gray-500">{file.type}</p>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div> */}
-
             <DialogFooter className="mt-4 justify-center">
               <Button
                 type="submit"
@@ -415,7 +459,6 @@ export default function CreateTicketModal({
               >
                 {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
                 {isSubmitting ? t("submittingTicket") : t("submitTicket")}
-                {/* {t("submitTicket")} */}
               </Button>
               <Button
                 type="button"

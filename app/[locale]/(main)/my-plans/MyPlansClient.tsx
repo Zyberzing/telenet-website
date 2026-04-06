@@ -259,12 +259,12 @@ export default function MyPlans({
                         >
                           {t("renew")}
                         </Button>
-                        <Button
+                        {/* <Button
                           onClick={() => router.push(ROUTES.TOP_UP(locale))}
                           className="bg-black dark:text-white dark:hover:text-black dark:hover:bg-purple-50 hover:bg-gray-800 px-10 rounded-full"
                         >
                           {t("topUp")}
-                        </Button>
+                        </Button> */}
                         <Button
                           onClick={() => {
                             setSelectedPlan(plan);

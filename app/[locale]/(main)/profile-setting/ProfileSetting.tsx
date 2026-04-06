@@ -29,6 +29,7 @@ export type User = {
   currency: string;
   address?: string;
   phone?: string;
+  avatar?: string;
   profilePicture?: string;
   location?: string;
   customerDOB?: string;
@@ -58,11 +59,11 @@ export default function ProfileSetting({ user }: { user: User }) {
 
   // Notification settings — bind to ProfileSetting page
   const [emailAlertEnabled, setEmailAlertEnabled] = useState(
-    user?.emailAlertEnabled
+    user?.emailAlertEnabled,
   );
   const [smsAlertEnabled, setSmsAlertEnabled] = useState(user?.smsAlertEnabled);
   const [pushNotificationEnabled, setPushNotificationEnabled] = useState(
-    user?.pushNotificationEnabled
+    user?.pushNotificationEnabled,
   );
 
   // Handle password change
@@ -154,7 +155,8 @@ export default function ProfileSetting({ user }: { user: User }) {
         <div className="w-full max-w-3xl border border-[#CDE9FE] dark:border-gray-700 rounded-xl shadow-sm p-6 flex flex-col sm:flex-row items-center sm:items-start gap-6 bg-white dark:bg-gray-800">
           <div className="flex flex-col items-center sm:items-start gap-2">
             <Image
-              src={userData?.profilePicture || "/profile-user-avatar.svg"}
+              key={userData?.avatar}
+              src={userData?.avatar || "/profile-user-avatar.svg"}
               alt={t("profileAlt")}
               width={100}
               height={100}

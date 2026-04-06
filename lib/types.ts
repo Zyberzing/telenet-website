@@ -29,6 +29,7 @@ export interface Ticket {
   _id?: string;
   id: string;
   ticketId: string;
+  orderId?: string;
   priority: string;
   subject: string;
   createdAt: string;
@@ -131,6 +132,7 @@ export interface Order {
   network: string;
   providerName: string;
   paymentMethodType: string;
+  finalPrice: number;
   status: string;
   isRefundRequested?: boolean;
   refundStatus?: string | null;

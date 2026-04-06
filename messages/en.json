@@ -90,7 +90,6 @@
     "registerButton": "Create Account",
     "success": "Registration successful!",
     "error": "Something went wrong. Please try again.",
-
     "fields": {
       "name": "Name",
       "email": "Email",
@@ -100,7 +99,6 @@
       "phone": "Phone Number",
       "countryCode": "Country Code"
     },
-
     "placeholders": {
       "name": "Enter your full name",
       "email": "Enter your email",
@@ -110,7 +108,6 @@
       "phone": "Enter your phone number",
       "countryCode": "Enter country code (e.g. +1)"
     },
-
     "validation": {
       "nameRequired": "Name is required",
       "emailInvalid": "Please enter a valid email",
@@ -278,10 +275,18 @@
       "highlight": "Telenet",
       "subtitle": "We believe travelers are bold. telenet aims to reinforce their boldness zeta times with exabytes of connectivity.",
       "stats": [
-        { "label": "Customers Worldwide" },
-        { "label": "Serving Countries " },
-        { "label": "Years of Telecom Expertise" },
-        { "label": "App Downloads on iOS & Android" }
+        {
+          "label": "Customers Worldwide"
+        },
+        {
+          "label": "Serving Countries "
+        },
+        {
+          "label": "Years of Telecom Expertise"
+        },
+        {
+          "label": "App Downloads on iOS \u0026 Android"
+        }
       ],
       "content": "Sophia Michelle’s journey is far from over. Her story serves as a testament to the power of passion, and perseverance.For aspiring designers, she remains a beacon of inspiration—a reminder that creativity, when nurtured, can transform lives."
     },
@@ -321,7 +326,7 @@
     "title1": "Touchpoints Integration",
     "description1": "Enhance connectivity by integrating data packs to offer tailored eSIM solutions to your customers.",
     "title2": "Your Customers Buy",
-    "description2": "Customers buy eSIMs together with your core products & services.",
+    "description2": "Customers buy eSIMs together with your core products \u0026 services.",
     "title3": "You Earn the Profit",
     "description3": "Increase ancillary revenue by selling eSIM.",
     "form": {
@@ -858,6 +863,14 @@
     "loading": "Loading",
     "filterAlt": "Filter",
     "action": "Action",
-    "noTickets": "No tickets found"
+    "noTickets": "No tickets found",
+    "orderId": "Order ID",
+    "selectOrder": "Select order",
+    "searchOrder": "Search order...",
+    "noOrderFound": "No order found",
+    "loadingOrders": "Loading orders...",
+    "ordersLoadFailed": "Failed to load orders",
+    "ticketCreatedSuccessfully": "Ticket created successfully",
+    "ticketCreateFailed": "Failed to create ticket"
   }
 }
