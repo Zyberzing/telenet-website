@@ -47,7 +47,8 @@ export default function Plans({
   const { formatAmount } = useCurrency();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const listContainerRef = useRef<HTMLElement | null>(null);
+  const listContainerRef = useRef<HTMLDivElement | null>(null);
+  const sidebarContainerRef = useRef<HTMLDivElement | null>(null);
   const hasMountedRef = useRef(false);
   const urlFilterBy =
     searchParams.get("filterby") === "Region"
@@ -91,10 +92,11 @@ export default function Plans({
   const [planType, setPlanType] = useState(
     Number(searchParams.get("plan_name")) || initialPlanType || 1,
   );
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [sidebarHeight, setSidebarHeight] = useState<number | null>(null);
 
   const smoothScrollToTop = () => {
     listContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -186,6 +188,38 @@ export default function Plans({
     urlMaxValidity,
     urlPlanType,
   ]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (!isDesktop) {
+      setSidebarHeight(null);
+      return;
+    }
+
+    const sidebarEl = sidebarContainerRef.current;
+    if (!sidebarEl) {
+      return;
+    }
+
+    const updateSidebarHeight = () => {
+      setSidebarHeight(Math.ceil(sidebarEl.getBoundingClientRect().height));
+    };
+
+    updateSidebarHeight();
+    const observer = new ResizeObserver(updateSidebarHeight);
+    observer.observe(sidebarEl);
+
+    return () => observer.disconnect();
+  }, [isDesktop]);
 
   const updateUrlAndReload = ({
     newDataSize,
@@ -304,8 +338,8 @@ export default function Plans({
   };
 
   return (
-    <section className="w-full min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
-      <div className="relative w-full h-[22.6vh]">
+    <section className="w-full min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 lg:h-full lg:min-h-0 lg:flex lg:flex-col lg:overflow-hidden">
+      <div className="relative w-full h-[22.6vh] lg:flex-shrink-0">
         <Image
           src="/banner-plans.svg"
           alt={t("bannerAlt")}
@@ -315,163 +349,173 @@ export default function Plans({
         />
       </div>
 
-      <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:h-[calc(100vh)-88px-22.6vh]">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:h-full">
-          <PlanFilters
-            filterType={filterType}
-            setFilterType={setFilterType}
-            countries={countries.map((c) => ({
-              label: c.name,
-              value: c.iso2,
-            }))}
-            regions={regions.map((r) => ({
-              label: r.name,
-              value: r.name,
-            }))}
-            selectedCountry={internalSelectedCountry}
-            selectedRegion={internalSelectedRegion}
-            onCountryChange={(v) => {
-              setFilterType("country");
-              setInternalSelectedCountry(v);
-              updateUrlAndReload({
-                newFilterType: "country",
-                newCountry: v,
-              });
-            }}
-            onRegionChange={(v) => {
-              setFilterType("region");
-              setInternalSelectedRegion(v);
-              updateUrlAndReload({
-                newFilterType: "region",
-                newRegion: v,
-              });
-            }}
-            dataSize={dataSize}
-            onDataSizeChange={setDataSize}
-            onDataSizeCommit={(v) => {
-              updateUrlAndReload({ newDataSize: v[0] });
-            }}
-            minValidity={minValidity}
-            onMinValidityChange={setMinValidity}
-            onMinValidityCommit={(v) => {
-              updateUrlAndReload({ newMinValidity: v });
-            }}
-            maxValidity={maxValidity}
-            onMaxValidityChange={setMaxValidity}
-            onMaxValidityCommit={(v) => {
-              updateUrlAndReload({ newMaxValidity: v });
-            }}
-            planType={planType}
-            onPlanTypeChange={(type) => {
-              setPlanType(type);
-              updateUrlAndReload({ newPlanType: type });
-            }}
-            countryLabel={t("country")}
-            regionLabel={t("region")}
-            filterTitle={t("filterTitle")}
-          />
+      <div className="max-w-7xl mx-auto py-12 px-4 md:px-8 lg:flex-1 lg:min-h-0 lg:box-border lg:overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:h-full lg:overflow-hidden">
+          <div ref={sidebarContainerRef} className="lg:self-start">
+            <PlanFilters
+              filterType={filterType}
+              setFilterType={setFilterType}
+              countries={countries.map((c) => ({
+                label: c.name,
+                value: c.iso2,
+              }))}
+              regions={regions.map((r) => ({
+                label: r.name,
+                value: r.name,
+              }))}
+              selectedCountry={internalSelectedCountry}
+              selectedRegion={internalSelectedRegion}
+              onCountryChange={(v) => {
+                setFilterType("country");
+                setInternalSelectedCountry(v);
+                updateUrlAndReload({
+                  newFilterType: "country",
+                  newCountry: v,
+                });
+              }}
+              onRegionChange={(v) => {
+                setFilterType("region");
+                setInternalSelectedRegion(v);
+                updateUrlAndReload({
+                  newFilterType: "region",
+                  newRegion: v,
+                });
+              }}
+              dataSize={dataSize}
+              onDataSizeChange={setDataSize}
+              onDataSizeCommit={(v) => {
+                updateUrlAndReload({ newDataSize: v[0] });
+              }}
+              minValidity={minValidity}
+              onMinValidityChange={setMinValidity}
+              onMinValidityCommit={(v) => {
+                updateUrlAndReload({ newMinValidity: v });
+              }}
+              maxValidity={maxValidity}
+              onMaxValidityChange={setMaxValidity}
+              onMaxValidityCommit={(v) => {
+                updateUrlAndReload({ newMaxValidity: v });
+              }}
+              planType={planType}
+              onPlanTypeChange={(type) => {
+                setPlanType(type);
+                updateUrlAndReload({ newPlanType: type });
+              }}
+              countryLabel={t("country")}
+              regionLabel={t("region")}
+              filterTitle={t("filterTitle")}
+            />
+          </div>
 
-          <main
-            ref={listContainerRef}
-            className="lg:col-span-4 lg:overflow-y-auto lg:h-full lg:pr-2 scrollbar-thin"
-          >
-            <div className="pb-6">
+          <main className="lg:col-span-4 lg:h-full lg:min-h-0">
+            <div
+              className="pb-6 lg:h-full lg:flex lg:flex-col lg:min-h-0"
+              style={
+                isDesktop && sidebarHeight
+                  ? { height: `${sidebarHeight}px` }
+                  : undefined
+              }
+            >
               <h1 className="text-start text-2xl md:text-3xl font-[400px] mb-6 sticky top-0 bg-white z-10 pb-2 dark:bg-gray-900">
                 {t("popularPlans")}
               </h1>
-
-              {isPending ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <PlanCardSkeleton key={i} />
-                  ))}
-                </div>
-              ) : plansList.length > 0 ? (
-                <>
+              <div
+                ref={listContainerRef}
+                className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto lg:pr-2 scrollbar-thin"
+              >
+                {isPending ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {plansList.map((plan) => (
-                      <div key={plan.package_id}>
-                        <div
-                          className="rounded-2xl p-5 shadow-sm border border-gray-100 bg-[#F1F8FE] hover:bg-[#FFF2E0] transition-all duration-300 flex flex-col justify-between cursor-pointer group dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
-                          onClick={() => setSelectedPlan(plan)}
-                        >
-                          <div className="flex justify-between">
-                            <h3 className="text-2xl font-[400px] mb-6">
-                              {formatAmount(plan.finalPrice)}
-                            </h3>
-                            <ChevronRightIcon className="cursor-pointer text-primary group-hover:text-[#E49B2C] transition-colors duration-300" />
-                          </div>
-
-                          <div className="flex justify-between">
-                            <div className="gap-4">
-                              <p className="flex gap-2 items-center">
-                                <ArrowDownUp size={15} /> {plan.data}
-                              </p>
-                              <p className="flex gap-2 items-center">
-                                <Phone size={15} /> {plan.call}
-                              </p>
-                            </div>
-                            <div className="gap-4">
-                              <p className="flex gap-2 items-center">
-                                <Calendar size={15} />
-                                {plan.validity} {t("days")}
-                              </p>
-                              <p className="flex gap-2 items-center">
-                                <MessageCircleMore size={15} /> {plan.sms}
-                              </p>
-                            </div>
-                          </div>
-
-                          <Button className="text-white mt-6 text-sm rounded-full w-full transition-all duration-300 group-hover:[background:#E49B2C] group-hover:text-black dark:group-hover:text-white hover:[background:#E49B2C_!important] hover:text-black dark:hover:text-white bg-gradient">
-                            {t("buy")}
-                          </Button>
-                        </div>
-                      </div>
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <PlanCardSkeleton key={i} />
                     ))}
                   </div>
-
-                  {totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-2 mt-8">
-                      <Button
-                        variant="outline"
-                        onClick={() =>
-                          updateUrlAndReload({ newPage: currentPage - 1 })
-                        }
-                        disabled={currentPage <= 1 || isPending}
-                      >
-                        Prev
-                      </Button>
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                        (page) => (
-                          <Button
-                            key={page}
-                            variant={
-                              currentPage === page ? "default" : "outline"
-                            }
-                            onClick={() =>
-                              updateUrlAndReload({ newPage: page })
-                            }
-                            disabled={isPending}
+                ) : plansList.length > 0 ? (
+                  <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {plansList.map((plan) => (
+                        <div key={plan.package_id}>
+                          <div
+                            className="rounded-2xl p-5 shadow-sm border border-gray-100 bg-[#F1F8FE] hover:bg-[#FFF2E0] transition-all duration-300 flex flex-col justify-between cursor-pointer group dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+                            onClick={() => setSelectedPlan(plan)}
                           >
-                            {page}
-                          </Button>
-                        ),
-                      )}
-                      <Button
-                        variant="outline"
-                        onClick={() =>
-                          updateUrlAndReload({ newPage: currentPage + 1 })
-                        }
-                        disabled={currentPage >= totalPages || isPending}
-                      >
-                        Next
-                      </Button>
+                            <div className="flex justify-between">
+                              <h3 className="text-2xl font-[400px] mb-6">
+                                {formatAmount(plan.finalPrice)}
+                              </h3>
+                              <ChevronRightIcon className="cursor-pointer text-primary group-hover:text-[#E49B2C] transition-colors duration-300" />
+                            </div>
+
+                            <div className="flex justify-between">
+                              <div className="gap-4">
+                                <p className="flex gap-2 items-center">
+                                  <ArrowDownUp size={15} /> {plan.data}
+                                </p>
+                                <p className="flex gap-2 items-center">
+                                  <Phone size={15} /> {plan.call}
+                                </p>
+                              </div>
+                              <div className="gap-4">
+                                <p className="flex gap-2 items-center">
+                                  <Calendar size={15} />
+                                  {plan.validity} {t("days")}
+                                </p>
+                                <p className="flex gap-2 items-center">
+                                  <MessageCircleMore size={15} /> {plan.sms}
+                                </p>
+                              </div>
+                            </div>
+
+                            <Button className="text-white mt-6 text-sm rounded-full w-full transition-all duration-300 group-hover:[background:#E49B2C] group-hover:text-black dark:group-hover:text-white hover:[background:#E49B2C_!important] hover:text-black dark:hover:text-white bg-gradient">
+                              {t("buy")}
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  )}
-                </>
-              ) : (
-                <p className="text-[20px]">{t("noPlans")}</p>
-              )}
+
+                    {totalPages > 1 && (
+                      <div className="flex items-center justify-center gap-2 mt-8">
+                        <Button
+                          variant="outline"
+                          onClick={() =>
+                            updateUrlAndReload({ newPage: currentPage - 1 })
+                          }
+                          disabled={currentPage <= 1 || isPending}
+                        >
+                          Prev
+                        </Button>
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                          (page) => (
+                            <Button
+                              key={page}
+                              variant={
+                                currentPage === page ? "default" : "outline"
+                              }
+                              onClick={() =>
+                                updateUrlAndReload({ newPage: page })
+                              }
+                              disabled={isPending}
+                            >
+                              {page}
+                            </Button>
+                          ),
+                        )}
+                        <Button
+                          variant="outline"
+                          onClick={() =>
+                            updateUrlAndReload({ newPage: currentPage + 1 })
+                          }
+                          disabled={currentPage >= totalPages || isPending}
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-[20px]">{t("noPlans")}</p>
+                )}
+              </div>
             </div>
           </main>
         </div>
