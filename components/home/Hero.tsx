@@ -234,7 +234,7 @@ export default function Hero() {
                                     setDropdownOpen(false);
                                   }}
                                   className={cn(
-                                    isSelected && "bg-gradient text-white!"
+                                    isSelected && "bg-gradient text-white!",
                                   )}
                                 >
                                   {opt.name}
@@ -243,7 +243,7 @@ export default function Hero() {
                                       "ml-auto h-4 w-4",
                                       isSelected
                                         ? "opacity-100 text-white"
-                                        : "opacity-0"
+                                        : "opacity-0",
                                     )}
                                   />
                                 </CommandItem>

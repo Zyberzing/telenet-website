@@ -2,6 +2,7 @@ export type LanguageOption = {
   id: string;
   code: string;
   name: string;
+  dir: "ltr" | "rtl";
 };
 
 type LanguageListApiResponse = {
@@ -12,6 +13,8 @@ type LanguageListApiResponse = {
       id?: string;
       code?: string;
       lang?: string;
+      dir?: string;
+      direction?: string;
       active?: boolean | number | string;
       isActive?: boolean | number | string;
       enabled?: boolean | number | string;
@@ -22,10 +25,34 @@ type LanguageListApiResponse = {
 };
 
 export const FALLBACK_LANGUAGES: LanguageOption[] = [
-  { id: "en", code: "en", name: "English" },
-  { id: "fr", code: "fr", name: "Français" },
-  { id: "es", code: "es", name: "Español" },
+  { id: "en", code: "en", name: "English", dir: "ltr" },
+  { id: "fr", code: "fr", name: "Français", dir: "ltr" },
+  { id: "es", code: "es", name: "Español", dir: "ltr" },
 ];
+
+function isRtlLocale(code: string): boolean {
+  return ["ar", "fa", "he", "ku", "ps", "sd", "ug", "ur"].includes(
+    code.toLowerCase(),
+  );
+}
+
+function normalizeDirection(
+  code: string,
+  dir?: string,
+  direction?: string,
+): "ltr" | "rtl" {
+  const normalizedValue = (dir || direction || "").trim().toLowerCase();
+
+  if (normalizedValue === "rtl") {
+    return "rtl";
+  }
+
+  if (normalizedValue === "ltr") {
+    return "ltr";
+  }
+
+  return isRtlLocale(code) ? "rtl" : "ltr";
+}
 
 export async function getLanguageList(): Promise<LanguageOption[]> {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE;
@@ -57,6 +84,8 @@ export async function getLanguageList(): Promise<LanguageOption[]> {
             _id?: string;
             code: string;
             lang: string;
+            dir?: string;
+            direction?: string;
             active?: boolean | number | string;
             isActive?: boolean | number | string;
             enabled?: boolean | number | string;
@@ -94,6 +123,7 @@ export async function getLanguageList(): Promise<LanguageOption[]> {
             id,
             code,
             name: item.lang,
+            dir: normalizeDirection(code, item.dir, item.direction),
           };
         }) || [];
 
@@ -109,4 +139,18 @@ export async function getLanguageIdByCode(
 ): Promise<string | undefined> {
   const languages = await getLanguageList();
   return languages.find((item) => item.code === code.toLowerCase())?.id;
+}
+
+export async function getLanguageByCode(
+  code: string,
+): Promise<LanguageOption | undefined> {
+  const languages = await getLanguageList();
+  return languages.find((item) => item.code === code.toLowerCase());
+}
+
+export async function getLanguageDirByCode(
+  code: string,
+): Promise<"ltr" | "rtl"> {
+  const language = await getLanguageByCode(code);
+  return language?.dir || normalizeDirection(code);
 }
