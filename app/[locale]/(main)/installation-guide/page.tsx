@@ -1,4 +1,14 @@
 import InstallationGuide from "./InstallationGuide";
+import { getPageMetadata } from "@/services/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return getPageMetadata(locale, "installation-guide");
+}
 
 export default async function Page() {
   // ✅ Optionally, fetch any JSON or API data (server-side)

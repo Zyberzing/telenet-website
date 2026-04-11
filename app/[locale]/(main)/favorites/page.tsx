@@ -1,9 +1,19 @@
 import { hasSession } from "@/lib/session";
 import { Pagination, Plan } from "@/lib/types";
+import { getPageMetadata } from "@/services/seo";
 import { getWishlist } from "@/services/wishlist";
 import Favorites from "./Favorites";
 
 const FAVORITES_LIMIT = 9;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return getPageMetadata(locale, "favorites");
+}
 
 export default async function FavoritesPage({
   searchParams,

@@ -1,5 +1,15 @@
 import AboutUs from "./AboutUs";
+import { getPageMetadata } from "@/services/seo";
 import { getTranslations } from "next-intl/server";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return getPageMetadata(locale, "about-us");
+}
 
 export default async function Page() {
   // 🧠 SSR: This function runs on the server

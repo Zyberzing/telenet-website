@@ -1,4 +1,14 @@
 import VirtualNumberPage from "./VirtualNumberPage";
+import { getPageMetadata } from "@/services/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return getPageMetadata(locale, "virtual-number");
+}
 
 export default async function Page() {
   // Simulate fetching user data (SSR)

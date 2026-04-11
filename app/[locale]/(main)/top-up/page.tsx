@@ -1,4 +1,14 @@
 import TopUp from "./TopUp";
+import { getPageMetadata } from "@/services/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return getPageMetadata(locale, "top-up");
+}
 
 export default async function Page() {
   // ✅ Optionally, fetch any JSON or API data (server-side)

@@ -1,6 +1,16 @@
 import RegisterForm from "@/components/RegisterForm";
+import { getPageMetadata } from "@/services/seo";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return getPageMetadata(locale, "register");
+}
 
 export default function LoginPage() {
   const t = useTranslations("LoginPage");

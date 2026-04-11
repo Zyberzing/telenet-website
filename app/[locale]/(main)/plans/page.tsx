@@ -1,8 +1,7 @@
 import { Pagination, Plan } from "@/lib/types";
 import { getProfile } from "@/services/auth";
 import { getCountries, getPlans, getRegions } from "@/services/plansApi";
-import { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getPageMetadata } from "@/services/seo";
 import Plans from "./Plans";
 
 export type countryItems = {
@@ -40,42 +39,13 @@ const toOptionalPositiveInt = (value?: string) => {
   return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : undefined;
 };
 
-const toPositiveInt = (value: string | undefined, fallback: number) => {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : fallback;
-};
-
 export async function generateMetadata({
   params,
-  searchParams,
-}: PageProps & { params: Promise<{ locale: string }> }): Promise<Metadata> {
+}: {
+  params: Promise<{ locale: string }>;
+}) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "Plans" });
-  const query = await searchParams;
-  const filterby = query.filterby || "Country";
-  const country = query.country_code;
-  const region = query.region_name;
-
-  let title = t("metaTitleDefault");
-  let description = t("metaDescriptionDefault");
-
-  if (filterby === "Region" && region) {
-    title = t("metaTitleRegion", { region });
-    description = t("metaDescriptionRegion", { region });
-  } else if (filterby === "Country" && country) {
-    title = t("metaTitleCountry", { country });
-    description = t("metaDescriptionCountry", { country });
-  }
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: "website",
-    },
-  };
+  return getPageMetadata(locale, "plans");
 }
 
 export default async function Page({ searchParams }: PageProps) {

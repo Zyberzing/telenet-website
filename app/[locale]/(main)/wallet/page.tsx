@@ -1,7 +1,17 @@
 import Wallet from "./Wallet";
+import { getPageMetadata } from "@/services/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return getPageMetadata(locale, "wallet");
+}
 
 async function getTransactions() {
   return [

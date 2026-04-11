@@ -1,4 +1,14 @@
 import OTPVerification from "./OTPVerification";
+import { getPageMetadata } from "@/services/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return getPageMetadata(locale, "otp");
+}
 
 export default async function Page({
   searchParams,

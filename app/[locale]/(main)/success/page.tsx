@@ -10,7 +10,7 @@ export default function SuccessPage() {
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("Success");
-  const searchParams = useSearchParams();
+  useSearchParams();
   // const sessionId = searchParams.get("session_id");
 
   return (

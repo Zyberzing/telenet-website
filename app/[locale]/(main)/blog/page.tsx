@@ -1,7 +1,7 @@
 import { BlogCard } from "@/components/blog/BlogCard";
 import { getCmsBlogList } from "@/services/cms";
 import { getLanguageIdByCode } from "@/services/language";
-import { Metadata } from "next";
+import { getPageMetadata } from "@/services/seo";
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 
@@ -9,13 +9,9 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
+}) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "Blog" });
-  return {
-    title: t("metaTitle"),
-    description: t("metaDescription"),
-  };
+  return getPageMetadata(locale, "blog");
 }
 
 const slugify = (value: string) =>

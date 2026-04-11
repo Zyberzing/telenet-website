@@ -1,5 +1,15 @@
 import { getTickets } from "@/services/ticket";
+import { getPageMetadata } from "@/services/seo";
 import Support from "./Support";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return getPageMetadata(locale, "support");
+}
 
 export default async function Page() {
   const tickets = await getTickets({

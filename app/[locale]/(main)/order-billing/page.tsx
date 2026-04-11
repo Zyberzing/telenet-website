@@ -1,5 +1,6 @@
 import { Order } from "@/lib/types";
 import { getOrderList } from "@/services/order";
+import { getPageMetadata } from "@/services/seo";
 import OrderBilling from "./OrderBilling";
 
 export interface GetOrderListResponse {
@@ -10,6 +11,15 @@ export interface GetOrderListResponse {
   pagination: Record<string, unknown>;
   // };
   // statusCode: number;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return getPageMetadata(locale, "order-billing");
 }
 
 export default async function OrderBillingPage() {

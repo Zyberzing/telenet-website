@@ -1,4 +1,5 @@
 import { getMyPlans } from "@/services/order";
+import { getPageMetadata } from "@/services/seo";
 import MyPlans, { Plan } from "./MyPlansClient";
 
 interface GetMyPlansResponse {
@@ -15,6 +16,15 @@ interface GetMyPlansResponse {
   };
   // };
   // statusCode: number;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  return getPageMetadata(locale, "my-plans");
 }
 
 const Page = async ({
