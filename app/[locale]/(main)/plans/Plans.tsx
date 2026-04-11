@@ -21,6 +21,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 const DEFAULT_DATA_SIZE = 50;
+const DEFAULT_PLAN_TYPE: 0 | 1 | null = null;
 
 const toPositiveInt = (value: string | null | undefined, fallback: number) => {
   const parsed = Number(value);
@@ -30,6 +31,14 @@ const toPositiveInt = (value: string | null | undefined, fallback: number) => {
 const toOptionalPositiveInt = (value: string | null | undefined) => {
   const parsed = Number(value);
   return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : undefined;
+};
+
+const toPlanType = (
+  value: string | number | null | undefined,
+): 0 | 1 | null => {
+  if (value === 0 || value === "0") return 0;
+  if (value === 1 || value === "1") return 1;
+  return null;
 };
 
 export default function Plans({
@@ -69,9 +78,7 @@ export default function Plans({
   const urlMaxValidity = toOptionalPositiveInt(
     searchParams.get("max_validity"),
   );
-  const urlPlanType = Number(
-    searchParams.get("plan_name") ?? initialPlanType ?? 1,
-  );
+  const urlPlanType = toPlanType(searchParams.get("plan_name") ?? initialPlanType);
 
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [plansList, setPlansList] = useState<Plan[]>(result);
@@ -89,9 +96,7 @@ export default function Plans({
   const [minValidity, setMinValidity] = useState(urlMinValidity);
   const [maxValidity, setMaxValidity] = useState(urlMaxValidity);
   const [isPending, startTransition] = useTransition();
-  const [planType, setPlanType] = useState(
-    Number(searchParams.get("plan_name")) || initialPlanType || 1,
-  );
+  const [planType, setPlanType] = useState<0 | 1 | null>(urlPlanType);
   const [isDesktop, setIsDesktop] = useState(false);
   const [sidebarHeight, setSidebarHeight] = useState<number | null>(null);
 
@@ -115,7 +120,6 @@ export default function Plans({
     const params = new URLSearchParams(searchParams.toString());
     const hasFilter = Boolean(searchParams.get("filterby"));
     const hasDataSize = Boolean(searchParams.get("data_size"));
-    const hasPlanType = Boolean(searchParams.get("plan_name"));
     const hasCountry = Boolean(searchParams.get("country_code"));
     const hasRegion = Boolean(searchParams.get("region_name"));
     const hasPage = Boolean(searchParams.get("page"));
@@ -124,7 +128,7 @@ export default function Plans({
       urlFilterBy === "country" && (!hasCountry || !hasFilter);
     const needsRegionDefaults =
       urlFilterBy === "region" && (!hasRegion || !hasFilter);
-    const needsBaseDefaults = !hasDataSize || !hasPlanType || !hasPage;
+    const needsBaseDefaults = !hasDataSize || !hasPage;
 
     if (!needsCountryDefaults && !needsRegionDefaults && !needsBaseDefaults) {
       return;
@@ -133,7 +137,11 @@ export default function Plans({
     params.set("filterby", urlFilterBy === "country" ? "Country" : "Region");
     params.set("data_size", String(urlDataSize || DEFAULT_DATA_SIZE));
     params.set("page", String(urlPage || 1));
-    params.set("plan_name", String(urlPlanType || 1));
+    if (urlPlanType === 0 || urlPlanType === 1) {
+      params.set("plan_name", String(urlPlanType));
+    } else {
+      params.delete("plan_name");
+    }
 
     if (typeof urlMinValidity === "number" && urlMinValidity > 0) {
       params.set("min_validity", String(urlMinValidity));
@@ -237,7 +245,7 @@ export default function Plans({
     newCountry?: string;
     newRegion?: string;
     newFilterType?: "country" | "region";
-    newPlanType?: number;
+    newPlanType?: 0 | 1 | null;
     newPage?: number;
   }) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -250,7 +258,12 @@ export default function Plans({
     const page = newPage ?? 1;
 
     params.set("filterby", filter === "country" ? "Country" : "Region");
-    params.set("plan_name", (newPlanType ?? planType).toString());
+    const nextPlanType = newPlanType ?? planType ?? DEFAULT_PLAN_TYPE;
+    if (nextPlanType === 0 || nextPlanType === 1) {
+      params.set("plan_name", nextPlanType.toString());
+    } else {
+      params.delete("plan_name");
+    }
     params.set("data_size", String(dataSizeValue));
     params.set("page", page.toString());
 

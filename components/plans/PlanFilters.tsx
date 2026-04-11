@@ -109,8 +109,8 @@ interface PlanFiltersProps {
   maxValidity?: number;
   onMaxValidityChange: (value: number | undefined) => void;
   onMaxValidityCommit: (value: number | undefined) => void;
-  planType: number;
-  onPlanTypeChange: (type: number) => void;
+  planType: 0 | 1 | null;
+  onPlanTypeChange: (type: 0 | 1 | null) => void;
   countryLabel: string;
   regionLabel: string;
   filterTitle: string;
@@ -297,8 +297,20 @@ export function PlanFilters({
             Plan Type
           </label>
 
-          <div className="flex items-center gap-4 mt-2">
-            <label className="flex items-center gap-2 cursor-pointer text-gray-700 dark:text-gray-200">
+          <div className="flex items-center gap-2 mt-2">
+            <label className="flex items-center gap-1 cursor-pointer text-gray-700 dark:text-gray-200">
+              <input
+                type="radio"
+                name="planType"
+                value="both"
+                checked={planType === null}
+                className="accent-purple-600"
+                onChange={() => onPlanTypeChange(null)}
+              />
+              <span className="text-sm">Both</span>
+            </label>
+
+            <label className="flex items-center gap-1 cursor-pointer text-gray-700 dark:text-gray-200">
               <input
                 type="radio"
                 name="planType"
@@ -307,19 +319,19 @@ export function PlanFilters({
                 className="accent-purple-600"
                 onChange={() => onPlanTypeChange(1)}
               />
-              <span>Data</span>
+              <span className="text-sm">Data</span>
             </label>
 
-            <label className="flex items-center gap-2 cursor-pointer text-gray-700 dark:text-gray-200">
+            <label className="flex items-center gap-1 cursor-pointer text-gray-700 dark:text-gray-200">
               <input
                 type="radio"
                 name="planType"
-                value="2"
-                checked={planType === 2}
+                value="0"
+                checked={planType === 0}
                 className="accent-purple-600"
-                onChange={() => onPlanTypeChange(2)}
+                onChange={() => onPlanTypeChange(0)}
               />
-              <span>Voice</span>
+              <span className="text-sm">Voice</span>
             </label>
           </div>
         </div>

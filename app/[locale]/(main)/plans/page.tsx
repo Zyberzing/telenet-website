@@ -1,7 +1,8 @@
 import { Pagination, Plan } from "@/lib/types";
 import { getProfile } from "@/services/auth";
 import { getCountries, getPlans, getRegions } from "@/services/plansApi";
-import { getPageMetadata } from "@/services/seo";
+import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import Plans from "./Plans";
 
 export type countryItems = {
@@ -39,13 +40,43 @@ const toOptionalPositiveInt = (value?: string) => {
   return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : undefined;
 };
 
+const toPlanType = (value?: string): 0 | 1 | null => {
+  if (value === "0") return 0;
+  if (value === "1") return 1;
+  return DEFAULT_PLAN_TYPE;
+};
+
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
+  searchParams,
+}: PageProps & { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  return getPageMetadata(locale, "plans");
+  const t = await getTranslations({ locale, namespace: "Plans" });
+  const query = await searchParams;
+  const filterby = query.filterby || "Country";
+  const country = query.country_code;
+  const region = query.region_name;
+
+  let title = t("metaTitleDefault");
+  let description = t("metaDescriptionDefault");
+
+  if (filterby === "Region" && region) {
+    title = t("metaTitleRegion", { region });
+    description = t("metaDescriptionRegion", { region });
+  } else if (filterby === "Country" && country) {
+    title = t("metaTitleCountry", { country });
+    description = t("metaDescriptionCountry", { country });
+  }
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+    },
+  };
 }
 
 export default async function Page({ searchParams }: PageProps) {
@@ -75,9 +106,7 @@ export default async function Page({ searchParams }: PageProps) {
     : DEFAULT_DATA_SIZE;
   const selectedMinValidity = toOptionalPositiveInt(query.min_validity);
   const selectedMaxValidity = toOptionalPositiveInt(query.max_validity);
-  const selectedPlanType = query.plan_name
-    ? Number(query.plan_name)
-    : DEFAULT_PLAN_TYPE;
+  const selectedPlanType = toPlanType(query.plan_name);
 
   let initialPlans: Plan[] = [];
   let initialPagination: Pagination | null = null;
@@ -96,7 +125,7 @@ export default async function Page({ searchParams }: PageProps) {
         data_size: selectedDataSize,
         min_validity: selectedMinValidity,
         max_validity: selectedMaxValidity,
-        plan_name: selectedPlanType,
+        plan_name: selectedPlanType ?? undefined, // If plan_name is explicitly 0 or 1, use it; otherwise, default to 1
       });
 
       initialPlans = plansData?.plans || [];

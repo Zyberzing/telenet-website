@@ -50,7 +50,7 @@ export const getPlans = async ({
   data_size?: number;
   min_validity?: number;
   max_validity?: number;
-  plan_name?: number;
+  plan_name?: 0 | 1;
 }): Promise<GetPlansResponse> => {
   try {
     const session = await hasSession();
@@ -92,7 +92,13 @@ export const getPlans = async ({
     ) {
       params.set("max_validity", max_validity.toString());
     }
-    if (plan_name) params.set("plan_name", plan_name.toString());
+    if (
+      typeof plan_name === "number" &&
+      Number.isFinite(plan_name) &&
+      (plan_name === 0 || plan_name === 1)
+    ) {
+      params.set("plan_name", plan_name.toString());
+    }
 
     const apiUrl = `/plan/package-list?${params.toString()}`;
 

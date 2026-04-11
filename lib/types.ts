@@ -206,7 +206,7 @@ export interface PlansProps {
   selectedCountry: string;
   selectedRegion: string;
   filterby: "Country" | "Region";
-  planType: number;
+  planType: 0 | 1 | null;
   userProfile: User | null;
 }
 
