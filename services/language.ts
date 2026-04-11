@@ -12,6 +12,11 @@ type LanguageListApiResponse = {
       id?: string;
       code?: string;
       lang?: string;
+      active?: boolean | number | string;
+      isActive?: boolean | number | string;
+      enabled?: boolean | number | string;
+      status?: string;
+      isDeleted?: boolean;
     }>;
   };
 };
@@ -49,11 +54,38 @@ export async function getLanguageList(): Promise<LanguageOption[]> {
           (
             item,
           ): item is {
-            _id: any;
+            _id?: string;
             code: string;
             lang: string;
+            active?: boolean | number | string;
+            isActive?: boolean | number | string;
+            enabled?: boolean | number | string;
+            status?: string;
+            isDeleted?: boolean;
           } => Boolean(item?.code && item?.lang),
         )
+        .filter((item) => {
+          const status = item.status?.toLowerCase();
+          const isExplicitlyInactive =
+            item.active === false ||
+            item.active === 0 ||
+            item.active === "0" ||
+            item.active === "false" ||
+            item.isActive === false ||
+            item.isActive === 0 ||
+            item.isActive === "0" ||
+            item.isActive === "false" ||
+            item.enabled === false ||
+            item.enabled === 0 ||
+            item.enabled === "0" ||
+            item.enabled === "false" ||
+            status === "inactive" ||
+            status === "disabled" ||
+            status === "deleted" ||
+            item.isDeleted === true;
+
+          return !isExplicitlyInactive;
+        })
         .map((item) => {
           const code = item.code.toLowerCase();
           const id = item._id || code;
