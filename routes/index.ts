@@ -17,6 +17,7 @@ export const ROUTES = {
   WALLET: (locale: string) => `/${locale}/wallet`,
   ORDER_BILLING: (locale: string) => `/${locale}/order-billing`,
   MY_PLANS: (locale: string) => `/${locale}/my-plans`,
+  MY_ESIM: (locale: string) => `/${locale}/my-esim`,
   RENEW: (locale: string) => `/${locale}/renew`,
   FAVORITES: (locale: string) => `/${locale}/favorites`,
   SUPPORT: (locale: string) => `/${locale}/support`,

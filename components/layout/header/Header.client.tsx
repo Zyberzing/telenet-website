@@ -26,6 +26,7 @@ import {
   LogOut,
   Menu,
   Moon,
+  Smartphone,
   Receipt,
   RefreshCw,
   Settings,
@@ -50,6 +51,7 @@ const NAV_ITEMS = [
 const MENU_ITEMS = [
   { href: "dashboard", icon: LayoutGrid, label: "dashboard" },
   { href: "my-plans", icon: FileText, label: "myPlans" },
+  { href: "my-esim", icon: Smartphone, label: "myEsim" },
   { href: "renew", icon: RefreshCw , label: "renew" },
   { href: "favorites", icon: Heart, label: "favorites" },
   // { href: "wallet", icon: Wallet, label: "wallet" },

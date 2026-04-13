@@ -317,7 +317,7 @@ export default function RenewPlans({
 
   return (
     <section className="w-full min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
-      <div className="relative w-full h-[18vh]">
+      {/* <div className="relative w-full h-[18vh]">
         <Image
           src="/banner-my-plans.svg"
           alt={t("bannerAlt")}
@@ -325,7 +325,7 @@ export default function RenewPlans({
           className="object-cover object-top"
           priority
         />
-      </div>
+      </div> */}
 
       <div className="max-w-7xl mx-auto py-10 px-4 md:px-8">
         <div className="flex items-center justify-between mb-6">

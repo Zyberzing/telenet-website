@@ -390,6 +390,47 @@ export type DashboardSummaryResponse = {
   };
 };
 
+export interface EsimInformationItem {
+  _id: string;
+  orderId: string;
+  country?: string | null;
+  coverage?: string | null;
+  packageId?: string | null;
+  packageName?: string | null;
+  network?: string | null;
+  finalPrice?: string | number | null;
+  orderStatus?: string | null;
+  paymentStatus?: string | null;
+  paymentMethodType?: string | null;
+  providerName?: string | null;
+  activationStatus?: string | null;
+  iccid?: string | null;
+  imsi?: string | null;
+  msisdn?: string | null;
+  lpaString?: string | null;
+  smdpAddress?: string | null;
+  qrCode?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface EsimListResponse {
+  status: string;
+  message: string;
+  data: {
+    result: EsimInformationItem[];
+    pagination: Pagination;
+  };
+  statusCode?: number;
+}
+
+export interface EsimDetailsResponse {
+  status: string;
+  message: string;
+  data: EsimInformationItem;
+  statusCode?: number;
+}
+
 export interface OrderListFilters {
   startDate?: string;
   endDate?: string;
