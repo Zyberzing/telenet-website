@@ -758,6 +758,26 @@
                     "refundRejected":  "Reembolso rechazado",
                     "refundFailed":  "Reembolso fallido"
                 },
+    "Renew":  {
+                  "bannerAlt":  "Banner de renovacion de planes",
+                  "title":  "Renovar planes",
+                  "searchPlaceholder":  "Buscar por pedido o plan...",
+                  "statusPlaceholder":  "Estado",
+                  "resetFilters":  "Restablecer filtros",
+                  "loading":  "Cargando planes de renovacion...",
+                  "noPlans":  "No se encontraron datos",
+                  "days":  "dias",
+                  "buy":  "Comprar",
+                  "prev":  "Anterior",
+                  "next":  "Siguiente",
+                  "loginRequired":  "Por favor inicia sesion primero para renovar.",
+                  "orderCreated":  "Orden creada correctamente!",
+                  "checkoutUrlMissing":  "No se encontro la URL de pago",
+                  "orderCreateFailed":  "No se pudo crear la orden",
+                  "fetchFailed":  "No se pudieron cargar los planes de renovacion.",
+                  "missingRenewPayload":  "Faltan detalles de renovacion. Intentalo de nuevo."
+              },
+
     "Favorites":  {
                       "bannerAlt":  "Banner de favoritos",
                       "title":  "Mis planes favoritos",

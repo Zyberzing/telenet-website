@@ -17,6 +17,7 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 export interface Plan {
   _id: string;
   orderId: string;
+  packageId?: string;
   package_name: string;
   package_data: number;
   perioddays: string;
@@ -38,6 +39,7 @@ export interface Plan {
   qrcode?: string;
   refundStatus?: "processing" | "refunded" | "rejected" | "failed";
   order?: {
+    packageId?: string;
     expiryDate: string;
     finalPrice: string;
     country: string;
@@ -254,7 +256,27 @@ export default function MyPlans({
 
                       <div className="flex flex-col sm:flex-row gap-3 mt-3">
                         <Button
-                          onClick={() => router.push(ROUTES.PLANS(locale))}
+                          onClick={() => {
+                            const params = new URLSearchParams({
+                              sourceOrderId: plan.orderId || plan._id,
+                              packageId: plan.packageId || "",
+                              packageName: plan.package_name || "",
+                              data: String(plan.package_data || ""),
+                              validity: String(plan.perioddays || ""),
+                              call: String(plan.package_call || ""),
+                              sms: String(plan.package_sms || ""),
+                              finalPrice: String(plan.order?.finalPrice || ""),
+                              country:
+                                plan.country || plan.order?.country || "",
+                              provider: plan.provider || "",
+                              network: plan.provider || "",
+                              coverage: plan.country || "-",
+                            });
+
+                            router.push(
+                              `${ROUTES.RENEW(locale)}?${params.toString()}`,
+                            );
+                          }}
                           className="bg-primary dark:text-white hover:bg-primary px-10 rounded-full"
                         >
                           {t("renew")}
@@ -400,10 +422,31 @@ export default function MyPlans({
                     </Button>
                     <Button
                       className="bg-primary hover:bg-primary rounded-full"
+                      // onClick={() => {
+                      //   setSelectedPlan(plan);
+                      //   router.push(
+                      //     `${ROUTES.PLANS(locale)}?filterby=Country&country_code=${plan.order?.country}`,
+                      //   );
+                      // }}
                       onClick={() => {
-                        setSelectedPlan(plan);
+                        const params = new URLSearchParams({
+                          sourceOrderId: plan.orderId || plan._id,
+                          packageId:
+                            plan.packageId || plan.order?.packageId || "",
+                          packageName: plan.package_name || "",
+                          data: String(plan.package_data || ""),
+                          validity: String(plan.perioddays || ""),
+                          call: String(plan.package_call || ""),
+                          sms: String(plan.package_sms || ""),
+                          finalPrice: String(plan.order?.finalPrice || ""),
+                          country: plan.country || plan.order?.country || "",
+                          provider: plan.provider || "",
+                          network: plan.provider || "",
+                          coverage: plan.country || "-",
+                        });
+                        console.log("Renew params", plan, params.toString());
                         router.push(
-                          `${ROUTES.PLANS(locale)}?filterby=Country&country_code=${plan.order?.country}`,
+                          `${ROUTES.RENEW(locale)}?${params.toString()}`,
                         );
                       }}
                     >
@@ -475,10 +518,31 @@ export default function MyPlans({
                     </Button>
                     <Button
                       className="bg-primary hover:bg-primary rounded-full"
+                      // onClick={() => {
+                      //   setSelectedPlan(plan);
+                      //   router.push(
+                      //     `${ROUTES.PLANS(locale)}?filterby=Country&country_code=${plan.order?.country}`,
+                      //   );
+                      // }}
                       onClick={() => {
-                        setSelectedPlan(plan);
+                        const params = new URLSearchParams({
+                          sourceOrderId: plan.orderId || plan._id,
+                          packageId:
+                            plan.packageId || plan.order?.packageId || "",
+                          packageName: plan.package_name || "",
+                          data: String(plan.package_data || ""),
+                          validity: String(plan.perioddays || ""),
+                          call: String(plan.package_call || ""),
+                          sms: String(plan.package_sms || ""),
+                          finalPrice: String(plan.order?.finalPrice || ""),
+                          country: plan.country || plan.order?.country || "",
+                          provider: plan.provider || "",
+                          network: plan.provider || "",
+                          coverage: plan.country || "-",
+                        });
+                        console.log("Renew params", plan, params.toString());
                         router.push(
-                          `${ROUTES.PLANS(locale)}?filterby=Country&country_code=${plan.order?.country}`,
+                          `${ROUTES.RENEW(locale)}?${params.toString()}`,
                         );
                       }}
                     >

@@ -4,15 +4,10 @@ import {
   DashboardSummaryResponse,
   GetOrderListApiResponse,
   orderDetails,
+  OrderListFilters,
+  RenewalListFilters,
+  RenewPlanPayload,
 } from "@/lib/types";
-
-export interface OrderListFilters {
-  startDate?: string;
-  endDate?: string;
-  search?: string;
-  status?: string;
-  provider?: string;
-}
 
 export const createOrder = async (body: orderDetails): Promise<any> => {
   const response = await authFetcher<{ status: string; message: string }>(
@@ -86,4 +81,49 @@ export const getOrderDashboardSummary = async () => {
     console.error("Error fetching dashboard summary:", error);
     return null;
   }
+};
+
+export const getRenewalList = async (
+  page = 1,
+  limit = 9,
+  filters: RenewalListFilters = {},
+): Promise<GetOrderListApiResponse["data"] | null> => {
+  try {
+    const searchParams = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value === undefined || value === null || value === "") return;
+      searchParams.set(key, String(value));
+    });
+
+    const response = await authFetcher<GetOrderListApiResponse>(
+      `/order/renewal-list?${searchParams.toString()}`,
+    );
+
+    return response?.data || null;
+  } catch (error) {
+    console.error("Error fetching renewal list:", error);
+    return null;
+  }
+};
+
+export const createRenewPlan = async (
+  body: RenewPlanPayload,
+): Promise<any> => {
+  const response = await authFetcher<{ status: string; message: string }>(
+    "/order/renew-plan",
+    {
+      method: "POST",
+      body,
+    },
+  );
+
+  if (response?.status !== "success") {
+    throw new Error(response?.message || "Failed to renew plan");
+  }
+
+  return response;
 };

@@ -797,6 +797,25 @@
     "refundRejected": "Refund Rejected",
     "refundFailed": "Refund Failed"
   },
+  "Renew": {
+    "bannerAlt": "Renew plans banner",
+    "title": "Renew Plans",
+    "searchPlaceholder": "Search by order or plan...",
+    "statusPlaceholder": "Status",
+    "resetFilters": "Reset Filters",
+    "loading": "Loading renewal plans...",
+    "noPlans": "No data found",
+    "days": "Days",
+    "buy": "Buy",
+    "prev": "Prev",
+    "next": "Next",
+    "loginRequired": "Please login first to renew.",
+    "orderCreated": "Order successfully created!",
+    "checkoutUrlMissing": "Checkout URL not found",
+    "orderCreateFailed": "Failed to create order",
+    "fetchFailed": "Failed to load renewal plans.",
+    "missingRenewPayload": "Missing renewal details. Please try again."
+  },
   "Favorites": {
     "bannerAlt": "Favorites banner",
     "title": "My Favorite Plans",

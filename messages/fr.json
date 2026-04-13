@@ -742,6 +742,26 @@
                     "refundRejected":  "Remboursement rejete",
                     "refundFailed":  "Remboursement echoue"
                 },
+    "Renew":  {
+                  "bannerAlt":  "Banniere des forfaits de renouvellement",
+                  "title":  "Renouveler les forfaits",
+                  "searchPlaceholder":  "Rechercher par commande ou forfait...",
+                  "statusPlaceholder":  "Statut",
+                  "resetFilters":  "Reinitialiser les filtres",
+                  "loading":  "Chargement des forfaits de renouvellement...",
+                  "noPlans":  "Aucune donnee trouvee",
+                  "days":  "jours",
+                  "buy":  "Acheter",
+                  "prev":  "Precedent",
+                  "next":  "Suivant",
+                  "loginRequired":  "Veuillez vous connecter d abord pour renouveler.",
+                  "orderCreated":  "Commande creee avec succes!",
+                  "checkoutUrlMissing":  "URL de paiement introuvable",
+                  "orderCreateFailed":  "Echec de creation de commande",
+                  "fetchFailed":  "Impossible de charger les forfaits de renouvellement.",
+                  "missingRenewPayload":  "Details de renouvellement manquants. Veuillez reessayer."
+              },
+
     "Favorites":  {
                       "bannerAlt":  "Bannière des favoris",
                       "title":  "Mes forfaits favoris",

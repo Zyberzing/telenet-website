@@ -27,6 +27,7 @@ import {
   Menu,
   Moon,
   Receipt,
+  RefreshCw,
   Settings,
   Sun,
   User,
@@ -49,6 +50,7 @@ const NAV_ITEMS = [
 const MENU_ITEMS = [
   { href: "dashboard", icon: LayoutGrid, label: "dashboard" },
   { href: "my-plans", icon: FileText, label: "myPlans" },
+  { href: "renew", icon: RefreshCw , label: "renew" },
   { href: "favorites", icon: Heart, label: "favorites" },
   // { href: "wallet", icon: Wallet, label: "wallet" },
   { href: "order-billing", icon: Receipt, label: "ordersBilling" },

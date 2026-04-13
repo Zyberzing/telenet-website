@@ -389,3 +389,24 @@ export type DashboardSummaryResponse = {
     } | null;
   };
 };
+
+export interface OrderListFilters {
+  startDate?: string;
+  endDate?: string;
+  search?: string;
+  status?: string;
+  provider?: string;
+}
+
+export interface RenewalListFilters {
+  startDate?: string;
+  endDate?: string;
+  search?: string;
+  status?: string;
+}
+
+export interface RenewPlanPayload {
+  sourceOrderId: string;
+  packageId: string;
+  packageName: string;
+}
