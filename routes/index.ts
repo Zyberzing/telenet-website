@@ -28,4 +28,6 @@ export const ROUTES = {
   REGION: (locale: string) => `/${locale}/region`,
   BLOG: (locale: string) => `/${locale}/blog`,
   BLOG_DETAIL: (locale: string, slug: string) => `/${locale}/blog/${slug}`,
+  DYNAMIC_PAGE_DETAIL: (locale: string, slug: string) =>
+    `/${locale}/dynamic-page/${slug}`,
 };

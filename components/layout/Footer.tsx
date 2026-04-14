@@ -1,13 +1,72 @@
 "use client";
 
+import { DynamicPageListItem } from "@/lib/types";
 import { ROUTES } from "@/routes";
+import {
+  buildDynamicPageSlug,
+  getDynamicPageList,
+} from "@/services/dynamicPage";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { ScrollArea } from "../ui/scroll-area";
 
 export default function Footer({ locale }: { locale: string }) {
   const t = useTranslations("Footer");
+  const [dynamicPages, setDynamicPages] = useState<DynamicPageListItem[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const PAGE_LIMIT = 5;
+
+  useEffect(() => {
+    let isMounted = true;
+
+    (async () => {
+      const response = await getDynamicPageList({ page: 1, limit: PAGE_LIMIT });
+      if (!isMounted) return;
+
+      const activePages = response.result.filter(
+        (page) => page.status === "active",
+      );
+      setDynamicPages(activePages);
+      setCurrentPage(response.pagination?.currentPage || 1);
+      setTotalPages(response.pagination?.totalPages || 1);
+    })();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleLoadMorePages = async () => {
+    if (loadingMore || currentPage >= totalPages) return;
+
+    setLoadingMore(true);
+    try {
+      const nextPage = currentPage + 1;
+      const response = await getDynamicPageList({
+        page: nextPage,
+        limit: PAGE_LIMIT,
+      });
+      const activePages = response.result.filter(
+        (page) => page.status === "active",
+      );
+
+      setDynamicPages((prev) => {
+        const existingIds = new Set(prev.map((item) => item._id));
+        const uniqueNewItems = activePages.filter(
+          (item) => !existingIds.has(item._id),
+        );
+        return [...prev, ...uniqueNewItems];
+      });
+      setCurrentPage(response.pagination?.currentPage || nextPage);
+      setTotalPages(response.pagination?.totalPages || totalPages);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   return (
     <footer className="bg-black text-gray-300 px-4 sm:px-6 md:px-10 lg:px-[6em]">
@@ -83,7 +142,7 @@ export default function Footer({ locale }: { locale: string }) {
                 <Link
                   className="hover:text-primary dark:hover:text-primary"
                   href={`/${locale}/plans?filterby=Country&country_code=${encodeURIComponent(
-                    country
+                    country,
                   )}`}
                 >
                   {t(`countries.${country}`)}
@@ -124,6 +183,38 @@ export default function Footer({ locale }: { locale: string }) {
               </Link>
             </li>
           </ul>
+          {dynamicPages.length > 0 && (
+            <div className="mt-2 w-full max-w-xs">
+              <ScrollArea className="mt-2 h-[150px] w-full max-w-xs pr-2">
+                <ul className="flex flex-col gap-1 text-[14px] sm:text-[15px]">
+                  {dynamicPages.map((page) => (
+                    <li key={page._id}>
+                      <Link
+                        className="hover:text-primary dark:hover:text-primary"
+                        href={ROUTES.DYNAMIC_PAGE_DETAIL(
+                          locale,
+                          buildDynamicPageSlug(page.pageName, page._id),
+                        )}
+                      >
+                        {page.pageName}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </ScrollArea>
+
+              {currentPage < totalPages && (
+                <button
+                  type="button"
+                  onClick={handleLoadMorePages}
+                  disabled={loadingMore}
+                  className="mt-2 text-sm font-medium text-primary transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loadingMore ? "Loading..." : "More"}
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Resources */}
@@ -136,11 +227,7 @@ export default function Footer({ locale }: { locale: string }) {
               <li key={key}>
                 <Link
                   className="hover:text-primary dark:hover:text-primary"
-                  href={
-                    key === "blog"
-                      ? ROUTES.BLOG(locale)
-                      : "#"
-                  }
+                  href={key === "blog" ? ROUTES.BLOG(locale) : "#"}
                 >
                   {t(key)}
                 </Link>

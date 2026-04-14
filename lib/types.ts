@@ -451,3 +451,47 @@ export interface RenewPlanPayload {
   packageId: string;
   packageName: string;
 }
+
+export interface DynamicPageListItem {
+  _id: string;
+  pageName: string;
+  status?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface DynamicPageSection {
+  _id: string;
+  title: string;
+  description: string;
+  dynamicPage: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface DynamicPageDetails {
+  _id: string;
+  pageName: string;
+  status?: string;
+  isDeleted?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  sections?: DynamicPageSection[];
+}
+
+export interface DynamicPageListResponse {
+  status: string;
+  message: string;
+  data?: {
+    result?: DynamicPageListItem[];
+    pagination?: Pagination;
+  };
+  statusCode?: number;
+}
+
+export interface DynamicPageDetailsResponse {
+  status: string;
+  message: string;
+  data?: DynamicPageDetails;
+  statusCode?: number;
+}
