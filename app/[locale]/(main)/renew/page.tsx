@@ -19,6 +19,11 @@ type SearchParams = {
   call?: string;
   sms?: string;
   finalPrice?: string;
+  basePrice?: string;
+  taxAmount?: string;
+  stripe?: string;
+  markupAmount?: string;
+  fupPolicy?: string;
   country?: string;
   provider?: string;
   network?: string;
@@ -66,6 +71,11 @@ export default async function RenewPage({
           package_call: query.call || "",
           package_sms: query.sms || "",
           finalPrice: query.finalPrice || "",
+          basePrice: query.basePrice || "",
+          taxAmount: query.taxAmount || "",
+          stripe: query.stripe || "",
+          markupAmount: query.markupAmount || "",
+          fup_policy: query.fupPolicy || "",
           country: query.country || "",
           provider: query.provider || "",
           network: query.network || "",

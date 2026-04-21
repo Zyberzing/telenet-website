@@ -1,18 +1,23 @@
 "use client";
 
+import { User } from "@/app/[locale]/(main)/profile-setting/ProfileSetting";
 import { useCurrency } from "@/app/providers/CurrencyProvider";
+import PlanDetailsModal from "@/components/modals/PlanDetailsModal";
 import QRModal from "@/components/modals/QRModal";
 import RefundModal from "@/components/modals/RefundModal";
 import BillingModal from "@/components/modals/ViewBillingModal";
 import { Button } from "@/components/ui/Button";
+import { Plan as ModalPlan, RenewPlanPayload } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { ROUTES } from "@/routes";
-import { getOrderList } from "@/services/order";
+import { createRenewPlan, getOrderList } from "@/services/order";
+import { createCheckout } from "@/services/payment";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
+import { toast } from "sonner";
 
 export interface Plan {
   _id: string;
@@ -36,8 +41,16 @@ export interface Plan {
   status: "active" | "expired" | "cancelled" | string;
   package_sms: number;
   package_call: number;
+  taxAmount?: string | number;
+  stripe?: string | number;
+  markupAmount?: string | number;
+  basePrice?: number;
+  fup_policy?: string | null;
   qrcode?: string;
   refundStatus?: "processing" | "refunded" | "rejected" | "failed";
+  planSnapshot?: {
+    price: number;
+  };
   order?: {
     packageId?: string;
     expiryDate: string;
@@ -50,7 +63,71 @@ interface MyPlansClientProps {
   plans: Plan[];
   expiredPlan: Plan[];
   cancelledPlan: Plan[];
+  userProfile: User | null;
 }
+
+type RenewModalPlan = ModalPlan & {
+  sourceOrderId: string;
+  providerId: string;
+  countryName: string;
+};
+
+const toNumber = (value: string | number | undefined, fallback = 0) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+const formatDataFromMb = (value: string | number | undefined) => {
+  const amount = Number(value);
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return "-";
+  }
+
+  if (amount >= 1024) {
+    return `${(amount / 1024).toFixed(2)} GB`;
+  }
+
+  return `${amount} MB`;
+};
+
+const mapPlanToRenewModalPlan = (plan: Plan): RenewModalPlan => {
+  const gross = toNumber(
+    plan.order?.finalPrice || plan.unit_price_gross_amount,
+  );
+  const net = toNumber(plan.unit_price_net_amount);
+  const computedTax = Math.max(gross - net, 0);
+
+  return {
+    _id: plan.packageId || plan.order?.packageId || plan._id,
+    package_id: plan.packageId || plan.order?.packageId || "",
+    package_name: plan.package_name || "-",
+    data: formatDataFromMb(plan.package_data),
+    validity: toNumber(plan.perioddays),
+    coverage: plan.country || plan.order?.country || "-",
+    price: gross,
+    basePrice: toNumber(plan.basePrice) || toNumber(plan?.planSnapshot?.price),
+    taxAmount: toNumber(plan.taxAmount, computedTax),
+    stripe: toNumber(plan.stripe),
+    tax: 0,
+    call: toNumber(plan.package_call),
+    sms: toNumber(plan.package_sms),
+    finalPrice: gross,
+    network: plan.provider || "-",
+    fup_policy: plan.fup_policy || null,
+    countryIso2: plan.country || plan.order?.country || "",
+    countries: [],
+    actionType: "increase",
+    markupType: "fixed",
+    markupValue: 0,
+    markupAmount: toNumber(plan.markupAmount),
+    percentage: 0,
+    provider: plan.provider || "",
+    sourceOrderId: plan.orderId || plan._id,
+    providerId: plan.provider || "",
+    countryName: plan.country || plan.order?.country || "",
+  };
+};
 
 enum RefundStatusEnum {
   PROCESSING = "processing",
@@ -62,6 +139,7 @@ export default function MyPlans({
   plans,
   expiredPlan,
   cancelledPlan,
+  userProfile,
 }: MyPlansClientProps) {
   const t = useTranslations("MyPlans");
   const { formatAmount } = useCurrency();
@@ -75,12 +153,82 @@ export default function MyPlans({
   const [showRefund, setShowRefund] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const [showBilling, setShowBilling] = useState(false);
+  const [selectedRenewPlan, setSelectedRenewPlan] =
+    useState<RenewModalPlan | null>(null);
+  const [orderLoading, setOrderLoading] = useState(false);
   const [refundRequestedOrderIds, setRefundRequestedOrderIds] = useState<
     Set<string>
   >(new Set());
   const [refundNoteTargetId, setRefundNoteTargetId] = useState<string | null>(
     null,
   );
+
+  const handleOpenRenewModal = (plan: Plan) => {
+    setSelectedRenewPlan(mapPlanToRenewModalPlan(plan));
+  };
+
+  const handleRenewBuy = async (
+    promotionId?: string,
+    travelStartDate?: string,
+    travelEndDate?: string,
+  ) => {
+    if (!selectedRenewPlan || orderLoading) {
+      return;
+    }
+
+    if (!userProfile) {
+      toast.error("Please login first.");
+      return;
+    }
+
+    const renewPayload: RenewPlanPayload = {
+      sourceOrderId: selectedRenewPlan.sourceOrderId,
+      packageId: selectedRenewPlan.package_id,
+      packageName: selectedRenewPlan.package_name,
+    };
+
+    if (
+      !renewPayload.sourceOrderId ||
+      !renewPayload.packageId ||
+      !renewPayload.packageName
+    ) {
+      toast.error("Unable to renew this plan right now.");
+      return;
+    }
+
+    try {
+      setOrderLoading(true);
+      const createRenew = await createRenewPlan(renewPayload);
+      const checkoutResponse = await createCheckout({
+        packageId: selectedRenewPlan.package_id,
+        country: selectedRenewPlan.countryName || selectedRenewPlan.countryIso2,
+        providerId: selectedRenewPlan.providerId,
+        customerDOB: userProfile.customerDOB,
+        customerPassportDOB: userProfile.customerPassportDOB,
+        travelStartDate,
+        travelEndDate,
+        ...(promotionId ? { couponId: promotionId } : {}),
+      });
+
+      toast.success(checkoutResponse?.message || "Order created successfully.");
+      setSelectedRenewPlan(null);
+
+      if (checkoutResponse?.data?.url) {
+        window.location.href = checkoutResponse.data.url;
+      } else {
+        toast.error("Checkout URL missing.");
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to create renew order.");
+      }
+    } finally {
+      setOrderLoading(false);
+    }
+  };
+
   const getRefundStatus = (plan: any): RefundStatusEnum | null => {
     try {
       if (plan?.refundStatus) {
@@ -221,20 +369,10 @@ export default function MyPlans({
                         </div>
                         <div className="text-sm flex justify-between text-gray-500 dark:text-gray-400">
                           <p>
-                            {plan.package_data >= 1024
-                              ? `${parseFloat(
-                                  (plan.package_data / 1024).toFixed(2),
-                                )} GB`
-                              : `${plan.package_data} MB`}{" "}
+                            {formatDataFromMb(plan.package_data)}{" "}
                             {t("dataLeft")}
                           </p>
-                          <p>
-                            {plan.package_data >= 1024
-                              ? `${parseFloat(
-                                  (plan.package_data / 1024).toFixed(2),
-                                )} GB`
-                              : `${plan.package_data} MB`}
-                          </p>
+                          <p>{formatDataFromMb(plan.package_data)}</p>
                         </div>
 
                         <div className="bg-gray-200 h-1.5 rounded-full overflow-hidden">
@@ -257,29 +395,12 @@ export default function MyPlans({
                       <div className="flex flex-col sm:flex-row gap-3 mt-3">
                         <Button
                           onClick={() => {
-                            const params = new URLSearchParams({
-                              sourceOrderId: plan.orderId || plan._id,
-                              packageId: plan.packageId || "",
-                              packageName: plan.package_name || "",
-                              data: String(plan.package_data || ""),
-                              validity: String(plan.perioddays || ""),
-                              call: String(plan.package_call || ""),
-                              sms: String(plan.package_sms || ""),
-                              finalPrice: String(plan.order?.finalPrice || ""),
-                              country:
-                                plan.country || plan.order?.country || "",
-                              provider: plan.provider || "",
-                              network: plan.provider || "",
-                              coverage: plan.country || "-",
-                            });
-
-                            router.push(
-                              `${ROUTES.RENEW(locale)}?${params.toString()}`,
-                            );
+                            plan.status !== "upcoming" &&
+                              handleOpenRenewModal(plan);
                           }}
                           className="bg-primary dark:text-white hover:bg-primary px-10 rounded-full"
                         >
-                          {t("renew")}
+                          {plan.status === "upcoming" ? "Upcoming" : t("renew")}
                         </Button>
                         {/* <Button
                           onClick={() => router.push(ROUTES.TOP_UP(locale))}
@@ -422,33 +543,7 @@ export default function MyPlans({
                     </Button>
                     <Button
                       className="bg-primary hover:bg-primary rounded-full"
-                      // onClick={() => {
-                      //   setSelectedPlan(plan);
-                      //   router.push(
-                      //     `${ROUTES.PLANS(locale)}?filterby=Country&country_code=${plan.order?.country}`,
-                      //   );
-                      // }}
-                      onClick={() => {
-                        const params = new URLSearchParams({
-                          sourceOrderId: plan.orderId || plan._id,
-                          packageId:
-                            plan.packageId || plan.order?.packageId || "",
-                          packageName: plan.package_name || "",
-                          data: String(plan.package_data || ""),
-                          validity: String(plan.perioddays || ""),
-                          call: String(plan.package_call || ""),
-                          sms: String(plan.package_sms || ""),
-                          finalPrice: String(plan.order?.finalPrice || ""),
-                          country: plan.country || plan.order?.country || "",
-                          provider: plan.provider || "",
-                          network: plan.provider || "",
-                          coverage: plan.country || "-",
-                        });
-                        console.log("Renew params", plan, params.toString());
-                        router.push(
-                          `${ROUTES.RENEW(locale)}?${params.toString()}`,
-                        );
-                      }}
+                      onClick={() => handleOpenRenewModal(plan)}
                     >
                       {t("repurchase")}
                     </Button>
@@ -518,33 +613,7 @@ export default function MyPlans({
                     </Button>
                     <Button
                       className="bg-primary hover:bg-primary rounded-full"
-                      // onClick={() => {
-                      //   setSelectedPlan(plan);
-                      //   router.push(
-                      //     `${ROUTES.PLANS(locale)}?filterby=Country&country_code=${plan.order?.country}`,
-                      //   );
-                      // }}
-                      onClick={() => {
-                        const params = new URLSearchParams({
-                          sourceOrderId: plan.orderId || plan._id,
-                          packageId:
-                            plan.packageId || plan.order?.packageId || "",
-                          packageName: plan.package_name || "",
-                          data: String(plan.package_data || ""),
-                          validity: String(plan.perioddays || ""),
-                          call: String(plan.package_call || ""),
-                          sms: String(plan.package_sms || ""),
-                          finalPrice: String(plan.order?.finalPrice || ""),
-                          country: plan.country || plan.order?.country || "",
-                          provider: plan.provider || "",
-                          network: plan.provider || "",
-                          coverage: plan.country || "-",
-                        });
-                        console.log("Renew params", plan, params.toString());
-                        router.push(
-                          `${ROUTES.RENEW(locale)}?${params.toString()}`,
-                        );
-                      }}
+                      onClick={() => handleOpenRenewModal(plan)}
                     >
                       {t("repurchase")}
                     </Button>
@@ -561,6 +630,14 @@ export default function MyPlans({
       </div>
 
       {/* Dialog Modal */}
+      <PlanDetailsModal
+        selectedPlan={selectedRenewPlan}
+        onClose={() => setSelectedRenewPlan(null)}
+        onBuy={handleRenewBuy}
+        orderLoading={orderLoading}
+        isLoggedIn={!!userProfile}
+      />
+
       <BillingModal
         open={showBilling}
         plan={selectedPlan}

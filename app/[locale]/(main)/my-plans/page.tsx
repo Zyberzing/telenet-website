@@ -1,3 +1,4 @@
+import { getProfile } from "@/services/auth";
 import { getMyPlans } from "@/services/order";
 import { getPageMetadata } from "@/services/seo";
 import MyPlans, { Plan } from "./MyPlansClient";
@@ -53,12 +54,14 @@ const Page = async ({
   const myPlans: Plan[] = response?.result || [];
   const expiredPlans: Plan[] = expiredResponse?.result || [];
   const cancelledPlans: Plan[] = cancelledResponse?.result || [];
+  const userProfile = await getProfile();
 
   return (
     <MyPlans
       plans={myPlans}
       expiredPlan={expiredPlans}
       cancelledPlan={cancelledPlans}
+      userProfile={userProfile}
     />
   );
 };

@@ -19,40 +19,58 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 type RenewalApiItem = {
   _id?: string;
   sourceOrderId?: string;
+  source_order_id?: string;
   orderId?: string;
+  order_id?: string;
   packageId?: string;
   package_id?: string;
   packageName?: string;
   package_name?: string;
+  packageData?: string | number;
   package_data?: string | number;
   data?: string | number;
+  periodDays?: string | number;
   perioddays?: string | number;
   validity?: string | number;
+  packageCall?: string | number;
   package_call?: string | number;
   call?: string | number;
+  packageSms?: string | number;
   package_sms?: string | number;
   sms?: string | number;
-  coverage?: string;
+  coverage?: string | string[];
+  coverageName?: string;
   country?: string;
   country_code?: string;
+  countryCode?: string;
   countryIso2?: string;
   provider?: string;
   providerId?: string;
   providerName?: string;
   network?: string;
+  networkName?: string;
   fup_policy?: string | null;
+  fupPolicy?: string | null;
   finalPrice?: string | number;
+  final_price?: string | number;
+  price?: string | number;
+  unit_price_gross_amount?: string | number;
   basePrice?: string | number;
+  base_price?: string | number;
+  unit_price_net_amount?: string | number;
   taxAmount?: string | number;
+  tax_amount?: string | number;
   stripe?: string | number;
+  stripeAmount?: string | number;
+  stripe_amount?: string | number;
   markupAmount?: string | number;
+  markup_amount?: string | number;
 };
 
 type RenewalPlan = Plan & {
@@ -80,38 +98,103 @@ const formatPlanData = (value: string | number | undefined) => {
   return "-";
 };
 
+const firstDefined = <T,>(...values: Array<T | null | undefined>) =>
+  values.find((value) => value !== undefined && value !== null);
+
+const normalizeCoverage = (
+  coverage?: string | string[],
+  fallbackCountry?: string,
+) => {
+  if (Array.isArray(coverage)) {
+    const compact = coverage
+      .map((item) => String(item || "").trim())
+      .filter(Boolean);
+    if (compact.length > 0) return compact.join(", ");
+  }
+
+  if (typeof coverage === "string" && coverage.trim()) {
+    return coverage;
+  }
+
+  if (fallbackCountry && String(fallbackCountry).trim()) {
+    return String(fallbackCountry);
+  }
+
+  return "-";
+};
+
 const mapRenewalItemToPlan = (item: RenewalApiItem): RenewalPlan => {
-  const planId = String(item.package_id || item.packageId || item._id || "");
+  const packageIdRaw = firstDefined(item.package_id, item.packageId, item._id);
+  const planId = String(packageIdRaw || "");
   const sourceOrderId = String(
-    item.sourceOrderId || item.orderId || item._id || "",
+    firstDefined(
+      item.sourceOrderId,
+      item.source_order_id,
+      item.orderId,
+      item.order_id,
+      item._id,
+    ) || "",
   );
   const countryCode = String(
-    item.country_code || item.countryIso2 || item.country || "",
+    firstDefined(
+      item.country_code,
+      item.countryCode,
+      item.countryIso2,
+      item.country,
+    ) || "",
+  );
+  const finalPrice = toNumber(
+    firstDefined(
+      item.finalPrice,
+      item.final_price,
+      item.price,
+      item.unit_price_gross_amount,
+    ),
+  );
+  const basePrice = toNumber(
+    firstDefined(item.basePrice, item.base_price, item.unit_price_net_amount),
+  );
+  const taxAmount = toNumber(firstDefined(item.taxAmount, item.tax_amount));
+  const stripeAmount = toNumber(
+    firstDefined(item.stripe, item.stripeAmount, item.stripe_amount),
   );
 
   return {
     _id: planId || sourceOrderId || "unknown-plan",
     package_id: planId || "",
-    package_name: String(item.package_name || item.packageName || "-"),
-    data: formatPlanData(item.package_data ?? item.data),
-    validity: toNumber(item.perioddays ?? item.validity),
-    coverage: String(item.coverage || item.country || "-"),
-    price: toNumber(item.finalPrice),
-    basePrice: toNumber(item.basePrice),
-    taxAmount: toNumber(item.taxAmount),
-    stripe: toNumber(item.stripe),
+    package_name: String(
+      firstDefined(item.package_name, item.packageName) || "-",
+    ),
+    data: formatPlanData(
+      firstDefined(item.package_data, item.packageData, item.data),
+    ),
+    validity: toNumber(
+      firstDefined(item.perioddays, item.periodDays, item.validity),
+    ),
+    coverage: normalizeCoverage(
+      firstDefined(item.coverage, item.coverageName),
+      item.country,
+    ),
+    price: finalPrice,
+    basePrice,
+    taxAmount,
+    stripe: stripeAmount,
     tax: 0,
-    call: toNumber(item.package_call ?? item.call),
-    sms: toNumber(item.package_sms ?? item.sms),
-    finalPrice: toNumber(item.finalPrice),
-    network: String(item.network || item.providerName || "-"),
-    fup_policy: item.fup_policy ?? null,
+    call: toNumber(
+      firstDefined(item.package_call, item.packageCall, item.call),
+    ),
+    sms: toNumber(firstDefined(item.package_sms, item.packageSms, item.sms)),
+    finalPrice,
+    network: String(
+      firstDefined(item.network, item.networkName, item.providerName) || "-",
+    ),
+    fup_policy: firstDefined(item.fup_policy, item.fupPolicy) ?? null,
     countryIso2: countryCode,
     countries: [],
     actionType: "increase",
     markupType: "fixed",
     markupValue: 0,
-    markupAmount: toNumber(item.markupAmount),
+    markupAmount: toNumber(firstDefined(item.markupAmount, item.markup_amount)),
     percentage: 0,
     provider: String(item.provider || item.providerId || ""),
     sourceOrderId,
